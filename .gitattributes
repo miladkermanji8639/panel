@@ -183,7 +183,7 @@ Procfile          text
 *.jar             binary
 *.rar             binary
 *.tar             binary
-*.zip             binary
+*.zip filter=lfs diff=lfs merge=lfs -text
 # Fonts
 *.ttf             binary
 *.eot             binary
@@ -198,4 +198,3 @@ Procfile          text
 # Ignore files (like .npmignore or .gitignore)
 *.*ignore         text
 *.node filter=lfs diff=lfs merge=lfs -text
-*.zip filter=lfs diff=lfs merge=lfs -text
