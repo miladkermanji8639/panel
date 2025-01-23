@@ -239,23 +239,16 @@ class ScheduleSettingController
       );
 
       // بررسی تداخل زمانی
-      $existingSlots = Cache::remember(
-        "doctor_{$doctor->id}_slots_{$validated['day']}",
-        now()->addMinutes(30),
-        function () use ($doctor, $validated) {
-          return AppointmentSlot::whereHas('workSchedule', function ($query) use ($doctor, $validated) {
-            $query->where('doctor_id', $doctor->id)
-              ->where('day', $validated['day']);
-          })->get();
-        }
-      );
-
+      $existingSlots =
+        AppointmentSlot::whereHas('workSchedule', function ($query) use ($doctor, $validated) {
+          $query->where('doctor_id', $doctor->id)
+            ->where('day', $validated['day']);
+        })->get();
       foreach ($existingSlots as $slot) {
         $slotStart = Carbon::createFromFormat('H:i', $slot->time_slots['start_time']);
         $slotEnd = Carbon::createFromFormat('H:i', $slot->time_slots['end_time']);
         $newStart = Carbon::createFromFormat('H:i', $validated['start_time']);
         $newEnd = Carbon::createFromFormat('H:i', $validated['end_time']);
-
         if (
           ($newStart >= $slotStart && $newStart < $slotEnd) ||
           ($newEnd > $slotStart && $newEnd <= $slotEnd) ||
@@ -280,7 +273,6 @@ class ScheduleSettingController
       ]);
 
       // به‌روزرسانی کش
-      Cache::forget("doctor_{$doctor->id}_slots_{$validated['day']}");
 
       return response()->json([
         'message' => 'موفقیت آمیز',
@@ -390,7 +382,6 @@ class ScheduleSettingController
 
   public function saveAppointmentSettings(Request $request)
   {
-    Log::info($request->all());
 
     $validated = $request->validate([
       'day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
@@ -413,7 +404,7 @@ class ScheduleSettingController
       foreach ($selectedDays as $day) {
         // تنظیمات موجود برای روز
         $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctor->id)
-          ->where('day',  $validated['day'])
+          ->where('day', $validated['day'])
           ->first();
 
         // بازیابی تنظیمات قبلی به صورت آرایه
@@ -500,7 +491,7 @@ class ScheduleSettingController
 
 
 
- 
+
 
 
   private function calculateMaxAppointments($startTime, $endTime)
@@ -529,7 +520,7 @@ class ScheduleSettingController
 
   public function getAppointmentSettings(Request $request)
   {
-    
+
 
     $doctor = Auth::guard('doctor')->user();
 
@@ -704,6 +695,7 @@ class ScheduleSettingController
       'start_time' => 'required|date_format:H:i',
       'end_time' => 'required|date_format:H:i',
     ]);
+    Log::info($request);
 
     try {
       $doctor = Auth::guard('doctor')->user();

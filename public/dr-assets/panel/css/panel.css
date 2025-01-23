@@ -8,11 +8,15 @@
  background-color: #fff;
  z-index: 555;
 }
-
+.bg-active-slot{
+  background-color: #eef2f8 !important;
+}
 .bg-light-blue {
  background-color: #ebeff8 !important;
 }
-
+.form-group{
+  margin-bottom: 0 !important;
+}
 .sidebar__nav {
  z-index: 556;
 }
