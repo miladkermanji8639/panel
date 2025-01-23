@@ -39,7 +39,7 @@
    return false;
   }
 
-  // بررسی تداخل با اسلات‌های موجود
+  // بررسی تداخل با برنامه کاری‌های موجود
   const existingSlots = $(`#morning-${day}-details .form-row`);
   let hasConflict = false;
   const conflictingSlots = [];
@@ -59,7 +59,7 @@
 
   if (hasConflict) {
    Toastify({
-    text: 'این بازه زمانی با اسلات‌های موجود تداخل دارد',
+    text: 'این بازه زمانی با برنامه کاری‌های موجود تداخل دارد',
     duration: 3000,
     gravity: "top",
     position: 'right',
@@ -186,7 +186,7 @@
      // 2. نمایش بخش ساعات کاری برای روز مقصد
      $(`.work-hours-${day}`).removeClass('d-none');
 
-     // 3. به‌روزرسانی محتوا (اسلات‌های جدید) برای روز مقصد
+     // 3. به‌روزرسانی محتوا (برنامه کاری‌های جدید) برای روز مقصد
      updateDayUI(schedule);
     });
 
@@ -229,6 +229,11 @@
         },
         success: function(response) {
          response.target_days.forEach(function(day) {
+           const dayCheckbox = $(`#${day}`);
+           dayCheckbox.prop('checked', true);
+
+           // 2. نمایش بخش ساعات کاری مربوط به روز مقصد
+           $(`.work-hours-${day}`).removeClass('d-none');
           reloadDayData(day); // بازسازی داده‌های روز مقصد
          });
          Toastify({
@@ -245,9 +250,8 @@
          $(".modal-backdrop").remove();
          // به‌روزرسانی رابط کاربری برای روزهای مقصد
          response.workSchedules.forEach(function(schedule) {
-
-
-          updateDayUI(schedule); // این تابع باید فیلدها را بر اساس داده‌ها به‌روزرسانی کند
+          
+             updateDayUI(schedule);
          });
 
         },
@@ -349,7 +353,7 @@
     `;
   $container.append(mainRowHtml);
 
-  // اضافه کردن اسلات‌های جدید
+  // اضافه کردن برنامه کاری‌های جدید
   if (schedule.slots && schedule.slots.length > 0) {
    schedule.slots.forEach(slot => {
     const slotHtml = createSlotHtml(slot, day);
@@ -423,7 +427,7 @@
 
 
 
- // تابع بارگذاری اسلات‌ها
+ // تابع بارگذاری برنامه کاری‌ها
  function loadDaySlots(day, callback) {
   $.ajax({
    url: "{{ route('dr-get-work-schedule') }}",
@@ -467,7 +471,7 @@
   // باز کردن مدال
   $('#checkboxModal').modal('show');
 
-  // ذخیره‌سازی اطلاعات اسلات در دکمه ذخیره
+  // ذخیره‌سازی اطلاعات برنامه کاری در دکمه ذخیره
   $('#saveSelection').data('slot-id', slotId);
   $('#saveSelection').data('source-day', currentDay);
   $('#saveSelection').attr('id', 'saveSingleSlotSelection');
@@ -542,6 +546,12 @@
 
     // به‌روزرسانی UI برای روزهای مقصد
     response.target_days.forEach(function(day) {
+        // 1. فعال کردن چک‌باکس مربوط به روز مقصد
+      const dayCheckbox = $(`#${day}`);
+      dayCheckbox.prop('checked', true);
+
+      // 2. نمایش بخش ساعات کاری مربوط به روز مقصد
+      $(`.work-hours-${day}`).removeClass('d-none');
      reloadDayData(day);
     });
    },
@@ -584,11 +594,17 @@
         success: function(response) {
          // به‌روزرسانی UI
          response.target_days.forEach(function(day) {
+            // 1. فعال کردن چک‌باکس مربوط به روز مقصد
+           const dayCheckbox = $(`#${day}`);
+           dayCheckbox.prop('checked', true);
+
+           // 2. نمایش بخش ساعات کاری مربوط به روز مقصد
+           $(`.work-hours-${day}`).removeClass('d-none');
           reloadDayData(day);
          });
 
          Toastify({
-          text: 'اسلات با موفقیت جایگزین شد.',
+          text: 'برنامه کاری با موفقیت جایگزین شد.',
           duration: 3000,
           gravity: 'top',
           position: 'right',
@@ -603,7 +619,7 @@
         },
         error: function(xhr) {
          Toastify({
-          text: xhr.responseJSON?.message || 'خطا در جایگزینی اسلات',
+          text: xhr.responseJSON?.message || 'خطا در جایگزینی برنامه کاری',
           duration: 3000,
           gravity: 'top',
           position: 'right',
@@ -639,7 +655,7 @@
    }
   });
  });
- // تابع ایجاد HTML برای اسلات
+ // تابع ایجاد HTML برای برنامه کاری
  function createCopySlotHtml(slot) {
   const start_time = slot?.time_slots?.start_time || "08:00";
   const end_time = slot?.time_slots?.end_time || "12:00";
@@ -697,7 +713,7 @@
   });
  });
 
- // هنگام اضافه کردن اسلات ج
+ // هنگام اضافه کردن برنامه کاری ج
 
  // هنگام کپی کردن
 
@@ -713,7 +729,7 @@
   $(`#morning-patients-${day}`).val(maxAppointments);
  }
 
- // بعد از بارگذاری اسلات‌ها، المان اصلی را مقداردهی کنید
+ // بعد از بارگذاری برنامه کاری‌ها، المان اصلی را مقداردهی کنید
 
  // تابع ذخیره‌سازی در localStorage
  function cacheWorkSchedule(data) {
@@ -768,7 +784,7 @@
      $(`.work-hours-${schedule.day}`).addClass('d-none');
     }
 
-    // بارگذاری اسلات‌ها
+    // بارگذاری برنامه کاری‌ها
     if (schedule.slots && schedule.slots.length > 0) {
      const $container = $(`#morning-${schedule.day}-details`);
 
@@ -807,7 +823,7 @@
      $(`.work-hours-${schedule.day}`).addClass('d-none');
     }
 
-    // بارگذاری اسلات‌ها
+    // بارگذاری برنامه کاری‌ها
     if (schedule.slots && schedule.slots.length > 0) {
      const $container = $(`#morning-${schedule.day}-details`);
 
@@ -863,7 +879,7 @@
   `;
  }
 
- // تابع ایجاد ردیف اسلات
+ // تابع ایجاد ردیف برنامه کاری
  function createSlotHtml(slot, day) {
   const startTime = slot.time_slots ? slot.time_slots.start_time : '08:00';
   const endTime = slot.time_slots ? slot.time_slots.end_time : '12:00';
@@ -1081,7 +1097,7 @@
   modal.attr('data-max-appointments', $(this).data('max-appointments') || 0);
   modal.attr('data-day', $(this).data('day'));
 
-  // به‌روزرسانی عنوان مدال با اطلاعات دقیق اسلات
+  // به‌روزرسانی عنوان مدال با اطلاعات دقیق برنامه کاری
   $("#scheduleModalLabel").text(
    `برنامه زمانبندی برای نوبت های ${persianDay} ${start_time} الی ${end_time} (${max_appointments} نوبت)`
   );
@@ -1112,7 +1128,7 @@
      // تبدیل تنظیمات JSON به آرایه
      const settings = response.settings;
 
-     // فیلتر تنظیمات مرتبط با اسلات جاری
+     // فیلتر تنظیمات مرتبط با برنامه کاری جاری
      const filteredSettings = settings.filter(setting =>
       setting.start_time === start_time &&
       setting.end_time === end_time &&
@@ -1343,7 +1359,7 @@
     }
    });
   }
-  // تابع جمع‌آوری اسلات‌ها
+  // تابع جمع‌آوری برنامه کاری‌ها
   function collectSlots(day) {
    const slots = [];
    $(`#morning-${day}-details .form-row`).each(function() {
@@ -1351,7 +1367,7 @@
     const startTime = $row.find('.start-time').val();
     const endTime = $row.find('.end-time').val();
     const maxAppointments = $row.find('.max-appointments').val() || 1;
-    // فقط اضافه کردن اسلات‌های با زمان شروع و پایان
+    // فقط اضافه کردن برنامه کاری‌های با زمان شروع و پایان
     if (startTime && endTime) {
      slots.push({
       start_time: startTime,
@@ -1541,7 +1557,7 @@
      } else {
       $(`.work-hours-${schedule.day}`).addClass('d-none');
      }
-     // بارگذاری اسلات‌ها
+     // بارگذاری برنامه کاری‌ها
      if (schedule.slots && schedule.slots.length > 0) {
       const $container = $(`#morning-${schedule.day}-details`);
       schedule.slots.forEach(function(slot) {
@@ -1605,7 +1621,7 @@
  });
  $(document).ready(function() {
   // تابع ذخیره‌سازی برنامه کاری
-  // تابع جمع‌آوری اسلات‌ها
+  // تابع جمع‌آوری برنامه کاری‌ها
   function collectSlots(day) {
    const slots = [];
    $(`#morning-${day}-details .form-row`).each(function() {
@@ -1613,7 +1629,7 @@
     const startTime = $row.find('.start-time').val();
     const endTime = $row.find('.end-time').val();
     const maxAppointments = $row.find('.max-appointments').val() || 1;
-    // فقط اضافه کردن اسلات‌های با زمان شروع و پایان
+    // فقط اضافه کردن برنامه کاری‌های با زمان شروع و پایان
     if (startTime && endTime) {
      slots.push({
       start_time: startTime,
