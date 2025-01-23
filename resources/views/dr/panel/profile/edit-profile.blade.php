@@ -6,7 +6,26 @@
 @section('site-header')
  {{ 'به نوبه | پنل دکتر' }}
 @endsection
+<style>
+.ts-wrapper.form-control:not(.disabled) .ts-control{
+  padding-right: 17px !important;
+}
+.clear-button {
+  position: absolute !important;
+  right: 5px !important
+}
+.ts-control .item{
+  font-size: 12px !important;
+  font-weight: bold !important
+}
+.ts-control{
+  padding: 14 .75rem !important;
+  text-wrap: nowrap !important;
+}
+
+</style>
 @section('content')
+
 @section('bread-crumb-title', ' ویرایش پروفایل ')
 <div class="main-content mb-5">
  @if (!$doctor->profile_completed && count($incompleteSections) > 0)
@@ -486,9 +505,9 @@
          <div class="password_toggle__AXK9v">
           <input type="checkbox" id="secure_call" name="secure_call" value="1"
            {{ ($messengers->where('messenger_type', 'ita')->first()->is_secure_call ?? false) ||
-           ($messengers->where('messenger_type', 'whatsapp')->first()->is_secure_call ?? false)
-               ? 'checked'
-               : '' }}>
+  ($messengers->where('messenger_type', 'whatsapp')->first()->is_secure_call ?? false)
+  ? 'checked'
+  : '' }}>
           <label for="secure_call">Toggle</label>
          </div>
         </div>
