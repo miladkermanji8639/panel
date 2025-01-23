@@ -184,13 +184,66 @@ label {
     font-size: 12px !important;
     font-weight: bold !important;
   }
+
+  .gap-40 {
+    display: flex !important;
+    gap: 15px !important;
+  }
+
+  .form-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    text-wrap: nowrap !important;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    align-items: center !important;
+  }
+    .form-group {
+      margin-bottom: 0 !important;
+    }
+}
+
+@media only screen and (max-width: 544px) {
+  .gap-40 {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    text-wrap: nowrap !important;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    align-items: center !important;
+  }
+  .max-appointments{
+    width: 70px !important;
+  }
+[data-target="#CalculatorModal"] {
+  width: 70px !important;
+}
+  .form-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    text-wrap: nowrap !important;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+  }
+
+  .mt-3 .form-row .d-flex .justify-content-between .w-100 .p-2 {
+    padding: 0 !important;
+  }
+  .form-group{
+    margin-bottom: 0 !important;
+  }
 }
 
 @media only screen and (max-width: 425px) {
   .workhours-wrapper-content {
     width: 98vw;
   }
-
+  .p-3{
+    padding-top: .6rem !important;
+      padding-right: .6rem !important;
+      padding-bottom: .6rem !important;
+      padding-left: .6rem !important;
+  }
   .my-425-styles-input {
     display: flex !important;
     flex-wrap: wrap !important;
