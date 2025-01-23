@@ -20,7 +20,10 @@
 .sidebar__nav {
  z-index: 556;
 }
-
+.border-bottom-2{
+  border-bottom: 2px dashed rgb(190, 190, 190) !important;
+  margin-top: 10px;
+}
 .label-top-input-special-takhasos {
  z-index: 700 !important;
 }

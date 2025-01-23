@@ -182,7 +182,126 @@ class ScheduleSettingController
       ], 500);
     }
   }
+  public function copySingleSlot(Request $request)
+  {
+    $validated = $request->validate([
+      'source_day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
+      'target_days' => 'required|array|min:1',
+      'slot_id' => 'required|exists:appointment_slots,id',
+      'override' => 'nullable|in:0,1,true,false'
+    ]);
 
+    $override = filter_var($request->input('override', false), FILTER_VALIDATE_BOOLEAN);
+
+    $doctor = Auth::guard('doctor')->user();
+
+    DB::beginTransaction();
+    try {
+      $sourceSlot = AppointmentSlot::findOrFail($validated['slot_id']);
+
+      $conflictingSlots = [];
+
+      foreach ($validated['target_days'] as $targetDay) {
+        $targetWorkSchedule = DoctorWorkSchedule::firstOrCreate(
+          [
+            'doctor_id' => $doctor->id,
+            'day' => $targetDay
+          ],
+          ['is_working' => true]
+        );
+
+        $existingSlots = AppointmentSlot::where('work_schedule_id', $targetWorkSchedule->id)->get();
+
+        foreach ($existingSlots as $existingSlot) {
+          $existingStart = Carbon::createFromFormat('H:i', $existingSlot->time_slots['start_time']);
+          $existingEnd = Carbon::createFromFormat('H:i', $existingSlot->time_slots['end_time']);
+          $newStart = Carbon::createFromFormat('H:i', $sourceSlot->time_slots['start_time']);
+          $newEnd = Carbon::createFromFormat('H:i', $sourceSlot->time_slots['end_time']);
+
+          if (
+            ($newStart >= $existingStart && $newStart < $existingEnd) ||
+            ($newEnd > $existingStart && $newEnd <= $existingEnd) ||
+            ($newStart <= $existingStart && $newEnd >= $existingEnd)
+          ) {
+            if (!$override) {
+              $conflictingSlots[] = [
+                'day' => $this->getDayNameInPersian($targetDay),
+                'start' => $existingStart->format('H:i'),
+                'end' => $existingEnd->format('H:i')
+              ];
+            }
+          }
+        }
+      }
+
+      if (!empty($conflictingSlots)) {
+        return response()->json([
+          'message' => 'تداخل زمانی وجود دارد',
+          'conflicting_slots' => $conflictingSlots,
+          'status' => false
+        ], 400);
+      }
+
+      foreach ($validated['target_days'] as $targetDay) {
+        $targetWorkSchedule = DoctorWorkSchedule::firstOrCreate(
+          [
+            'doctor_id' => $doctor->id,
+            'day' => $targetDay
+          ],
+          ['is_working' => true]
+        );
+
+        if ($override) {
+          // حذف فقط اسلات‌های متداخل
+          AppointmentSlot::where('work_schedule_id', $targetWorkSchedule->id)
+            ->where(function ($query) use ($sourceSlot) {
+              $query->whereRaw("JSON_EXTRACT(time_slots, '$.start_time') = ?", [$sourceSlot->time_slots['start_time']])
+                ->orWhereRaw("JSON_EXTRACT(time_slots, '$.end_time') = ?", [$sourceSlot->time_slots['end_time']]);
+            })
+            ->delete();
+        }
+
+        AppointmentSlot::create([
+          'work_schedule_id' => $targetWorkSchedule->id,
+          'time_slots' => $sourceSlot->time_slots,
+          'max_appointments' => $sourceSlot->max_appointments,
+          'is_active' => $sourceSlot->is_active
+        ]);
+      }
+
+      DB::commit();
+
+      return response()->json([
+        'message' => 'اسلات با موفقیت کپی شد',
+        'status' => true,
+        'target_days' => $validated['target_days']
+      ]);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::error('خطا در کپی اسلات: ' . $e->getMessage());
+
+      return response()->json([
+        'message' => 'خطا در کپی اسلات',
+        'status' => false
+      ], 500);
+    }
+  }
+
+  // تابع کمکی برای تبدیل روز به فارسی
+  private function getDayNameInPersian($day)
+  {
+    $days = [
+      'saturday' => 'شنبه',
+      'sunday' => 'یکشنبه',
+      'monday' => 'دوشنبه',
+      'tuesday' => 'سه‌شنبه',
+      'wednesday' => 'چهارشنبه',
+      'thursday' => 'پنج‌شنبه',
+      'friday' => 'جمعه'
+    ];
+
+    return $days[$day] ?? $day;
+  }
   public function checkDaySlots(Request $request)
   {
     $validated = $request->validate([
@@ -469,20 +588,7 @@ class ScheduleSettingController
       ], 500);
     }
   }
-  private function getDayNameInPersian($day)
-  {
-    $daysInPersian = [
-      'saturday' => 'شنبه',
-      'sunday' => 'یکشنبه',
-      'monday' => 'دوشنبه',
-      'tuesday' => 'سه‌شنبه',
-      'wednesday' => 'چهارشنبه',
-      'thursday' => 'پنج‌شنبه',
-      'friday' => 'جمعه',
-    ];
 
-    return $daysInPersian[$day] ?? $day; // اگر روز پیدا نشد، مقدار اصلی برگردانده شود
-  }
 
 
 

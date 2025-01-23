@@ -425,7 +425,7 @@ Route::prefix('dr')
         Route::group(['prefix' => 'secretary'], function () {
           Route::get('/', [SecretaryManagementController::class, 'index'])->name('dr-secretary-management');
         });
-    
+
 
         Route::prefix('turn')->group(function () {
           Route::prefix('schedule')->group(function () {
@@ -497,6 +497,10 @@ Route::prefix('dr')
             // routes/web.php
             Route::post('/copy-work-hours', [ScheduleSettingController::class, 'copyWorkHours'])
               ->name('copy-work-hours');
+            Route::post('/copy-single-slot', [ScheduleSettingController::class, 'copySingleSlot'])
+              ->name('copy-single-slot');
+
+
             Route::post('/save-time-slot', [ScheduleSettingController::class, 'saveTimeSlot'])
               ->name('save-time-slot');
             Route::get('/scheduleSetting/my-special-days', [ScheduleSettingController::class, 'mySpecialDays'])->name('dr-mySpecialDays');
