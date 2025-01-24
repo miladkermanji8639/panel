@@ -161,7 +161,12 @@ class LoginController
       $user->update(['mobile_verified_at' => Carbon::now()]);
     }
 
-    Auth::guard('doctor')->login($user);
+    // انتخاب گارد مناسب
+    if ($user instanceof Doctor) {
+      Auth::guard('doctor')->login($user);
+    } elseif ($user instanceof Secretary) {
+      Auth::guard('secretary')->login($user);
+    }
 
     (new LoginAttemptsService())->resetLoginAttempts($user->mobile);
 
@@ -173,6 +178,7 @@ class LoginController
     ]);
   }
 
+
   public function loginWithMobilePass(MobilePassRequest $request)
   {
     $mobile = $request->mobile;
@@ -181,14 +187,12 @@ class LoginController
 
     $loginAttempts = new LoginAttemptsService();
 
-    // بررسی قفل بودن حساب
     if ($loginAttempts->isLocked($mobile)) {
       return $this->handleRateLimitError($mobile);
     }
 
     $user = $doctor ?? $secretary;
 
-    // اعتبارسنجی اطلاعات ورود
     if (!$user || !Hash::check($request->password, $user->password) || ($user->status ?? 0) !== 1) {
       $loginAttempts->incrementLoginAttempt($user?->id ?? null, $mobile, $doctor?->id, $secretary?->id);
       return response()->json([
@@ -197,11 +201,9 @@ class LoginController
       ], 422);
     }
 
-    // ذخیره شناسه‌های موقت در جلسه
     session(['doctor_temp_login' => $doctor?->id, 'secretary_temp_login' => $secretary?->id]);
     session(['step3_completed' => true]);
 
-    // بررسی فعال بودن احراز هویت دو مرحله‌ای
     if ($user->two_factor_secret_enabled ?? false) {
       return response()->json([
         'success' => true,
@@ -209,10 +211,13 @@ class LoginController
       ]);
     }
 
-    // لاگین کاربر با گارد دکتر
-    Auth::guard('doctor')->login($user);
+    // انتخاب گارد مناسب برای لاگین
+    if ($user instanceof Doctor) {
+      Auth::guard('doctor')->login($user);
+    } elseif ($user instanceof Secretary) {
+      Auth::guard('secretary')->login($user);
+    }
 
-    // ریست کردن تلاش‌های ورود
     $loginAttempts->resetLoginAttempts($mobile);
 
     return response()->json([
@@ -222,12 +227,12 @@ class LoginController
   }
 
 
+
   public function twoFactorFormCheck(TwoFactorRequest $request)
   {
     $doctorId = session('doctor_temp_login');
     $secretaryId = session('secretary_temp_login');
 
-    // بررسی وجود شناسه در session
     if (!$doctorId && !$secretaryId) {
       return response()->json([
         'success' => false,
@@ -236,10 +241,8 @@ class LoginController
       ], 422);
     }
 
-    // بازیابی کاربر (Doctor یا Secretary)
     $user = Doctor::find($doctorId) ?? Secretary::find($secretaryId);
 
-    // بررسی موجودیت و اعتبارسنجی کد دو عاملی
     if (!$user || !$user->two_factor_secret || !Hash::check($request->two_factor_secret, $user->two_factor_secret)) {
       return response()->json([
         'success' => false,
@@ -247,15 +250,14 @@ class LoginController
       ], 422);
     }
 
-    // تایید و لاگین کاربر
     $user->update(['two_factor_confirmed_at' => Carbon::now()]);
-    if ($user instanceof Doctor || $user instanceof Secretary) {
+
+    if ($user instanceof Doctor) {
       Auth::guard('doctor')->login($user);
-    } else {
-      return response()->json(['success' => false, 'message' => 'کاربر پیدا نشد.'], 422);
+    } elseif ($user instanceof Secretary) {
+      Auth::guard('secretary')->login($user);
     }
 
-    // حذف session
     session()->forget(['doctor_temp_login', 'secretary_temp_login']);
 
     return response()->json([
@@ -263,6 +265,7 @@ class LoginController
       'redirect' => route('dr-panel')
     ]);
   }
+
 
 
 
@@ -285,8 +288,14 @@ class LoginController
 
   public function logout()
   {
-    Auth::guard('doctor')->logout();
+    if (Auth::guard('doctor')->check()) {
+      Auth::guard('doctor')->logout();
+    } elseif (Auth::guard('secretary')->check()) {
+      Auth::guard('secretary')->logout();
+    }
+
     return redirect()->route('dr.auth.login-register-form')
       ->with('swal-success', 'شما با موفقیت از سایت خارج شدید');
   }
+
 }

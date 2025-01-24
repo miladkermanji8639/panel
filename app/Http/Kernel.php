@@ -59,7 +59,13 @@ class Kernel extends HttpKernel
       /* 'rate.limit' => \App\Http\Middleware\RateLimitMiddleware::class, */
       'doctor' => \App\Http\Middleware\doctor::class,
 
-    ]
+    ],
+    'secretary' => [
+      'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
+      /* 'rate.limit' => \App\Http\Middleware\RateLimitMiddleware::class, */
+      'secretary' => \App\Http\Middleware\secretary::class,
+
+    ],
   ];
 
   /**
@@ -84,6 +90,7 @@ class Kernel extends HttpKernel
     'user' => \App\Http\Middleware\user::class,
     'manager' => \App\Http\Middleware\manager::class,
     'doctor' => \App\Http\Middleware\doctor::class,
+    'secretary' => \App\Http\Middleware\secretary::class,
     //  'secretary' => \App\Http\Middleware\secretary::class,
 
   ];

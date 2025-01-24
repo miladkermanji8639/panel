@@ -50,6 +50,10 @@ return [
             'driver' => 'session',
             'provider' => 'doctors',
         ],
+        'secretary' => [
+            'driver' => 'session',
+            'provider' => 'secretaries',
+        ],
     ],
 
     /*
@@ -84,6 +88,12 @@ return [
             'driver' => 'eloquent',
             'table' => 'doctors',
             'model' => App\Models\Dr\Doctor::class,
+
+        ],
+        'secretaries' => [
+            'driver' => 'eloquent',
+            'table' => 'secretaries',
+            'model' => App\Models\Dr\Secretary::class,
 
         ],
     ],
@@ -122,6 +132,12 @@ return [
         ],
         'doctors' => [
             'provider' => 'doctors',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'secretaries' => [
+            'provider' => 'secretaries',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

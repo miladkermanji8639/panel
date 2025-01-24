@@ -14,7 +14,7 @@ class Secretary extends Authenticatable
         'first_name',
         'last_name',
         'email',
-        'phone',
+        'mobile',
         'national_code',
         'gender',
         'address',

@@ -4,11 +4,16 @@
 <head>
  @include('dr.panel.layouts.partials.head-tags')
  @yield('styles')
- <title>
+<title>
   @if (Auth::guard('doctor')->check())
-   پنل {{ Auth::guard('doctor')->user()->user_type === 'doctor' ? 'دکتر' : 'منشی' }} | به نوبه
+    پنل دکتر | به نوبه
+  @elseif (Auth::guard('secretary')->check())
+    پنل منشی | به نوبه
+  @else
+    به نوبه
   @endif
- </title>
+</title>
+
  @include('dr.panel.my-tools.loader-btn')
 </head>
 

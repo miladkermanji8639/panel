@@ -412,7 +412,7 @@ Route::prefix('dr')
       ->name('dr.auth.login-resend-otp');
     Route::get('/logout', [LoginController::class, 'logout'])->name('dr.auth.logout');
     Route::prefix('panel')
-      ->middleware(['doctor', 'complete-profile'])
+      ->middleware(['doctor','secretary', 'complete-profile'])
       ->group(function () {
         Route::get('/', [DrPanelController::class, 'index'])->name('dr-panel');
         Route::get('/patient-records', [PatientRecordsController::class, 'index'])->name('dr-patient-records');

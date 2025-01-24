@@ -60,8 +60,8 @@
 
             <div class="w-100 position-relative mt-4">
               <label class="label-top-input-special-takhasos"> شماره موبایل: </label>
-              <input name="phone" type="text" class="form-control h-50 w-100">
-              <small class="text-danger error-phone mt-1"></small>
+              <input name="mobile" type="text" class="form-control h-50 w-100">
+              <small class="text-danger error-mobile mt-1"></small>
 
             </div>
             <div class="w-100 position-relative mt-4">
@@ -141,8 +141,8 @@
 
             <div class="w-100 position-relative mt-4">
               <label class="label-top-input-special-takhasos"> شماره موبایل: </label>
-              <input type="text" name="phone" id="edit-phone" class="form-control h-50 w-100">
-              <small class="text-danger error-phone mt-1"></small>
+              <input type="text" name="mobile" id="edit-mobile" class="form-control h-50 w-100">
+              <small class="text-danger error-mobile mt-1"></small>
 
             </div>
             <div class="w-100 position-relative mt-4">
@@ -191,7 +191,7 @@
       <div>
        <span class="d-block font-weight-bold text-dark"> {{ $secretary->first_name }} {{ $secretary->last_name }}</span>
        <span class="font-size-13 font-weight-bold">
-        شماره موبایل: <span>{{ $secretary->phone }}</span>
+        شماره موبایل: <span>{{ $secretary->mobile }}</span>
        </span>
        <span class="font-size-13 mx-2 font-weight-bold">
         کدملی:{{ $secretary->national_code }}
@@ -280,7 +280,7 @@
         <div class="subuser-card p-3 w-100 d-flex justify-content-between align-items-end">
           <div>
             <span class="d-block font-weight-bold text-dark">${secretary.first_name} ${secretary.last_name}</span>
-            <span class="font-size-13 font-weight-bold">شماره موبایل: <span>${secretary.phone}</span></span>
+            <span class="font-size-13 font-weight-bold">شماره موبایل: <span>${secretary.mobile}</span></span>
             <span class="font-size-13 mx-2 font-weight-bold">کدملی: ${secretary.national_code}</span>
           </div>
           <div>
@@ -386,7 +386,7 @@
     $('#edit-first-name').val(response.first_name);
     $('#edit-last-name').val(response.last_name);
     $('#edit-email').val(response.email);
-    $('#edit-phone').val(response.phone);
+    $('#edit-mobile').val(response.mobile);
     $('#edit-national-code').val(response.national_code);
     $('#editSecretaryModal').modal('show');
    });
@@ -410,6 +410,8 @@
     data: form.serialize(),
     success: function(response) {
      showToast('منشی با موفقیت ویرایش شد!');
+      buttonText.show();
+      loader.hide();
      $('#editSecretaryModal').modal('hide');
      $('body').removeClass('modal-open'); // حذف کلاس جلوگیری از اسکرول
      $('.modal-backdrop').remove();
@@ -417,6 +419,8 @@
      updateSecretaryList(response.secretaries);
     },
     error: function() {
+       buttonText.show();
+      loader.hide();
      showToast('خطا در ویرایش منشی!', 'error');
     },
    });

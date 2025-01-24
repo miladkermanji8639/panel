@@ -21,7 +21,7 @@ class SecretaryManagementController
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
-            'phone' => 'required|unique:secretaries',
+            'mobile' => 'required|unique:secretaries',
             'national_code' => 'required|unique:secretaries',
             'gender' => 'required',
             'password' => 'required|min:6',
@@ -31,7 +31,7 @@ class SecretaryManagementController
             'doctor_id' => Auth::guard('doctor')->user()->id,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'phone' => $request->phone,
+            'mobile' => $request->mobile,
             'national_code' => $request->national_code,
             'gender' => $request->gender,
             'password' => Hash::make($request->password) ?? NULL,
@@ -52,7 +52,7 @@ class SecretaryManagementController
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
-            'phone' => "required|unique:secretaries,phone,$id",
+            'mobile' => "required|unique:secretaries,mobile,$id",
             'national_code' => "required|unique:secretaries,national_code,$id",
             'gender' => 'required',
         ]);
@@ -61,7 +61,7 @@ class SecretaryManagementController
         $secretary->update([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'phone' => $request->phone,
+            'mobile' => $request->mobile,
             'national_code' => $request->national_code,
             'gender' => $request->gender,
             'password' => $request->password ? Hash::make($request->password) : $secretary->password,

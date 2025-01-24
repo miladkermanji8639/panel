@@ -3,23 +3,19 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class doctor
+class Secretary
 {
-    protected $table = "doctors";
-
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next): Response
     {
-        // بررسی اینکه آیا دکتر یا منشی وارد شده است
+        // بررسی اگر کاربر دکتر یا منشی لاگین نکرده باشد
         if (!Auth::guard('doctor')->check() && !Auth::guard('secretary')->check()) {
             return redirect()->to(route('dr.auth.login-register-form'));
         }
 
-        // بررسی وضعیت دکتر
+        // بررسی وضعیت فعال بودن برای دکتر
         if (Auth::guard('doctor')->check()) {
             $doctor = Auth::guard('doctor')->user();
             if ($doctor->status === 0) {
@@ -27,7 +23,7 @@ class doctor
             }
         }
 
-        // بررسی وضعیت منشی
+        // بررسی وضعیت فعال بودن برای منشی
         if (Auth::guard('secretary')->check()) {
             $secretary = Auth::guard('secretary')->user();
             if ($secretary->status === 0) {
