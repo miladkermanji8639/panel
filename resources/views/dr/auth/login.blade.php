@@ -209,7 +209,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
   $remainingTime = max(0, ($otp->created_at->addMinutes(2)->timestamp - now()->timestamp) * 1000);
 } elseif (isset($token)) {
   // اگر توکن موجود است، تلاش برای بازیابی OTP
-  $otp = \App\Models\Dr\Otp::where('token', $token)->first();
+  $otp = \App\Models\Otp::where('token', $token)->first();
   if ($otp) {
     $remainingTime = max(0, ($otp->created_at->addMinutes(2)->timestamp - now()->timestamp) * 1000);
   }

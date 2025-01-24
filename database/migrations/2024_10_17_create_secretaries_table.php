@@ -1,20 +1,25 @@
 <?php
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration {
-    public function up()
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        Schema::create('doctors', function (Blueprint $table) {
+        Schema::create('secretaries', function (Blueprint $table) {
             $table->id();
-            $table->string('uuid')->nullable()->unique();
+            $table->unsignedBigInteger('doctor_id')->nullable();
+
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('display_name')->nullable()->comment('نام نمایشی');
             $table->date('date_of_birth')->nullable();
-            $table->enum('sex', ['male', 'female', 'other'])->nullable();
+            $table->enum('gender', ['male', 'female'])->nullable();
             $table->string('mobile')->unique()->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('alternative_mobile')->nullable();
@@ -24,10 +29,6 @@ return new class extends Migration {
             $table->string('two_factor_secret')->nullable();
             $table->boolean('two_factor_secret_enabled')->default(false)->comment('آیا رمز عبور ثابت فعال است؟');
             $table->timestamp('two_factor_confirmed_at')->nullable();
-            $table->string('license_number')->unique()->nullable();
-            $table->unsignedBigInteger('academic_degree_id')->nullable();
-            $table->unsignedBigInteger('specialty_id')->nullable();
-            $table->unsignedBigInteger('medical_system_code_type_id')->nullable();
             $table->unsignedBigInteger('province_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
             $table->text('address')->nullable();
@@ -39,7 +40,7 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->boolean('is_verified')->default(false);
             $table->boolean('profile_completed')->default(false);
-            $table->tinyInteger('status')->default(0)->comment('وضعیت حساب');
+            $table->tinyInteger('status')->default(1)->comment('وضعیت حساب');
             $table->string('api_token', 80)->unique()->nullable();
             $table->rememberToken();
             $table->timestamp('mobile_verified_at')->nullable();
@@ -47,27 +48,18 @@ return new class extends Migration {
             $table->timestamp('last_login_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
             $table->foreign('province_id')->references('id')->on('zone')->onDelete('set null');
             $table->foreign('city_id')->references('id')->on('zone')->onDelete('set null');
-
-            $table->foreign('specialty_id')->references('id')->on('sub_specialties')->onDelete('set null');
-            $table->foreign('medical_system_code_type_id')->references('id')->on('medical_system_code_types')->onDelete('set null');
-            $table->foreign('academic_degree_id')
-                ->references('id')
-                ->on('academic_degrees')
-                ->onDelete('set null');
+            // کلید خارجی
+            $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('cascade');
         });
-        DB::statement('
-        UPDATE doctors 
-        SET uuid = CONCAT("DR-", id)
-        WHERE uuid IS NULL
-    ');
-
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('doctors');
+        Schema::dropIfExists('secretaries');
     }
 };

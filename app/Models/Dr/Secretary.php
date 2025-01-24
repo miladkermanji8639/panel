@@ -2,10 +2,10 @@
 
 namespace App\Models\Dr;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Secretary extends Model
+class Secretary extends Authenticatable
 {
     use HasFactory;
 
@@ -22,6 +22,13 @@ class Secretary extends Model
         'profile_photo_path',
         'password',
         'is_active',
+    ];
+
+    // کست کردن فیلدها
+    protected $hidden = ['password'];
+    protected $casts = [
+        'is_active' => 'boolean',
+        'birth_date' => 'date',
     ];
 
     // ارتباط با مدل دکتر

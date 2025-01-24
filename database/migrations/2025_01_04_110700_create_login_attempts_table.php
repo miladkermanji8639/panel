@@ -12,7 +12,9 @@ return new class extends Migration {
     {
         Schema::create('login_attempts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('doctor_id')->nullable(); // برای ارتباط با مدل دکتر
+            $table->unsignedBigInteger('doctor_id')->nullable();
+            $table->unsignedBigInteger('secratary_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('mobile')->index();
             $table->integer('attempts')->default(0);
             $table->timestamp('last_attempt_at')->nullable();
@@ -20,12 +22,20 @@ return new class extends Migration {
             $table->timestamps();
 
             // ایندکس‌گذاری برای جستجوی سریع‌تر
-            $table->unique(['doctor_id', 'mobile']);
+            $table->unique(['doctor_id', 'mobile', 'secratary_id', 'user_id']);
 
             // ارتباط با جدول دکترها
             $table->foreign('doctor_id')
                 ->references('id')
                 ->on('doctors')
+                ->onDelete('cascade');
+            $table->foreign('secratary_id')
+                ->references('id')
+                ->on('secretaries')
+                ->onDelete('cascade');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
                 ->onDelete('cascade');
         });
     }

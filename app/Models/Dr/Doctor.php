@@ -54,7 +54,6 @@ class Doctor extends Authenticatable
         'is_verified',
         'profile_completed',
         'status',
-        'user_type',
         'api_token',
         'two_factor_secret', // فیلد برای ذخیره کلید مخفی
         'two_factor_enabled',
