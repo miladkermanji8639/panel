@@ -424,6 +424,10 @@ Route::prefix('dr')
         Route::get('my-performance/doctor-chart', [MyPerformanceController::class, 'chart'])->name('dr-my-performance-chart');
         Route::group(['prefix' => 'secretary'], function () {
           Route::get('/', [SecretaryManagementController::class, 'index'])->name('dr-secretary-management');
+          Route::post('/store', [SecretaryManagementController::class, 'store'])->name('dr-secretary-store');
+          Route::get('/edit/{id}', [SecretaryManagementController::class, 'edit'])->name('dr-secretary-edit');
+          Route::post('/update/{id}', [SecretaryManagementController::class, 'update'])->name('dr-secretary-update');
+          Route::delete('/delete/{id}', [SecretaryManagementController::class, 'destroy'])->name('dr-secretary-delete');
         });
 
 
