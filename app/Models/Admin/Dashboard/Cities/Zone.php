@@ -2,32 +2,53 @@
 
 namespace App\Models\Admin\Dashboard\Cities;
 
+use App\Models\Dr\Clinic;
 use App\Models\Dr\Doctor;
 use Illuminate\Database\Eloquent\Model;
-
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Zone extends Model
 {
     use HasFactory, Sluggable;
+
+    protected $table = 'zone';
+    protected $guarded = ['id'];
+
     public function sluggable(): array
     {
         return [
-            'slug' => [
-                'source' => 'name'
-            ]
-
+            'slug' => ['source' => 'name']
         ];
     }
-    protected $table = 'zone';
-    protected $guarded = 'id';
+
     public function doctors()
     {
         return $this->hasMany(Doctor::class, 'city_id');
     }
-    public function province()  
-    {  
-        return $this->belongsTo(Zone::class, 'parent_id'); // برای ارتباط با استان  
+
+    public function clinics()
+    {
+        return $this->hasMany(Clinic::class, 'city_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Zone::class, 'parent_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Zone::class, 'parent_id');
+    }
+
+    public function scopeProvinces($query)
+    {
+        return $query->where('level', 1);
+    }
+
+    public function scopeCities($query)
+    {
+        return $query->where('level', 2);
     }
 }

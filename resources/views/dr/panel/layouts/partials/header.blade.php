@@ -3,18 +3,7 @@
   <span class="bars"></span>
 
  </div>
- {{-- <div>
-        <a class="" href="">
-  <img src="{{ asset('app-assets/logos/benobe.svg') }}"
-       width="80px"
-       height="80px"
-       alt=""
-       srcset="">
-  </a>
-</div> --}}
  <div class="header__left d-flex flex-end item-center margin-top-2">
-
-
   <div class="d-flex notif-option">
     <div>
      <span class="bell-red-badge">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dr\Panel\DoctorsClinic\Activation;
 
+use App\Models\Dr\Clinic;
 use Illuminate\Http\Request;
 
 class ActivationDoctorsClinicController
@@ -9,9 +10,10 @@ class ActivationDoctorsClinicController
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($id)
     {
-        return view("dr.panel.doctors-clinic.activation.index");
+        $clinic = Clinic::where('id', $id)->first();
+        return view("dr.panel.doctors-clinic.activation.index",compact('clinic'));
     }
 
     /**

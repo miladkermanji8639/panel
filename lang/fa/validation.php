@@ -70,6 +70,7 @@ return [
         "appointment_date" => " تاریخ مراجعه",
         "appointment_time" => " ساعت مراجعه",
         "city_id" => " شهر",
+        "phone_numbers" => " شماره موبایل",
         "end_time" => " زمان پایان",
         "start_time" => " زمان شروع",
         "is_working" => "فعالسازی روز",

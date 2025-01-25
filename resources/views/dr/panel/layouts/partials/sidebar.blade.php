@@ -175,7 +175,7 @@
    </ul>
   </li>
   <li
-   class="item-li i-clinic {{ Request::routeIs('management-doctor-clinic') ? 'is-active' : '' }} d-flex flex-column justify-content-center"
+   class="item-li i-clinic {{ Request::routeIs('dr-clinic-management') ? 'is-active' : '' }} d-flex flex-column justify-content-center"
    id="gozaresh-mali">
    <a href="#" class="d-flex justify-content-between w-100 align-items-center">
     مطب
@@ -190,8 +190,8 @@
    </a>
    <ul class="drop-toggle d-none">
     <li
-     class="item-li i-user__inforamtion {{ Request::routeIs('management-doctor-clinic') || Request::routeIs('dr-office-gallery') || Request::routeIs('dr-office-medicalDoc') ? 'is-active' : '' }}">
-     <a href="{{ route('management-doctor-clinic') }}"> مدیریت مطب</a>
+     class="item-li i-user__inforamtion {{ Request::routeIs('dr-clinic-management') || Request::routeIs('dr-office-gallery') || Request::routeIs('dr-office-medicalDoc') ? 'is-active' : '' }}">
+     <a href="{{ route('dr-clinic-management') }}"> مدیریت مطب</a>
     </li>
     <li class="item-li i-user__inforamtion {{ Request::routeIs('dr-office-gallery') ? 'is-active' : '' }}">
      <a href="{{ route('dr-office-gallery') }}"> گالری تصاویر </a>

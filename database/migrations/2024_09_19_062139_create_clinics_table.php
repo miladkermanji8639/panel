@@ -19,8 +19,11 @@ return new class extends Migration {
             $table->string('address')->nullable(); // آدرس مطب
             $table->string('phone_number')->nullable(); // شماره تماس مطب
             $table->string('postal_code')->nullable(); // کد پستی
-            $table->string('province')->nullable(); // استان
-            $table->string('city')->nullable(); // شهر
+            $table->unsignedBigInteger('province_id')->nullable(); // کلید خارجی به جدول zone
+            $table->unsignedBigInteger('city_id')->nullable(); // کلید خارجی به جدول zone
+         
+         
+
 
             // اطلاعات تکمیلی
             $table->boolean('is_main_clinic')->default(false); // آیا مطب اصلی است
@@ -29,16 +32,22 @@ return new class extends Migration {
             $table->text('description')->nullable(); // توضیحات مطب
 
             // مختصات جغرافیایی
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
+            $table->decimal('latitude', 10, 7)->nullable(); // عرض جغرافیایی
+            $table->decimal('longitude', 10, 7)->nullable(); // طول جغرافیایی
 
             // اطلاعات مالی
             $table->decimal('consultation_fee', 10, 2)->nullable(); // هزینه ویزیت
             $table->enum('payment_methods', ['cash', 'card', 'online'])->nullable(); // روش‌های پرداخت
 
             // وضعیت و تنظیمات
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->default(false); // وضعیت فعال‌سازی
             $table->json('working_days')->nullable(); // روزهای کاری
+
+            // فیلدهای جدید
+            $table->json('gallery')->nullable(); // گالری تصاویر مطب
+            $table->json('documents')->nullable(); // مدارک مطب
+            $table->json('phone_numbers')->nullable(); // شماره‌های تماس مطب
+            $table->boolean('location_confirmed')->default(false); // تایید مکان روی نقشه
 
             $table->timestamps();
 
@@ -47,6 +56,8 @@ return new class extends Migration {
                 ->references('id')
                 ->on('doctors')
                 ->onDelete('cascade');
+            $table->foreign('province_id')->references('id')->on('zone')->onDelete('set null');
+            $table->foreign('city_id')->references('id')->on('zone')->onDelete('set null');
         });
     }
 

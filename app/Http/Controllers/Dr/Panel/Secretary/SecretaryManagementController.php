@@ -21,8 +21,24 @@ class SecretaryManagementController
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
-            'mobile' => 'required|unique:secretaries',
-            'national_code' => 'required|unique:secretaries',
+            'mobile' => [
+                'required',
+                'unique:secretaries',
+                function ($attribute, $value, $fail) {
+                    if (\DB::table('doctors')->where('mobile', $value)->exists()) {
+                        $fail('شماره موبایل قبلاً به عنوان دکتر ثبت شده است.');
+                    }
+                },
+            ],
+            'national_code' => [
+                'required',
+                'unique:secretaries',
+                function ($attribute, $value, $fail) {
+                    if (\DB::table('doctors')->where('national_code', $value)->exists()) {
+                        $fail('کد ملی قبلاً به عنوان دکتر ثبت شده است.');
+                    }
+                },
+            ],
             'gender' => 'required',
             'password' => 'required|min:6',
         ]);
@@ -34,12 +50,15 @@ class SecretaryManagementController
             'mobile' => $request->mobile,
             'national_code' => $request->national_code,
             'gender' => $request->gender,
-            'password' => Hash::make($request->password) ?? NULL,
+            'password' => Hash::make($request->password),
         ]);
+
         $secretaries = Secretary::where('doctor_id', Auth::guard('doctor')->user()->id)->get();
 
         return response()->json(['message' => 'منشی با موفقیت اضافه شد', 'secretaries' => $secretaries]);
     }
+
+
 
     public function edit($id)
     {
@@ -52,8 +71,24 @@ class SecretaryManagementController
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
-            'mobile' => "required|unique:secretaries,mobile,$id",
-            'national_code' => "required|unique:secretaries,national_code,$id",
+            'mobile' => [
+                'required',
+                "unique:secretaries,mobile,$id",
+                function ($attribute, $value, $fail) {
+                    if (\DB::table('doctors')->where('mobile', $value)->exists()) {
+                        $fail('شماره موبایل قبلاً به عنوان دکتر ثبت شده است.');
+                    }
+                },
+            ],
+            'national_code' => [
+                'required',
+                "unique:secretaries,national_code,$id",
+                function ($attribute, $value, $fail) {
+                    if (\DB::table('doctors')->where('national_code', $value)->exists()) {
+                        $fail('کد ملی قبلاً به عنوان دکتر ثبت شده است.');
+                    }
+                },
+            ],
             'gender' => 'required',
         ]);
 
@@ -67,7 +102,6 @@ class SecretaryManagementController
             'password' => $request->password ? Hash::make($request->password) : $secretary->password,
         ]);
 
-        // استفاده از doctor_id برای بازیابی لیست منشی‌ها
         $secretaries = Secretary::where('doctor_id', Auth::guard('doctor')->user()->id)->get();
 
         return response()->json([
@@ -75,6 +109,8 @@ class SecretaryManagementController
             'secretaries' => $secretaries,
         ]);
     }
+
+
 
 
     public function destroy($id)

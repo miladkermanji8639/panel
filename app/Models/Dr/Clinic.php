@@ -3,26 +3,48 @@
 namespace App\Models\Dr;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Admin\Dashboard\Cities\Zone;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Clinic extends Model
 {
+    use HasFactory;
+
+    protected $table = 'clinics';
+
     protected $fillable = [
         'doctor_id',
         'name',
+        'phone_numbers',
         'address',
-        'phone_number',
-        // سایر فیلدها
+        'province_id',
+        'city_id',
+        'postal_code',
+        'description',
     ];
 
-    // رابطه با مدل دکتر
-    public function doctor()
+    protected $casts = [
+        'phone_numbers' => 'array',
+        'is_active' => 'boolean',
+    ];
+
+    public function city()
     {
-        return $this->belongsTo(Doctor::class);
+        return $this->belongsTo(Zone::class, 'city_id');
     }
 
-    // رابطه با نوبت‌ها
-    public function appointments()
+    public function province()
     {
-        return $this->hasMany(Appointment::class);
+        return $this->belongsTo(Zone::class, 'province_id');
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_id');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

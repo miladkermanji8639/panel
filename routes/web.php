@@ -536,10 +536,14 @@ Route::prefix('dr')
           Route::post('/appointments/{id}/status', [AppointmentController::class, 'updateStatus'])->name('updateStatusAppointment');
         });
         Route::group(['prefix' => 'DoctorsClinic'], function () {
-          Route::get('activation/', [ActivationDoctorsClinicController::class, 'index'])->name('activation-doctor-clinic');
-          Route::get('/', [DoctorsClinicManagementController::class, 'index'])->name('management-doctor-clinic');
+          Route::get('activation/{clinic}', [ActivationDoctorsClinicController::class, 'index'])->name('activation-doctor-clinic');
           Route::get('gallery', [DoctorsClinicManagementController::class, 'gallery'])->name('dr-office-gallery');
           Route::get('medicalDoc', [DoctorsClinicManagementController::class, 'medicalDoc'])->name('dr-office-medicalDoc');
+          Route::get('/', [DoctorsClinicManagementController::class, 'index'])->name('dr-clinic-management');
+          Route::post('/store', [DoctorsClinicManagementController::class, 'store'])->name('dr-clinic-store');
+          Route::get('/edit/{id}', [DoctorsClinicManagementController::class, 'edit'])->name('dr-clinic-edit');
+          Route::post('/update/{id}', [DoctorsClinicManagementController::class, 'update'])->name('dr-clinic-update');
+          Route::delete('/delete/{id}', [DoctorsClinicManagementController::class, 'destroy'])->name('dr-clinic-delete');
         });
         Route::group(['prefix' => 'noskhe-electronic'], function () {
           Route::get('prescription/', [PrescriptionController::class, 'index'])->name('prescription.index');

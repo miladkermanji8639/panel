@@ -21,7 +21,7 @@
  @include('dr.panel.layouts.partials.sidebar')
  <div class="content">
   @include('dr.panel.layouts.partials.header')
-@include('dr.panel.my-tools.loader-btn')
+ @include('dr.panel.my-tools.loader-btn')
 
   <div class="top-dr-panel d-flex justify-content-between w-100 align-items-start">
    <div class="p-3 bg-white">
@@ -89,25 +89,29 @@
            </div>
           </div>
          </div>
+        @foreach ($clinics as $clinic) 
          <div class="d-flex justify-content-between align-items-center option-card" aria-hidden="true">
-          <div class="d-flex align-items-center p-3 ">
-           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-             d="M20.83 8.01002L14.28 2.77002C13 1.75002 11 1.74002 9.73002 2.76002L3.18002 8.01002C2.24002 8.76002 1.67002 10.26 1.87002 11.44L3.13002 18.98C3.42002 20.67 4.99002 22 6.70002 22H17.3C18.99 22 20.59 20.64 20.88 18.97L22.14 11.43C22.32 10.26 21.75 8.76002 20.83 8.01002ZM12.75 18C12.75 18.41 12.41 18.75 12 18.75C11.59 18.75 11.25 18.41 11.25 18V15C11.25 14.59 11.59 14.25 12 14.25C12.41 14.25 12.75 14.59 12.75 15V18Z"
-             fill="#3F3F79"></path>
-           </svg>
-           <div class="d-flex flex-column mx-3">
-            <span class="font-weight-bold d-block fs-15">مطب یاسر محمدی</span>
-            <span class="font-weight-bold d-block fs-13">تهران، آزادی</span>
-           </div>
-          </div>
-          <div class="mx-2">
-           <button class="btn btn-primary fs-13 btn-sm h-35" tabindex="0" type="button"
-            onclick="window.location.href='{{ route('activation-doctor-clinic') }}'">فعال
-            سازی<span class="MuiTouchRipple-root muirtl-w0pj6f"></span>
-           </button>
-          </div>
+        <div class="d-flex align-items-center p-3 ">
+         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+         d="M20.83 8.01002L14.28 2.77002C13 1.75002 11 1.74002 9.73002 2.76002L3.18002 8.01002C2.24002 8.76002 1.67002 10.26 1.87002 11.44L3.13002 18.98C3.42002 20.67 4.99002 22 6.70002 22H17.3C18.99 22 20.59 20.64 20.88 18.97L22.14 11.43C22.32 10.26 21.75 8.76002 20.83 8.01002ZM12.75 18C12.75 18.41 12.41 18.75 12 18.75C11.59 18.75 11.25 18.41 11.25 18V15C11.25 14.59 11.59 14.25 12 14.25C12.41 14.25 12.75 14.59 12.75 15V18Z"
+         fill="#3F3F79"></path>
+         </svg>
+         <div class="d-flex flex-column mx-3">
+        <span class="font-weight-bold d-block fs-15"> {{ $clinic->name }}</span>
+        <span class="font-weight-bold d-block fs-13">{{ $clinic->province->name }} ، {{ $clinic->address }}</span>
          </div>
+        </div>
+        <div class="mx-2">
+       @if (!$clinic->is_active) 
+          <button class="btn btn-primary fs-13 btn-sm h-35" tabindex="0" type="button"
+         onclick="window.location.href='{{ route('activation-doctor-clinic',$clinic ) }}'">فعال
+         سازی<span class="MuiTouchRipple-root muirtl-w0pj6f"></span>
+          </button>
+       @endif
+        </div>
+         </div>
+    @endforeach
         </div>
        </div>
       </div>
