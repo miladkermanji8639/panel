@@ -18,6 +18,7 @@ class Clinic extends Model
         'phone_numbers',
         'address',
         'province_id',
+        'secretary_phone',
         'city_id',
         'postal_code',
         'description',

@@ -537,6 +537,14 @@ Route::prefix('dr')
         });
         Route::group(['prefix' => 'DoctorsClinic'], function () {
           Route::get('activation/{clinic}', [ActivationDoctorsClinicController::class, 'index'])->name('activation-doctor-clinic');
+          Route::post('/dr/panel/DoctorsClinic/activation/{id}/update-address', [ActivationDoctorsClinicController::class, 'updateAddress'])
+            ->name('doctors.clinic.update.address');
+          Route::get('/doctors/clinic/{id}/phones', [ActivationDoctorsClinicController::class, 'getPhones'])->name('doctors.clinic.get.phones');
+          Route::post('/doctors/clinic/{id}/phones', [ActivationDoctorsClinicController::class, 'updatePhones'])->name('doctors.clinic.update.phones');
+          Route::post('/doctors/clinic/{id}/phones/delete', [ActivationDoctorsClinicController::class, 'deletePhone'])->name('doctors.clinic.delete.phone');
+          Route::get('/clinic/{id}/secretary-phone', [ActivationDoctorsClinicController::class, 'getSecretaryPhone'])->name('doctors.clinic.get.secretary.phone');
+
+
           Route::get('gallery', [DoctorsClinicManagementController::class, 'gallery'])->name('dr-office-gallery');
           Route::get('medicalDoc', [DoctorsClinicManagementController::class, 'medicalDoc'])->name('dr-office-medicalDoc');
           Route::get('/', [DoctorsClinicManagementController::class, 'index'])->name('dr-clinic-management');
@@ -545,6 +553,7 @@ Route::prefix('dr')
           Route::post('/update/{id}', [DoctorsClinicManagementController::class, 'update'])->name('dr-clinic-update');
           Route::delete('/delete/{id}', [DoctorsClinicManagementController::class, 'destroy'])->name('dr-clinic-delete');
         });
+
         Route::group(['prefix' => 'noskhe-electronic'], function () {
           Route::get('prescription/', [PrescriptionController::class, 'index'])->name('prescription.index');
           Route::get('prescription/create', [PrescriptionController::class, 'create'])->name('prescription.create');
