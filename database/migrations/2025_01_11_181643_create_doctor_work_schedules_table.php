@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id(); // شناسه منحصر به فرد برای هر رکورد
 
             $table->unsignedBigInteger('doctor_id'); // شناسه پزشک
+            $table->unsignedBigInteger('clinic_id')->nullable(); // شناسه پزشک
 
             // تعریف روزهای هفته به صورت محدود
             $table->enum('day', [
@@ -43,9 +44,12 @@ return new class extends Migration {
                 ->references('id')
                 ->on('doctors')
                 ->onDelete('cascade'); // حذف رکوردهای مرتبط در صورت حذف پزشک
-
+            $table->foreign('clinic_id')
+                ->references('id')
+                ->on('clinics')
+                ->onDelete('cascade');
             // محدودیت یکتایی برای جلوگیری از تکرار رکوردها
-            $table->unique(['doctor_id', 'day']);
+            $table->unique(['doctor_id', 'day','clinic_id']);
         });
     }
 

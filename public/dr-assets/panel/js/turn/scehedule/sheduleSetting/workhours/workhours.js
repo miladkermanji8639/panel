@@ -1,5 +1,11 @@
 
 /* public\dr - assets\panel\js\turn\scehedule\sheduleSetting\workhours\workhours.js */
+
+$(document).ready(function () {
+ $('#appointment-toggle').change(function () {
+  $('.workhours-wrapper-content').toggleClass('d-none');
+ });
+});
 $(document).ready(function () {
  const DOMElements = document.querySelectorAll('.timepicker-ui');
  const options = {
@@ -14,12 +20,6 @@ $(document).ready(function () {
  });
  // Initialize Select2 on existing selects
 });
-$(document).ready(function () {
- $('#appointment-toggle').change(function () {
-  $('.workhours-wrapper-content').toggleClass('d-none');
- });
-});
-
 // cod for day bage active
 document.addEventListener('DOMContentLoaded', function () {
  // پیدا کردن همه اسپن‌هایی که کلاس badge-time-styles دارند  

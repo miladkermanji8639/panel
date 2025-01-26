@@ -553,6 +553,10 @@ Route::prefix('dr')
 
           Route::get('/activation/duration/{clinic}', [DurationController::class, 'index'])->name('duration.index');
           Route::get('/activation/workhours/{clinic}', [ActivationWorkhoursController::class, 'index'])->name('activation.workhours.index');
+          Route::get('{clinicId}/{doctorId}', [ActivationWorkhoursController::class, 'getWorkHours'])->name('workhours.get');
+          Route::post('/activation/workhours/store', [ActivationWorkhoursController::class, 'store'])->name('activation.workhours.store');
+          Route::post('workhours/delete', [ActivationWorkhoursController::class, 'deleteWorkHours'])->name('activation.workhours.delete');
+          Route::post('/dr/panel/start-appointment', [ActivationWorkhoursController::class, 'startAppointment'])->name('start.appointment');
 
           Route::post('/cost/store', [CostController::class, 'store'])->name('cost.store');
           Route::get('gallery', [DoctorsClinicManagementController::class, 'gallery'])->name('dr-office-gallery');

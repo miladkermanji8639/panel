@@ -10,6 +10,7 @@ class DoctorWorkSchedule extends Model
 
     protected $fillable = [
         'doctor_id',
+        'clinic_id',
         'day',
         'is_working', // اضافه کردن is_working به فیلدهای قابل پر شدن
         'work_hours',
