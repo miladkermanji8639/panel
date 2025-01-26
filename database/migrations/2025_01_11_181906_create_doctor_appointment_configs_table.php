@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id(); // شناسه منحصر به فرد
 
             $table->unsignedBigInteger('doctor_id'); // شناسه پزشک
+            $table->unsignedBigInteger('clinic_id')->nullable(); // شناسه کلینیک
 
             $table->boolean('auto_scheduling')->default(true);
             // آیا نوبت‌دهی به صورت خودکار انجام شود؟
@@ -30,20 +31,31 @@ return new class extends Migration {
             $table->integer('default_appointment_duration')->default(15);
             // مدت زمان پیش‌فرض هر نوبت (دقیقه)
 
+            $table->integer('appointment_duration')->default(15);
+            // مدت زمان هر نوبت (دقیقه)
+
+            $table->boolean('collaboration_with_other_sites')->default(false);
+            // آیا همکاری با سایر سایت‌های نوبت‌دهی وجود دارد؟
+
             $table->json('consultation_types')->nullable();
             // انواع مشاوره در فرمت JSON
             // مثال: ["general", "specialized", "emergency"]
 
             $table->timestamps(); // زمان ایجاد و آخرین بروزرسانی
 
-            // تعریف کلید خارجی برای ارتباط با جدول پزشکان
+            // تعریف کلیدهای خارجی
             $table->foreign('doctor_id')
                 ->references('id')
                 ->on('doctors')
                 ->onDelete('cascade'); // حذف تنظیمات در صورت حذف پزشک
 
-            // محدودیت یکتایی - فقط یک رکورد برای هر پزشک
-            $table->unique('doctor_id');
+            $table->foreign('clinic_id')
+                ->references('id')
+                ->on('clinics')
+                ->onDelete('cascade'); // حذف تنظیمات در صورت حذف کلینیک
+
+            // محدودیت یکتایی - فقط یک رکورد برای هر پزشک و کلینیک
+            $table->unique(['doctor_id', 'clinic_id']);
         });
     }
 

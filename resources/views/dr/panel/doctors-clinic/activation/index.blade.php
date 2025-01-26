@@ -313,6 +313,7 @@
      $('#doneModal').modal('hide'); // بستن مودال
      $('body').removeClass('modal-open'); // جلوگیری از اسکرول مودال
      $('.modal-backdrop').remove(); // حذف overlay
+     location.href = "{{ route('doctors.clinic.cost',$clinic->id) }}"
     },
     error: function() {
      buttonText.show();

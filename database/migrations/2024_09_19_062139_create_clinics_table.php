@@ -17,6 +17,7 @@ return new class extends Migration {
             // اطلاعات مطب
             $table->string('name')->nullable(); // نام مطب
             $table->string('address')->nullable(); // آدرس مطب
+            $table->string('secretary_phone')->nullable();
             $table->string('phone_number')->nullable(); // شماره تماس مطب
             $table->string('postal_code')->nullable(); // کد پستی
             $table->unsignedBigInteger('province_id')->nullable(); // کلید خارجی به جدول zone

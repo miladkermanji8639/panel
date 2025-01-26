@@ -8,6 +8,9 @@ class DoctorAppointmentConfig extends Model
 {
     protected $fillable = [
         'doctor_id',
+        'clinic_id',
+        'appointment_duration',
+        'collaboration_with_other_sites',
         'auto_scheduling',
         'calendar_days',
         'online_consultation',

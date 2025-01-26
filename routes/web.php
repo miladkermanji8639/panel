@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\Dr\Panel\DoctorsClinic\Activation\Workhours\ActivationWorkhoursController;
 use Mockery\Container;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\layouts\Blank;
@@ -73,6 +74,7 @@ use App\Http\Controllers\Admin\UsersManagement\UserGroup\UserGroupController;
 use App\Http\Controllers\Dr\Panel\Payment\Setting\DrPaymentSettingController;
 use App\Http\Controllers\Admin\ContentManagement\HomeVideo\HomeVideoController;
 use App\Http\Controllers\Admin\Dashboard\Membershipfee\MembershipfeeController;
+use App\Http\Controllers\Dr\Panel\DoctorsClinic\Activation\Cost\CostController;
 use App\Http\Controllers\Dr\Panel\Turn\TurnsCatByDays\TurnsCatByDaysController;
 use App\Http\Controllers\Admin\ContentManagement\FrontPages\FrontPagesController;
 use App\Http\Controllers\Admin\UsersManagement\LogsUpgrade\LogsUpgradeController;
@@ -87,6 +89,7 @@ use App\Http\Controllers\Admin\ContentManagement\CategoryBlog\CategoryBlogContro
 use App\Http\Controllers\Admin\Doctors\DoctorsManagement\DoctorsManagementController;
 use App\Http\Controllers\Admin\UsersManagement\ChargeAccount\ChargeAccountController;
 use App\Http\Controllers\Dr\Panel\NoskheElectronic\Favorite\Service\ServiceController;
+use App\Http\Controllers\Dr\Panel\DoctorsClinic\Activation\Duration\DurationController;
 use App\Http\Controllers\Dr\Panel\NoskheElectronic\Prescription\PrescriptionController;
 use App\Http\Controllers\Admin\Doctors\WalletDoctorRequest\WalletDoctorRequestController;
 use App\Http\Controllers\Dr\Panel\Turn\Schedule\ScheduleSetting\ScheduleSettingController;
@@ -543,8 +546,15 @@ Route::prefix('dr')
           Route::post('/doctors/clinic/{id}/phones', [ActivationDoctorsClinicController::class, 'updatePhones'])->name('doctors.clinic.update.phones');
           Route::post('/doctors/clinic/{id}/phones/delete', [ActivationDoctorsClinicController::class, 'deletePhone'])->name('doctors.clinic.delete.phone');
           Route::get('/clinic/{id}/secretary-phone', [ActivationDoctorsClinicController::class, 'getSecretaryPhone'])->name('doctors.clinic.get.secretary.phone');
+          Route::get('/activation/clinic/cost/{clinic}', [CostController::class, 'index'])->name('doctors.clinic.cost');
+          Route::get('/costs/{clinic_id}/list', [CostController::class, 'listDeposits'])->name('cost.list');
+          Route::post('/costs/delete', [CostController::class, 'deleteDeposit'])->name('cost.delete');
+          Route::post('/doctors-clinic/duration/store', [DurationController::class, 'store'])->name('duration.store');
 
+          Route::get('/activation/duration/{clinic}', [DurationController::class, 'index'])->name('duration.index');
+          Route::get('/activation/workhours/{clinic}', [ActivationWorkhoursController::class, 'index'])->name('activation.workhours.index');
 
+          Route::post('/cost/store', [CostController::class, 'store'])->name('cost.store');
           Route::get('gallery', [DoctorsClinicManagementController::class, 'gallery'])->name('dr-office-gallery');
           Route::get('medicalDoc', [DoctorsClinicManagementController::class, 'medicalDoc'])->name('dr-office-medicalDoc');
           Route::get('/', [DoctorsClinicManagementController::class, 'index'])->name('dr-clinic-management');

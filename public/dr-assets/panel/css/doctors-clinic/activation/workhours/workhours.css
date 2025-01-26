@@ -8,22 +8,28 @@
  background-color: #fff;
  z-index: 555;
 }
-.bg-active-slot{
-  background-color: #eef2f8 !important;
+
+.bg-active-slot {
+ background-color: #eef2f8 !important;
 }
+
 .bg-light-blue {
  background-color: #ebeff8 !important;
 }
-.form-group{
-  margin-bottom: 0 !important;
+
+.form-group {
+ margin-bottom: 0 !important;
 }
+
 .sidebar__nav {
  z-index: 556;
 }
-.border-bottom-2{
-  border-bottom: 2px dashed rgb(190, 190, 190) !important;
-  margin-top: 10px;
+
+.border-bottom-2 {
+ border-bottom: 2px dashed rgb(190, 190, 190) !important;
+ margin-top: 10px;
 }
+
 .label-top-input-special-takhasos {
  z-index: 700 !important;
 }
@@ -132,14 +138,18 @@
 
 .my-days-content {
  width: 100%;
- max-width: 100%; /* اضافه کردن حداکثر عرض */
+ max-width: 100%;
+ /* اضافه کردن حداکثر عرض */
  display: flex;
  align-items: center;
  justify-content: space-between;
  gap: 10px;
- white-space: nowrap; /* جلوگیری از شکستن خط */
- overflow-x: auto !important; /* اجازه اسکرول افقی */
- overflow-y: hidden !important; /* پنهان کردن اسکرول عمودی */
+ white-space: nowrap;
+ /* جلوگیری از شکستن خط */
+ overflow-x: auto !important;
+ /* اجازه اسکرول افقی */
+ overflow-y: hidden !important;
+ /* پنهان کردن اسکرول عمودی */
  transition: transform 1s ease;
 }
 
@@ -374,6 +384,7 @@
   flex-wrap: wrap !important;
   justify-content: space-around !important;
  }
+
  .selectDate_datepicker__xkZeS {
   border: 1px solid #ddd;
  }
@@ -604,7 +615,7 @@ button {
  outline: none !important;
 }
 
-.space-s-1 > :not([hidden]) ~ :not([hidden]) {
+.space-s-1> :not([hidden])~ :not([hidden]) {
  --tw-space-s-reverse: 0;
  margin-inline-end: calc(0.25rem * var(--tw-space-s-reverse));
  margin-inline-start: calc(0.25rem * (1 - var(--tw-space-s-reverse)));
@@ -636,7 +647,7 @@ button {
  padding: 1rem 2rem;
 }
 
-.password_toggle__AXK9v input:checked + label {
+.password_toggle__AXK9v input:checked+label {
  background: #0070f3;
 }
 
@@ -659,7 +670,7 @@ button {
  padding: 0.8rem 0.4rem !important;
 }
 
-.password_toggle__AXK9v input:checked + label:after {
+.password_toggle__AXK9v input:checked+label:after {
  left: calc(100% - 5px);
  transform: translateX(-100%);
 }
@@ -703,7 +714,7 @@ button {
 }
 
 .timepicker-ui input {
- width: 70px !important;
+ width: 100% !important;
 }
 
 .lh-2 {
