@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Dr\Panel\Profile;
 
-use App\Http\Requests\DoctorSpecialtyRequest;
 use Carbon\Carbon;
-use App\Models\Dr\Otp;
+use App\Models\Otp;
 use App\Models\Dr\Doctor;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -19,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Http\Requests\DoctorSpecialtyRequest;
 use Modules\SendOtp\App\Http\Services\MessageService;
 use Modules\SendOtp\App\Http\Services\SMS\SmsService;
 

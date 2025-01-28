@@ -11,6 +11,7 @@ class MoshavereWaitingController
      */
     public function index()
     {
+        
         return view("dr.panel.turn.schedule.moshavere_waiting.index");
     }
 

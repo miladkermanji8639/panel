@@ -281,6 +281,7 @@ Route::prefix('admin')
                 });
                 Route::prefix('moshavere-setting/')->group(function () {
                     Route::get('/', [MoshavereSettingController::class, 'index'])->name('admin.content.doctors.doctors-management.moshavere-setting.index');
+                    
                 });
                 Route::prefix('gallery/')->group(function () {
                     Route::get('/', [GalleryController::class, 'index'])->name('admin.content.doctors.doctors-management.gallery.index');
@@ -436,6 +437,18 @@ Route::prefix('dr')
                         Route::get('/appointments', [DrScheduleController::class, 'index'])->name('dr-appointments');
                         Route::get('/my-appointments/by-date', [DrScheduleController::class, 'showByDateAppointments'])->name('dr.turn.my-appointments.by-date');
                         Route::get('/moshavere_setting', [DrMoshavereSettingController::class, 'index'])->name('dr-moshavere_setting');
+                        Route::post('/copy-work-hours-counseling', [DrMoshavereSettingController::class, 'copyWorkHours'])->name('copy-work-hours-counseling');
+                        Route::get('get-work-schedule-counseling', [DrMoshavereSettingController::class, 'getWorkSchedule'])->name('dr-get-work-schedule-counseling');
+                        Route::post('/copy-single-slot-counseling', [DrMoshavereSettingController::class, 'copySingleSlot'])->name('copy-single-slot-counseling');
+                        Route::post('/save-time-slot-counseling', [DrMoshavereSettingController::class, 'saveTimeSlot'])->name('save-time-slot-counseling');
+                        Route::get('/get-appointment-settings-counseling', [DrMoshavereSettingController::class, 'getAppointmentSettings'])->name('get-appointment-settings-counseling');
+                        Route::delete('/appointment-slots-conseling/{id}', [DrMoshavereSettingController::class, 'destroy'])->name('appointment.slots.destroy-conseling');
+                        Route::post('save-work-schedule-counseling', [DrMoshavereSettingController::class, 'saveWorkSchedule'])->name('dr-save-work-schedule-counseling');
+                        Route::post('/dr/update-work-day-status-counseling', [DrMoshavereSettingController::class, 'updateWorkDayStatus'])->name('update-work-day-status-counseling');
+                        Route::post('/update-auto-scheduling-counseling', [DrMoshavereSettingController::class, 'updateAutoScheduling'])->name('update-auto-scheduling-counseling');
+                        Route::get('/get-all-days-settings-counseling', [DrMoshavereSettingController::class, 'getAllDaysSettings'])->name('get-all-days-settings-counseling');
+                        Route::post('/save-appointment-settings-counseling', [DrMoshavereSettingController::class, 'saveAppointmentSettings'])->name('save-appointment-settings-counseling');
+                        Route::post('/delete-schedule-setting-counseling', [DrMoshavereSettingController::class, 'deleteScheduleSetting'])->name('delete-schedule-setting-counseling');
                         Route::get('/moshavere_waiting', [MoshavereWaitingController::class, 'index'])->name('dr-moshavere_waiting');
                         Route::get('/manual_nobat', [ManualNobatController::class, 'index'])->name('dr-manual_nobat');
                         Route::post('manual_nobat/store', [ManualNobatController::class, 'store'])->name('manual-nobat.store');

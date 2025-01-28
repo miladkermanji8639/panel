@@ -90,7 +90,7 @@
           </div>
          </div>
         @foreach ($clinics as $clinic) 
-         <div class="d-flex justify-content-between align-items-center option-card" aria-hidden="true">
+         <div class="d-flex justify-content-between align-items-center option-card" aria-hidden="true" data-id="{{ $clinic->id }}">
         <div class="d-flex align-items-center p-3 ">
          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
