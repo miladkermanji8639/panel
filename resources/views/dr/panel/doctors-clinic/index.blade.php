@@ -22,7 +22,7 @@
    <div class="modal-body">
     <form id="edit-clinic-form">
      @csrf
-     <input type="hidden" id="edit-clinic-id">
+     <input type="hidden" name="id" id="edit-clinic-id">
      <div class="d-flex flex-column mt-2">
       <div class="position-relative d-flex gap-4 w-100">
        <!-- فیلد نام مطب -->
@@ -326,29 +326,23 @@
     citySelect.prop('disabled', true);
    }
   });
- });
-
-
- $(document).ready(function() {
-  // نمایش مودال افزودن مطب
-  $('#add-clinic-btn').on('click', function() {
-   $('#clinicModal').modal('show');
-   if ($('#clinic-form').length) {
-    $('#clinic-form').trigger('reset');
-   } // پاک کردن فرم
-   $('#clinic-id').val(''); // تنظیم مقدار پیش‌فرض برای فیلد ID
-   $('#clinic-city').empty().append('<option value="">انتخاب شهر</option>').prop('disabled', true);
-  });
-
-  // نمایش مودال ویرایش مطب
-  $(document).on('click', '.edit-btn', function () {
+   // نمایش مودال افزودن مطب
+   $('#add-clinic-btn').on('click', function () {
+     $('#clinicModal').modal('show');
+     if ($('#clinic-form').length) {
+       $('#clinic-form').trigger('reset');
+     } // پاک کردن فرم
+     $('#clinic-id').val(''); // تنظیم مقدار پیش‌فرض برای فیلد ID
+     $('#clinic-city').empty().append('<option value="">انتخاب شهر</option>').prop('disabled', true);
+   });
+   $(document).on('click', '.edit-btn', function () {
      const clinicId = $(this).data('id');
+     $('#edit-clinic-id').val(clinicId);
      $.ajax({
        url: "{{ route('dr-clinic-edit', ':id') }}".replace(':id', clinicId),
        method: 'GET',
        success: function (response) {
          $('#clinicEditModal').modal('show');
-         $('#edit-clinic-id').val(response.id);
          $('#edit-clinic-name').val(response.name);
          $('#edit-clinic-address').val(response.address);
          $('#edit-clinic-description').val(response.description);
@@ -390,150 +384,152 @@
        },
      });
    });
-
    // تغییر استان در فرم ویرایش
    $('#edit-clinic-province').on('change', function () {
      const provinceId = $(this).val();
      populateCities(provinceId, $('#edit-clinic-city'));
    });
-  // ارسال اطلاعات فرم افزودن مطب
-  $('#add-clinic-form').on('submit', function(e) {
-   e.preventDefault();
-   const form = $(this);
-   const submitButton = form.find('button[type="submit"]');
-   const loader = submitButton.find('.loader');
-   const buttonText = submitButton.find('.button_text');
+   $('#add-clinic-form').on('submit', function (e) {
+     e.preventDefault();
+     const form = $(this);
+     const submitButton = form.find('button[type="submit"]');
+     const loader = submitButton.find('.loader');
+     const buttonText = submitButton.find('.button_text');
 
-   // نمایش لودینگ و مخفی کردن متن دکمه
-   buttonText.hide();
-   loader.show();
+     // نمایش لودینگ و مخفی کردن متن دکمه
+     buttonText.hide();
+     loader.show();
 
-   $.ajax({
-    url: "{{ route('dr-clinic-store') }}",
-    method: 'POST',
-    data: form.serialize(),
-    success: function() {
-     Toastify({
-      text: 'مطب با موفقیت اضافه شد!',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: 'green',
-     }).showToast();
-     $('#clinicModal').modal('hide');
-     loadClinics(); // بروزرسانی لیست مطب‌ها
-    },
-    error: function(xhr) {
-      handleValidationErrors(xhr, form);
-
-      Toastify({
-       text: 'خطا در ذخیره اطلاعات!',
-       duration: 3000,
-       gravity: 'top',
-       position: 'right',
-       backgroundColor: 'red',
-      }).showToast();
-     
-    },
-    complete: function() {
-     buttonText.show();
-     loader.hide();
-    },
-   });
-  });
-   // ذخیره تغییرات مطب
-  $('#edit-clinic-form').on('submit', function(e) {
-    e.preventDefault();
-    const form = $(this);
-    const submitButton = form.find('button[type="submit"]');
-    const loader = submitButton.find('.loader');
-    const buttonText = submitButton.find('.button_text');
-    const clinicId = $('#edit-clinic-id').val();
-
-    buttonText.hide();
-    loader.show();
-
-    $.ajax({
-        url: "{{ route('dr-clinic-update', ':id') }}".replace(':id', clinicId),
-        method: 'POST',
-        data: form.serialize(),
-        success: function() {
-            Toastify({
-                text: 'مطب با موفقیت ویرایش شد!',
-                duration: 3000,
-                gravity: 'top',
-                position: 'right',
-                backgroundColor: 'green',
-            }).showToast();
-            $('#clinicEditModal').modal('hide');
-            loadClinics();
-        },
-        error: function(xhr) {
-            handleValidationErrors(xhr, form);
-            Toastify({
-                text: 'خطا در ذخیره اطلاعات!',
-                duration: 3000,
-                gravity: 'top',
-                position: 'right',
-                backgroundColor: 'red',
-            }).showToast();
-        },
-        complete: function() {
-            buttonText.show();
-            loader.hide();
-        }
-    });
-});
-
-  // حذف مطب با استفاده از SweetAlert
-  $(document).on('click', '.delete-btn', function() {
-   const clinicId = $(this).data('id');
-   Swal.fire({
-    title: 'حذف مطب',
-    text: 'آیا از حذف این مطب اطمینان دارید؟',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'بله، حذف کن',
-    cancelButtonText: 'لغو',
-   }).then((result) => {
-    if (result.isConfirmed) {
      $.ajax({
-      url: "{{ route('dr-clinic-delete', ':id') }}".replace(':id', clinicId),
-      method: 'DELETE',
-      data: {
-       _token: $('meta[name="csrf-token"]').attr('content'),
-      },
-      success: function() {
-       Toastify({
-        text: 'مطب با موفقیت حذف شد!',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: 'green',
-       }).showToast();
-       loadClinics();
-      },
-      error: function() {
-       Toastify({
-        text: 'خطا در حذف مطب!',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: 'red',
-       }).showToast();
-      },
+       url: "{{ route('dr-clinic-store') }}",
+       method: 'POST',
+       data: form.serialize(),
+       success: function () {
+         Toastify({
+           text: 'مطب با موفقیت اضافه شد!',
+           duration: 3000,
+           gravity: 'top',
+           position: 'right',
+           backgroundColor: 'green',
+         }).showToast();
+         $('#clinicModal').modal('hide');
+         loadClinics(); // بروزرسانی لیست مطب‌ها
+       },
+       error: function (xhr) {
+         handleValidationErrors(xhr, form);
+
+         Toastify({
+           text: 'خطا در ذخیره اطلاعات!',
+           duration: 3000,
+           gravity: 'top',
+           position: 'right',
+           backgroundColor: 'red',
+         }).showToast();
+
+       },
+       complete: function () {
+         buttonText.show();
+         loader.hide();
+       },
      });
-    }
    });
-  });
+   $('#edit-clinic-form').on('submit', function (e) {
+     e.preventDefault();
+     const form = $(this);
+     const submitButton = form.find('button[type="submit"]');
+     const loader = submitButton.find('.loader');
+     const buttonText = submitButton.find('.button_text');
+     const clinicId = $('#edit-clinic-id').val();
 
-  // بارگذاری لیست مطب‌ها
-  
+     buttonText.hide();
+     loader.show();
 
-  // بارگذاری اولیه مطب‌ها
-  loadClinics();
+     $.ajax({
+       url: "{{ route('dr-clinic-update', ':id') }}".replace(':id', clinicId),
+       method: 'POST',
+       data: form.serialize(),
+       success: function () {
+         Toastify({
+           text: 'مطب با موفقیت ویرایش شد!',
+           duration: 3000,
+           gravity: 'top',
+           position: 'right',
+           backgroundColor: 'green',
+         }).showToast();
+         $('#clinicEditModal').modal('hide');
+         loadClinics();
+       },
+       error: function (xhr) {
+         handleValidationErrors(xhr, form);
+         Toastify({
+           text: 'خطا در ذخیره اطلاعات!',
+           duration: 3000,
+           gravity: 'top',
+           position: 'right',
+           backgroundColor: 'red',
+         }).showToast();
+       },
+       complete: function () {
+         buttonText.show();
+         loader.hide();
+       }
+     });
+   });
+   $(document).on('click', '.delete-btn', function () {
+     const clinicId = $(this).data('id');
+     Swal.fire({
+       title: 'حذف مطب',
+       text: 'آیا از حذف این مطب اطمینان دارید؟',
+       icon: 'warning',
+       showCancelButton: true,
+       confirmButtonColor: '#d33',
+       cancelButtonColor: '#3085d6',
+       confirmButtonText: 'بله، حذف کن',
+       cancelButtonText: 'لغو',
+     }).then((result) => {
+       if (result.isConfirmed) {
+         $.ajax({
+           url: "{{ route('dr-clinic-delete', ':id') }}".replace(':id', clinicId),
+           method: 'DELETE',
+           data: {
+             _token: $('meta[name="csrf-token"]').attr('content'),
+           },
+           success: function () {
+             Toastify({
+               text: 'مطب با موفقیت حذف شد!',
+               duration: 3000,
+               gravity: 'top',
+               position: 'right',
+               backgroundColor: 'green',
+             }).showToast();
+             loadClinics();
+           },
+           error: function () {
+             Toastify({
+               text: 'خطا در حذف مطب!',
+               duration: 3000,
+               gravity: 'top',
+               position: 'right',
+               backgroundColor: 'red',
+             }).showToast();
+           },
+         });
+       }
+     });
+   });
+
+   // بارگذاری لیست مطب‌ها
+
+
+   // بارگذاری اولیه مطب‌ها
+   loadClinics();
+
+
+
+
  });
+
+
+ 
 </script>
 @endsection
