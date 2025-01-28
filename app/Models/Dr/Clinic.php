@@ -2,6 +2,7 @@
 
 namespace App\Models\Dr;
 
+use App\Models\Dr\Doctor;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Admin\Dashboard\Cities\Zone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

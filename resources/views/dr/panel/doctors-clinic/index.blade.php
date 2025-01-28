@@ -1,8 +1,8 @@
 @extends('dr.panel.layouts.master')
 @section('styles')
- <link type="text/css" href="{{ asset('dr-assets/panel/css/panel.css') }}" rel="stylesheet"/>
- <link type="text/css" href="{{ asset('dr-assets/panel/profile/edit-profile.css') }}" rel="stylesheet"/>
- <link type="text/css" href="{{ asset('dr-assets/panel/css/profile/subuser.css') }}" rel="stylesheet"/>
+ <link type="text/css" href="{{ asset('dr-assets/panel/css/panel.css') }}" rel="stylesheet" />
+ <link type="text/css" href="{{ asset('dr-assets/panel/profile/edit-profile.css') }}" rel="stylesheet" />
+ <link type="text/css" href="{{ asset('dr-assets/panel/css/profile/subuser.css') }}" rel="stylesheet" />
 @endsection
 @section('site-header')
  {{ 'به نوبه | پنل دکتر' }}
@@ -44,7 +44,6 @@
        </select>
        <small class="text-danger error-province_id"></small>
       </div>
-
       <div class="w-100 position-relative mt-4">
        <label class="label-top-input-special-takhasos" for="edit-clinic-city">شهر: </label>
        <select class="form-control h-50 w-100" id="edit-clinic-city" name="city_id" disabled>
@@ -52,22 +51,19 @@
        </select>
        <small class="text-danger error-city_id"></small>
       </div>
-
      </div>
      <!-- فیلد شماره موبایل -->
      <div class="w-100 position-relative mt-4">
       <label class="label-top-input-special-takhasos" for="edit-clinic-phone">شماره موبایل: </label>
       <input type="text" class="form-control h-50 w-100" id="edit-clinic-phone" name="phone_numbers[]">
      </div>
-      <small class="text-danger error-phone_numbers"></small>
-
+     <small class="text-danger error-phone_numbers"></small>
      <!-- فیلد آدرس -->
      <div class="w-100 position-relative mt-4">
       <label class="label-top-input-special-takhasos" for="edit-clinic-address">آدرس: </label>
       <textarea class="form-control h-50 w-100" id="edit-clinic-address" name="address" placeholder="آدرس" rows="3"></textarea>
       <small class="text-danger error-address"></small>
      </div>
-
      <!-- فیلد توضیحات -->
      <div class="w-100 position-relative mt-4">
       <label class="label-top-input-special-takhasos" for="edit-clinic-description">توضیحات: </label>
@@ -75,7 +71,6 @@
        rows="3"></textarea>
       <small class="text-danger error-description"></small>
      </div>
-
      <!-- دکمه ذخیره -->
      <div class="w-100 mt-4">
       <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center h-50">
@@ -88,87 +83,83 @@
   </div>
  </div>
 </div>
-
 <div class="modal fade " id="clinicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered " role="document">
-    <div class="modal-content border-radius-8">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle"> افزودن مطب </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
+ aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered " role="document">
+  <div class="modal-content border-radius-8">
+   <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLongTitle"> افزودن مطب </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+     <span aria-hidden="true">×</span>
+    </button>
+   </div>
+   <div class="modal-body">
+    <form id="add-clinic-form">
+     @csrf
+     <div class="d-flex flex-column mt-2">
+      <!-- فیلد نام مطب -->
+      <div class="position-relative w-100">
+       <label class="label-top-input-special-takhasos" for="clinic-name">نام مطب: </label>
+       <input type="text" class="form-control h-50 w-100" id="clinic-name" name="name">
+       <small class="text-danger error-name"></small>
       </div>
-      <div class="modal-body">
-        <form id="add-clinic-form">
-          @csrf
-          <div class="d-flex flex-column mt-2">
-            <!-- فیلد نام مطب -->
-            <div class="position-relative w-100">
-              <label class="label-top-input-special-takhasos" for="clinic-name">نام مطب: </label>
-              <input type="text" class="form-control h-50 w-100" id="clinic-name" name="name">
-              <small class="text-danger error-name"></small>
-            </div>
-          </div>
-          <!-- فیلد استان -->
-          <div class="w-100 position-relative mt-4">
-            <label class="label-top-input-special-takhasos" for="clinic-province">استان: </label>
-            <select class="form-control h-50 w-100" id="clinic-province" name="province_id">
-              <option value="">انتخاب استان</option>
-              @foreach ($provinces as $province)
-          <option value="{{ $province->id }}">{{ $province->name }}</option>
-        @endforeach
-            </select>
-            <small class="text-danger error-province_id"></small>
-          </div>
-          <!-- فیلد شهر -->
-          <div class="w-100 position-relative mt-4">
-            <label class="label-top-input-special-takhasos" for="clinic-city">شهر: </label>
-            <select class="form-control h-50 w-100" id="clinic-city" name="city_id" disabled>
-              <option value="">انتخاب شهر</option>
-            </select>
-            <small class="text-danger error-city_id"></small>
-          </div>
-          <!-- فیلد شماره موبایل -->
-          <div class="w-100 position-relative mt-4">
-            <label class="label-top-input-special-takhasos" for="clinic-phone">شماره موبایل: </label>
-            <input type="text" class="form-control h-50 w-100" id="clinic-phone" name="phone_numbers[]">
-          </div>
-            <small class="text-danger error-phone_numbers"></small>
-
-          <!-- فیلد آدرس -->
-          <div class="w-100 position-relative mt-4">
-            <label class="label-top-input-special-takhasos" for="clinic-address"> آدرس: </label>
-            <textarea class="form-control h-50 w-100" placeholder="آدرس" id="clinic-address" name="address" cols="30"
-              rows="3"></textarea>
-            <small class="text-danger error-address"></small>
-          </div>
-          <!-- فیلد توضیحات -->
-          <div class="w-100 position-relative mt-4">
-            <label class="label-top-input-special-takhasos" for="clinic-description">توضیحات: </label>
-            <textarea name="description" class="form-control h-50 w-100" placeholder="توضیحات" id="clinic-description"
-              cols="30" rows="3"></textarea>
-            <small class="text-danger error-description"></small>
-          </div>
-          <!-- دکمه ارسال -->
-          <div class="w-100 mt-4">
-            <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center h-50">
-              <span class="button_text">ذخیره</span>
-              <div class="loader" style="display: none;"></div>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+     </div>
+     <!-- فیلد استان -->
+     <div class="w-100 position-relative mt-4">
+      <label class="label-top-input-special-takhasos" for="clinic-province">استان: </label>
+      <select class="form-control h-50 w-100" id="clinic-province" name="province_id">
+       <option value="">انتخاب استان</option>
+       @foreach ($provinces as $province)
+        <option value="{{ $province->id }}">{{ $province->name }}</option>
+       @endforeach
+      </select>
+      <small class="text-danger error-province_id"></small>
+     </div>
+     <!-- فیلد شهر -->
+     <div class="w-100 position-relative mt-4">
+      <label class="label-top-input-special-takhasos" for="clinic-city">شهر: </label>
+      <select class="form-control h-50 w-100" id="clinic-city" name="city_id" disabled>
+       <option value="">انتخاب شهر</option>
+      </select>
+      <small class="text-danger error-city_id"></small>
+     </div>
+     <!-- فیلد شماره موبایل -->
+     <div class="w-100 position-relative mt-4">
+      <label class="label-top-input-special-takhasos" for="clinic-phone">شماره موبایل: </label>
+      <input type="text" class="form-control h-50 w-100" id="clinic-phone" name="phone_numbers[]">
+     </div>
+     <small class="text-danger error-phone_numbers"></small>
+     <!-- فیلد آدرس -->
+     <div class="w-100 position-relative mt-4">
+      <label class="label-top-input-special-takhasos" for="clinic-address"> آدرس: </label>
+      <textarea class="form-control h-50 w-100" placeholder="آدرس" id="clinic-address" name="address" cols="30"
+       rows="3"></textarea>
+      <small class="text-danger error-address"></small>
+     </div>
+     <!-- فیلد توضیحات -->
+     <div class="w-100 position-relative mt-4">
+      <label class="label-top-input-special-takhasos" for="clinic-description">توضیحات: </label>
+      <textarea name="description" class="form-control h-50 w-100" placeholder="توضیحات" id="clinic-description"
+       cols="30" rows="3"></textarea>
+      <small class="text-danger error-description"></small>
+     </div>
+     <!-- دکمه ارسال -->
+     <div class="w-100 mt-4">
+      <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center h-50">
+       <span class="button_text">ذخیره</span>
+       <div class="loader" style="display: none;"></div>
+      </button>
+     </div>
+    </form>
+   </div>
   </div>
+ </div>
 </div>
-
 <div class="subuser-content w-100 d-flex justify-content-center mt-4">
  <div class="subuser-content-wrapper p-3">
   <div class="w-100 d-flex justify-content-end">
-    <button class="btn btn-primary h-50" id="add-clinic-btn">افزودن مطب
-      جدید</button>
-  
+   <button class="btn btn-primary h-50" id="add-clinic-btn">افزودن مطب
+    جدید</button>
   </div>
   <div class="p-3">
    <h4 class="text-dark font-weight-bold">لیست مطب های من</h4>
@@ -198,7 +189,6 @@
           fill="#22282F"></path>
         </svg>
        </button>
-
        <button class="btn btn-light btn-sm rounded-circle delete-btn" data-id="{{ $clinic->id }}">
         <svg width="23" height="23" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
          class="cursor-pointer w-5 hover:!text-red-500">
@@ -207,14 +197,12 @@
           fill="#000"></path>
         </svg>
        </button>
-
       </div>
      </div>
     </div>
    @empty
     <div class="alert alert-info w-100 d-flex justify-content-center align-items-center">هیچ مطبی یافت نشد</div>
    @endforelse
-  
   </div>
  </div>
 </div>
@@ -228,41 +216,41 @@
   "{{ route('updateStatusAppointment', ':id') }}";
 </script>
 <script>
-  const cities = @json($cities);
-  function handleValidationErrors(xhr, form) {
-    if (xhr.status === 422) {
-       $('.label-top-input-special-takhasos').css({
-        'position': '',
-        'bottom': ''
-      });
-      const errors = xhr.responseJSON.errors;
-      form.find('.text-danger').text(''); // پاک کردن پیام‌های قبلی
-      Object.keys(errors).forEach(function (key) {
-        const fieldKey = key.replace(/\.\d+$/, '');
-        form.find(`.error-${fieldKey}`).text(errors[key][0]);
-          const relatedLabel = form.find(`input[name="${key}"], select[name="${key}"]`).siblings(
-          '.label-top-input-special-takhasos');
+ const cities = @json($cities);
 
-        if (relatedLabel.length > 0) {
-          // اعمال استایل برای خطاها
-          relatedLabel.css({
-            'position': 'absolute',
-            'bottom': relatedLabel.hasClass('password-label') ? '32px' : '56px'
-          });
-        }
-      });
+ function handleValidationErrors(xhr, form) {
+  if (xhr.status === 422) {
+   $('.label-top-input-special-takhasos').css({
+    'position': '',
+    'bottom': ''
+   });
+   const errors = xhr.responseJSON.errors;
+   form.find('.text-danger').text(''); // پاک کردن پیام‌های قبلی
+   Object.keys(errors).forEach(function(key) {
+    const fieldKey = key.replace(/\.\d+$/, '');
+    form.find(`.error-${fieldKey}`).text(errors[key][0]);
+    const relatedLabel = form.find(`input[name="${key}"], select[name="${key}"]`).siblings(
+     '.label-top-input-special-takhasos');
+    if (relatedLabel.length > 0) {
+     // اعمال استایل برای خطاها
+     relatedLabel.css({
+      'position': 'absolute',
+      'bottom': relatedLabel.hasClass('password-label') ? '32px' : '56px'
+     });
     }
+   });
   }
+ }
 
-  function loadClinics() {
-      $.get("{{ route('dr-clinic-management') }}", function (response) {
-        const container = $('#clinic-list');
-        container.empty();
-        if (response.clinics.length === 0) {
-          container.append('<div class="alert alert-info w-100 text-center">مطب فعالی ندارید.</div>');
-        } else {
-          response.clinics.forEach(function (clinic) {
-            const clinicCard = `
+ function loadClinics() {
+  $.get("{{ route('dr-clinic-management') }}", function(response) {
+   const container = $('#clinic-list');
+   container.empty();
+   if (response.clinics.length === 0) {
+    container.append('<div class="alert alert-info w-100 text-center">مطب فعالی ندارید.</div>');
+   } else {
+    response.clinics.forEach(function(clinic) {
+     const clinicCard = `
                         <div class="clinic-card p-3 w-100 d-flex justify-content-between align-items-end">
                             <div>
                                 <span class="d-block font-weight-bold text-dark">${clinic.name}</span>
@@ -291,32 +279,29 @@
                                   </button>
                             </div>
                         </div>`;
-            container.append(clinicCard);
-          });
-        }
-      });
-    }
-    // انتخاب شهر بر اساس استان
-      function populateCities(provinceId, citySelect, selectedCityId = null) {
-        citySelect.empty().append('<option value="">انتخاب شهر</option>');
-        if (provinceId && cities[provinceId]) {
-          cities[provinceId].forEach(function (city) {
-            const isSelected = selectedCityId === city.id ? 'selected' : '';
-            citySelect.append(`<option value="${city.id}" ${isSelected}>${city.name}</option>`);
-          });
-          citySelect.prop('disabled', false);
-        } else {
-          citySelect.prop('disabled', true);
-        }
-      }  
+     container.append(clinicCard);
+    });
+   }
+  });
+ }
+ // انتخاب شهر بر اساس استان
+ function populateCities(provinceId, citySelect, selectedCityId = null) {
+  citySelect.empty().append('<option value="">انتخاب شهر</option>');
+  if (provinceId && cities[provinceId]) {
+   cities[provinceId].forEach(function(city) {
+    const isSelected = selectedCityId === city.id ? 'selected' : '';
+    citySelect.append(`<option value="${city.id}" ${isSelected}>${city.name}</option>`);
+   });
+   citySelect.prop('disabled', false);
+  } else {
+   citySelect.prop('disabled', true);
+  }
+ }
  $(document).ready(function() {
-
   $('#clinic-province').on('change', function() {
    const provinceId = $(this).val();
    const citySelect = $('#clinic-city');
-
    citySelect.empty().append('<option value="">انتخاب شهر</option>');
-
    if (provinceId && cities[provinceId]) {
     cities[provinceId].forEach(function(city) {
      citySelect.append(`<option value="${city.id}">${city.name}</option>`);
@@ -326,210 +311,195 @@
     citySelect.prop('disabled', true);
    }
   });
-   // نمایش مودال افزودن مطب
-   $('#add-clinic-btn').on('click', function () {
-     $('#clinicModal').modal('show');
-     if ($('#clinic-form').length) {
-       $('#clinic-form').trigger('reset');
-     } // پاک کردن فرم
-     $('#clinic-id').val(''); // تنظیم مقدار پیش‌فرض برای فیلد ID
-     $('#clinic-city').empty().append('<option value="">انتخاب شهر</option>').prop('disabled', true);
-   });
-   $(document).on('click', '.edit-btn', function () {
-     const clinicId = $(this).data('id');
+  // نمایش مودال افزودن مطب
+  $('#add-clinic-btn').on('click', function() {
+   $('#clinicModal').modal('show');
+   if ($('#clinic-form').length) {
+    $('#clinic-form').trigger('reset');
+   } // پاک کردن فرم
+   $('#clinic-id').val(''); // تنظیم مقدار پیش‌فرض برای فیلد ID
+   $('#clinic-city').empty().append('<option value="">انتخاب شهر</option>').prop('disabled', true);
+  });
+  $(document).on('click', '.edit-btn', function() {
+   const clinicId = $(this).data('id');
+   $.ajax({
+    url: "{{ route('dr-clinic-edit', ':id') }}".replace(':id', clinicId),
+    method: 'GET',
+    headers: {
+     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function(response) {
+     $('#clinicEditModal').modal('show');
      $('#edit-clinic-id').val(clinicId);
-     $.ajax({
-       url: "{{ route('dr-clinic-edit', ':id') }}".replace(':id', clinicId),
-       method: 'GET',
-       success: function (response) {
-         $('#clinicEditModal').modal('show');
-         $('#edit-clinic-name').val(response.name);
-         $('#edit-clinic-address').val(response.address);
-         $('#edit-clinic-description').val(response.description);
-
-         // مقداردهی استان و شهر
-         $('#edit-clinic-province').val(response.province_id);
-         populateCities(response.province_id, $('#edit-clinic-city'), response.city_id);
-
-         // مقداردهی شماره موبایل
-         const phoneContainer = $('#edit-clinic-phone').parent();
-         phoneContainer.empty(); // پاک کردن فیلدهای قبلی
-         if (response.phone_numbers && response.phone_numbers.length > 0) {
-           response.phone_numbers.forEach((phone, index) => {
-             phoneContainer.append(`
+     $('#edit-clinic-name').val(response.name);
+     $('#edit-clinic-address').val(response.address);
+     $('#edit-clinic-description').val(response.description);
+     // مقداردهی استان و شهر
+     $('#edit-clinic-province').val(response.province_id);
+     populateCities(response.province_id, $('#edit-clinic-city'), response.city_id);
+     // مقداردهی شماره موبایل
+     const phoneContainer = $('#edit-clinic-phone').parent();
+     phoneContainer.empty(); // پاک کردن فیلدهای قبلی
+     if (response.phone_numbers && response.phone_numbers.length > 0) {
+      response.phone_numbers.forEach((phone, index) => {
+       phoneContainer.append(`
                         <div class="w-100 position-relative mt-2">
                             <label class="label-top-input-special-takhasos">شماره موبایل ${index + 1}:</label>
                             <input type="text" class="form-control h-50 w-100" name="phone_numbers[]" value="${phone}">
                         </div>
                     `);
-           });
-         } else {
-           // اگر شماره موبایلی وجود نداشت، یک فیلد خالی ایجاد کنید
-           phoneContainer.append(`
+      });
+     } else {
+      // اگر شماره موبایلی وجود نداشت، یک فیلد خالی ایجاد کنید
+      phoneContainer.append(`
                     <div class="w-100 position-relative mt-2">
                         <label class="label-top-input-special-takhasos">شماره موبایل:</label>
                         <input type="text" class="form-control h-50 w-100" name="phone_numbers[]">
                     </div>
                 `);
-         }
-       },
-       error: function () {
-         Toastify({
-           text: 'خطا در دریافت اطلاعات مطب!',
-           duration: 3000,
-           gravity: 'top',
-           position: 'right',
-           backgroundColor: 'red',
-         }).showToast();
-       },
-     });
+     }
+    },
+    error: function() {
+     Toastify({
+      text: 'خطا در دریافت اطلاعات مطب!',
+      duration: 3000,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: 'red',
+     }).showToast();
+    },
    });
-   // تغییر استان در فرم ویرایش
-   $('#edit-clinic-province').on('change', function () {
-     const provinceId = $(this).val();
-     populateCities(provinceId, $('#edit-clinic-city'));
+  });
+  // تغییر استان در فرم ویرایش
+  $('#edit-clinic-province').on('change', function() {
+   const provinceId = $(this).val();
+   populateCities(provinceId, $('#edit-clinic-city'));
+  });
+  $('#add-clinic-form').on('submit', function(e) {
+   e.preventDefault();
+   const form = $(this);
+   const submitButton = form.find('button[type="submit"]');
+   const loader = submitButton.find('.loader');
+   const buttonText = submitButton.find('.button_text');
+   // نمایش لودینگ و مخفی کردن متن دکمه
+   buttonText.hide();
+   loader.show();
+   $.ajax({
+    url: "{{ route('dr-clinic-store') }}",
+    method: 'POST',
+    data: form.serialize(),
+    success: function() {
+     Toastify({
+      text: 'مطب با موفقیت اضافه شد!',
+      duration: 3000,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: 'green',
+     }).showToast();
+     $('#clinicModal').modal('hide');
+     loadClinics(); // بروزرسانی لیست مطب‌ها
+    },
+    error: function(xhr) {
+     handleValidationErrors(xhr, form);
+     Toastify({
+      text: 'خطا در ذخیره اطلاعات!',
+      duration: 3000,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: 'red',
+     }).showToast();
+    },
+    complete: function() {
+     buttonText.show();
+     loader.hide();
+    },
    });
-   $('#add-clinic-form').on('submit', function (e) {
-     e.preventDefault();
-     const form = $(this);
-     const submitButton = form.find('button[type="submit"]');
-     const loader = submitButton.find('.loader');
-     const buttonText = submitButton.find('.button_text');
-
-     // نمایش لودینگ و مخفی کردن متن دکمه
-     buttonText.hide();
-     loader.show();
-
+  });
+  $('#edit-clinic-form').on('submit', function(e) {
+   e.preventDefault();
+   const form = $(this);
+   const submitButton = form.find('button[type="submit"]');
+   const loader = submitButton.find('.loader');
+   const buttonText = submitButton.find('.button_text');
+   const clinicId = $('#edit-clinic-id').val();
+   buttonText.hide();
+   loader.show();
+   $.ajax({
+    url: "{{ route('dr-clinic-update', ':id') }}".replace(':id', clinicId),
+    method: 'POST',
+    data: form.serialize(),
+    success: function() {
+     Toastify({
+      text: 'مطب با موفقیت ویرایش شد!',
+      duration: 3000,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: 'green',
+     }).showToast();
+     $('#clinicEditModal').modal('hide');
+     loadClinics();
+    },
+    error: function(xhr) {
+     handleValidationErrors(xhr, form);
+     Toastify({
+      text: 'خطا در ذخیره اطلاعات!',
+      duration: 3000,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: 'red',
+     }).showToast();
+    },
+    complete: function() {
+     buttonText.show();
+     loader.hide();
+    }
+   });
+  });
+  $(document).on('click', '.delete-btn', function() {
+   const clinicId = $(this).data('id');
+   Swal.fire({
+    title: 'حذف مطب',
+    text: 'آیا از حذف این مطب اطمینان دارید؟',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'بله، حذف کن',
+    cancelButtonText: 'لغو',
+   }).then((result) => {
+    if (result.isConfirmed) {
      $.ajax({
-       url: "{{ route('dr-clinic-store') }}",
-       method: 'POST',
-       data: form.serialize(),
-       success: function () {
-         Toastify({
-           text: 'مطب با موفقیت اضافه شد!',
-           duration: 3000,
-           gravity: 'top',
-           position: 'right',
-           backgroundColor: 'green',
-         }).showToast();
-         $('#clinicModal').modal('hide');
-         loadClinics(); // بروزرسانی لیست مطب‌ها
-       },
-       error: function (xhr) {
-         handleValidationErrors(xhr, form);
-
-         Toastify({
-           text: 'خطا در ذخیره اطلاعات!',
-           duration: 3000,
-           gravity: 'top',
-           position: 'right',
-           backgroundColor: 'red',
-         }).showToast();
-
-       },
-       complete: function () {
-         buttonText.show();
-         loader.hide();
-       },
+      url: "{{ route('dr-clinic-delete', ':id') }}".replace(':id', clinicId),
+      method: 'DELETE',
+      data: {
+       _token: $('meta[name="csrf-token"]').attr('content'),
+      },
+      success: function() {
+       Toastify({
+        text: 'مطب با موفقیت حذف شد!',
+        duration: 3000,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: 'green',
+       }).showToast();
+       loadClinics();
+      },
+      error: function() {
+       Toastify({
+        text: 'خطا در حذف مطب!',
+        duration: 3000,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: 'red',
+       }).showToast();
+      },
      });
+    }
    });
-   $('#edit-clinic-form').on('submit', function (e) {
-     e.preventDefault();
-     const form = $(this);
-     const submitButton = form.find('button[type="submit"]');
-     const loader = submitButton.find('.loader');
-     const buttonText = submitButton.find('.button_text');
-     const clinicId = $('#edit-clinic-id').val();
-
-     buttonText.hide();
-     loader.show();
-
-     $.ajax({
-       url: "{{ route('dr-clinic-update', ':id') }}".replace(':id', clinicId),
-       method: 'POST',
-       data: form.serialize(),
-       success: function () {
-         Toastify({
-           text: 'مطب با موفقیت ویرایش شد!',
-           duration: 3000,
-           gravity: 'top',
-           position: 'right',
-           backgroundColor: 'green',
-         }).showToast();
-         $('#clinicEditModal').modal('hide');
-         loadClinics();
-       },
-       error: function (xhr) {
-         handleValidationErrors(xhr, form);
-         Toastify({
-           text: 'خطا در ذخیره اطلاعات!',
-           duration: 3000,
-           gravity: 'top',
-           position: 'right',
-           backgroundColor: 'red',
-         }).showToast();
-       },
-       complete: function () {
-         buttonText.show();
-         loader.hide();
-       }
-     });
-   });
-   $(document).on('click', '.delete-btn', function () {
-     const clinicId = $(this).data('id');
-     Swal.fire({
-       title: 'حذف مطب',
-       text: 'آیا از حذف این مطب اطمینان دارید؟',
-       icon: 'warning',
-       showCancelButton: true,
-       confirmButtonColor: '#d33',
-       cancelButtonColor: '#3085d6',
-       confirmButtonText: 'بله، حذف کن',
-       cancelButtonText: 'لغو',
-     }).then((result) => {
-       if (result.isConfirmed) {
-         $.ajax({
-           url: "{{ route('dr-clinic-delete', ':id') }}".replace(':id', clinicId),
-           method: 'DELETE',
-           data: {
-             _token: $('meta[name="csrf-token"]').attr('content'),
-           },
-           success: function () {
-             Toastify({
-               text: 'مطب با موفقیت حذف شد!',
-               duration: 3000,
-               gravity: 'top',
-               position: 'right',
-               backgroundColor: 'green',
-             }).showToast();
-             loadClinics();
-           },
-           error: function () {
-             Toastify({
-               text: 'خطا در حذف مطب!',
-               duration: 3000,
-               gravity: 'top',
-               position: 'right',
-               backgroundColor: 'red',
-             }).showToast();
-           },
-         });
-       }
-     });
-   });
-
-   // بارگذاری لیست مطب‌ها
-
-
-   // بارگذاری اولیه مطب‌ها
-   loadClinics();
-
-
-
-
+  });
+  // بارگذاری لیست مطب‌ها
+  // بارگذاری اولیه مطب‌ها
+  loadClinics();
  });
-
-
- 
 </script>
 @endsection
