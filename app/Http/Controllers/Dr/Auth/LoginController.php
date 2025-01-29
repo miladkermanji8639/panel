@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Dr\Auth;
 use Carbon\Carbon;
 use App\Models\Otp;
+use App\Models\LoginLog;
 use App\Models\Dr\Doctor;
 use Illuminate\Support\Str;
 use App\Models\Dr\Secretary;
@@ -171,7 +172,15 @@ class LoginController
     (new LoginAttemptsService())->resetLoginAttempts($user->mobile);
 
     session()->forget('step1_completed');
-
+    LoginLog::create([
+      'user_id' => null,
+      'doctor_id' => $user instanceof Doctor ? $user->id : null,
+      'secretary_id' => $user instanceof Secretary ? $user->id : null,
+      'user_type' => $user instanceof Doctor ? 'doctor' : 'secretary',
+      'login_at' => now(),
+      'ip_address' => request()->ip(),
+      'device' => request()->header('User-Agent')
+    ]);
     return response()->json([
       'success' => true,
       'redirect' => route('dr-panel')
@@ -204,6 +213,7 @@ class LoginController
     session(['doctor_temp_login' => $doctor?->id, 'secretary_temp_login' => $secretary?->id]);
     session(['step3_completed' => true]);
 
+    // **اگر کاربر احراز هویت دو عاملی دارد، باید ابتدا تایید شود**
     if ($user->two_factor_secret_enabled ?? false) {
       return response()->json([
         'success' => true,
@@ -211,12 +221,24 @@ class LoginController
       ]);
     }
 
-    // انتخاب گارد مناسب برای لاگین
+    // ✅ ورود نهایی بدون احراز هویت دو عاملی
     if ($user instanceof Doctor) {
       Auth::guard('doctor')->login($user);
     } elseif ($user instanceof Secretary) {
       Auth::guard('secretary')->login($user);
     }
+
+    // **ثبت لاگ ورود با رمز عبور**
+    LoginLog::create([
+      'user_id' => null,
+      'doctor_id' => $user instanceof Doctor ? $user->id : null,
+      'secretary_id' => $user instanceof Secretary ? $user->id : null,
+      'user_type' => $user instanceof Doctor ? 'doctor' : 'secretary',
+      'login_at' => now(),
+      'ip_address' => request()->ip(),
+      'device' => request()->header('User-Agent'),
+      'login_method' => 'password'
+    ]);
 
     $loginAttempts->resetLoginAttempts($mobile);
 
@@ -225,6 +247,7 @@ class LoginController
       'redirect' => route('dr-panel')
     ]);
   }
+
 
 
 
@@ -258,6 +281,18 @@ class LoginController
       Auth::guard('secretary')->login($user);
     }
 
+    // **ثبت لاگ ورود با دو عاملی**
+    LoginLog::create([
+      'user_id' => null,
+      'doctor_id' => $user instanceof Doctor ? $user->id : null,
+      'secretary_id' => $user instanceof Secretary ? $user->id : null,
+      'user_type' => $user instanceof Doctor ? 'doctor' : 'secretary',
+      'login_at' => now(),
+      'ip_address' => request()->ip(),
+      'device' => request()->header('User-Agent'),
+      'login_method' => 'two_factor'
+    ]);
+
     session()->forget(['doctor_temp_login', 'secretary_temp_login']);
 
     return response()->json([
@@ -265,6 +300,7 @@ class LoginController
       'redirect' => route('dr-panel')
     ]);
   }
+
 
 
 
@@ -288,14 +324,32 @@ class LoginController
 
   public function logout()
   {
+    $user = null;
+    $guard = null;
+
     if (Auth::guard('doctor')->check()) {
+      $user = Auth::guard('doctor')->user();
+      $guard = 'doctor';
       Auth::guard('doctor')->logout();
     } elseif (Auth::guard('secretary')->check()) {
+      $user = Auth::guard('secretary')->user();
+      $guard = 'secretary';
       Auth::guard('secretary')->logout();
+    }
+
+    if ($user) {
+      // به‌روزرسانی لاگ آخرین ورود با مقدار logout_at
+      LoginLog::where('doctor_id', $guard === 'doctor' ? $user->id : null)
+        ->where('secretary_id', $guard === 'secretary' ? $user->id : null)
+        ->whereNull('logout_at')
+        ->latest()
+        ->first()
+          ?->update(['logout_at' => now()]);
     }
 
     return redirect()->route('dr.auth.login-register-form')
       ->with('swal-success', 'شما با موفقیت از سایت خارج شدید');
   }
+
 
 }

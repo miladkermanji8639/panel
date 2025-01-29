@@ -395,10 +395,7 @@ class DrProfileController
     {
         return view("dr.panel.profile.edit-niceId");
     }
-    public function security()
-    {
-        return view("dr.panel.profile.security");
-    }
+    
     public function upgrade()
     {
         return view("dr.panel.profile.upgrade");

@@ -1,5 +1,4 @@
 <?php
-use App\Http\Controllers\Dr\Panel\DoctorsClinic\Activation\Workhours\ActivationWorkhoursController;
 use Mockery\Container;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\layouts\Blank;
@@ -31,6 +30,7 @@ use App\Http\Controllers\Admin\Authentications\TwoStepsCover;
 use App\Http\Controllers\Admin\Dashboard\Amar\AmarController;
 use App\Http\Controllers\Admin\Dashboard\Menu\MenuController;
 use App\Http\Controllers\Dr\Panel\Profile\DrProfileController;
+use App\Http\Controllers\Dr\Panel\Profile\LoginLogsController;
 use App\Http\Controllers\Admin\Tools\SiteMap\SiteMapController;
 use App\Http\Controllers\Admin\Authentications\VerifyEmailBasic;
 use App\Http\Controllers\Admin\Authentications\VerifyEmailCover;
@@ -102,6 +102,7 @@ use App\Http\Controllers\Admin\Hospitals\WalletHospitalRequest\WalletHospitalReq
 use App\Http\Controllers\Admin\UsersManagement\WalletCheckoutUser\WalletCheckoutUserController;
 use App\Http\Controllers\Dr\Panel\NoskheElectronic\Favorite\Templates\FavoriteTemplatesController;
 use App\Http\Controllers\Admin\UsersManagement\WalletCheckoutMonshi\WalletCheckoutMonshiController;
+use App\Http\Controllers\Dr\Panel\DoctorsClinic\Activation\Workhours\ActivationWorkhoursController;
 use App\Http\Controllers\Admin\Doctors\DoctorsManagement\MoshavereSetting\MoshavereSettingController;
 use App\Http\Controllers\Admin\Doctors\DoctorsManagement\NobatdehiSetting\NobatdehiSettingController;
 use App\Http\Controllers\Dr\Panel\Turn\Schedule\ScheduleSetting\BlockingUsers\BlockingUsersController;
@@ -582,7 +583,10 @@ Route::prefix('dr')
                     Route::post('dr-static-password-update', [DrProfileController::class, 'updateStaticPassword'])->name('dr-static-password-update');
                     Route::post('dr-two-factor-update', [DrProfileController::class, 'updateTwoFactorAuth'])->name('dr-two-factor-update');
                     Route::get('niceId', [DrProfileController::class, 'niceId'])->name('dr-edit-profile-niceId');
-                    Route::get('security', [DrProfileController::class, 'security'])->name('dr-edit-profile-security');
+                    Route::get('security', [LoginLogsController::class, 'security'])->name('dr-edit-profile-security');
+                    Route::delete('/dr/panel/profile/security/logs/{id}', [LoginLogsController::class, 'deleteLog'])
+                        ->name('delete-log');
+
                     Route::get('upgrade', [DrProfileController::class, 'upgrade'])->name('dr-edit-profile-upgrade');
                     Route::get('subuser', [DrProfileController::class, 'subuser'])->name('dr-subuser');
                 });

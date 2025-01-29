@@ -6,15 +6,7 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
-  /**
-   * The application's global HTTP middleware stack.
-   *
-   * These middleware are run during every request to your application.
-   *
-   * @var array<int, class-string|string>
-   */
   protected $middleware = [
-    // \App\Http\Middleware\TrustHosts::class,
     \App\Http\Middleware\TrustProxies::class,
     \Illuminate\Http\Middleware\HandleCors::class,
     \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -23,18 +15,13 @@ class Kernel extends HttpKernel
     \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     \App\Http\Middleware\CorsMiddleware::class,
     'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
-
   ];
+
   protected $routeMiddleware = [
     'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
-    /* 'rate.limit' => \App\Http\Middleware\RateLimitMiddleware::class, */
+    'secretary.permission' => \App\Http\Middleware\Dr\CheckSecretaryPermission::class, // 👈 اضافه شد
   ];
 
-  /**
-   * The application's route middleware groups.
-   *
-   * @var array<string, array<int, class-string|string>>
-   */
   protected $middlewareGroups = [
     'web' => [
       \App\Http\Middleware\EncryptCookies::class,
@@ -44,9 +31,6 @@ class Kernel extends HttpKernel
       \App\Http\Middleware\VerifyCsrfToken::class,
       \Illuminate\Routing\Middleware\SubstituteBindings::class,
       \App\Http\Middleware\LocaleMiddleware::class,
-
-      // \App\Http\Middleware\user::class,
-
     ],
 
     'api' => [
@@ -54,27 +38,18 @@ class Kernel extends HttpKernel
       \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
       \Illuminate\Routing\Middleware\SubstituteBindings::class,
     ],
+
     'doctor' => [
       'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
-      /* 'rate.limit' => \App\Http\Middleware\RateLimitMiddleware::class, */
       'doctor' => \App\Http\Middleware\doctor::class,
-
     ],
+
     'secretary' => [
       'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
-      /* 'rate.limit' => \App\Http\Middleware\RateLimitMiddleware::class, */
       'secretary' => \App\Http\Middleware\secretary::class,
-
     ],
   ];
 
-  /**
-   * The application's middleware aliases.
-   *
-   * Aliases may be used instead of class names to conveniently assign middleware to routes and groups.
-   *
-   * @var array<string, class-string|string>
-   */
   protected $middlewareAliases = [
     'auth' => \App\Http\Middleware\Authenticate::class,
     'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
@@ -91,7 +66,6 @@ class Kernel extends HttpKernel
     'manager' => \App\Http\Middleware\manager::class,
     'doctor' => \App\Http\Middleware\doctor::class,
     'secretary' => \App\Http\Middleware\secretary::class,
-    //  'secretary' => \App\Http\Middleware\secretary::class,
-
+    'secretary.permission' => \App\Http\Middleware\Dr\CheckSecretaryPermission::class, // 👈 اضافه شد
   ];
 }
