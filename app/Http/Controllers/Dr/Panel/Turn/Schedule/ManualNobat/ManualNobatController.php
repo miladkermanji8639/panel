@@ -42,7 +42,7 @@ class ManualNobatController
   }
   public function showSettings()
   {
-    $settings = ManualAppointmentSetting::where('doctor_id', auth('doctor')->id())->first();
+    $settings = ManualAppointmentSetting::where('doctor_id', auth('doctor')->id() ?? auth('secretary')->id())->first();
 
     return view('dr.panel.turn.schedule.manual_nobat.manual-nobat-setting', compact('settings'));
   }
@@ -57,7 +57,7 @@ class ManualNobatController
 
     try {
       ManualAppointmentSetting::updateOrCreate(
-        ['doctor_id' => auth('doctor')->id()],
+        ['doctor_id' => auth('doctor')->id() ?? auth('secretary')->id()],
         [
           'is_active' => $request->status,
           'duration_send_link' => $request->duration_send_link,
@@ -163,7 +163,7 @@ class ManualNobatController
       // ایجاد نوبت
       $appointment = ManualAppointment::create([
         'user_id' => $user->id,
-        'doctor_id' => auth('doctor')->id(),
+        'doctor_id' => auth('doctor')->id() ?? auth('secretary')->id(),
         'appointment_date' => $validatedData['appointment_date'],
         'appointment_time' => $validatedData['appointment_time'],
         'description' => $validatedData['description'],

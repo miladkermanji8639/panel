@@ -127,7 +127,7 @@
     <form method="post" action="{{ route('manual-nobat.store') }}" id="manual-appointment-form" autocomplete="off">
      @csrf
      <input type="hidden" id="user-id" name="user_id" value="">
-     <input type="hidden" id="doctor-id" name="doctor_id" value="{{ auth('doctor')->id() }}">
+     <input type="hidden" id="doctor-id" name="doctor_id" value="{{ auth('doctor')->id() ?? auth('secretary')->user()->doctor_id  }}">
      <div class="mt-3 position-relative">
       <label class="label-top-input-special-takhasos"> نام بیمار:</label>
       <input type="text" name="fristname" class="form-control h-50" placeholder="نام بیمار را وارد کنید"

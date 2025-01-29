@@ -15,7 +15,7 @@ class DoctorsClinicManagementController
      */
     public function index(Request $request)
     {
-        $doctorId = Auth::guard('doctor')->id();
+        $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id;
 
         // بازیابی مطب‌ها با اطلاعات شهر و استان
         $clinics = Clinic::where('doctor_id', $doctorId)
@@ -81,7 +81,7 @@ class DoctorsClinicManagementController
 
 
         Clinic::create([
-            'doctor_id' => Auth::guard('doctor')->id(),
+            'doctor_id' => Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id,
             'name' => $request->name,
             'phone_numbers' => json_encode($request->phone_numbers),
             'address' => $request->address,

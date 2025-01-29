@@ -11,7 +11,7 @@ class SecretaryManagementController
 {
     public function index()
     {
-        $doctorId = Auth::guard('doctor')->user()->id; // شناسه دکتر لاگین‌شده
+        $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id; // شناسه دکتر لاگین‌شده
         $secretaries = Secretary::where('doctor_id', $doctorId)->get();
         return view('dr.panel.secretary.index', compact('secretaries'));
     }
@@ -44,7 +44,7 @@ class SecretaryManagementController
         ]);
 
         Secretary::create([
-            'doctor_id' => Auth::guard('doctor')->user()->id,
+            'doctor_id' => Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'mobile' => $request->mobile,
@@ -53,7 +53,7 @@ class SecretaryManagementController
             'password' => Hash::make($request->password),
         ]);
 
-        $secretaries = Secretary::where('doctor_id', Auth::guard('doctor')->user()->id)->get();
+        $secretaries = Secretary::where('doctor_id', Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id)->get();
 
         return response()->json(['message' => 'منشی با موفقیت اضافه شد', 'secretaries' => $secretaries]);
     }
@@ -102,7 +102,7 @@ class SecretaryManagementController
             'password' => $request->password ? Hash::make($request->password) : $secretary->password,
         ]);
 
-        $secretaries = Secretary::where('doctor_id', Auth::guard('doctor')->user()->id)->get();
+        $secretaries = Secretary::where('doctor_id', Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id)->get();
 
         return response()->json([
             'message' => 'منشی با موفقیت به‌روزرسانی شد',
@@ -117,7 +117,7 @@ class SecretaryManagementController
     {
         $secretary = Secretary::findOrFail($id);
         $secretary->delete();
-        $secretaries = Secretary::where('doctor_id', Auth::guard(name: 'doctor')->user()->id)->get();
+        $secretaries = Secretary::where('doctor_id', Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id)->get();
         return response()->json(['message' => 'منشی با موفقیت حذف شد', 'secretaries' => $secretaries]);
     }
 }

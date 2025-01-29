@@ -137,19 +137,19 @@
       @csrf
       <div class="form-group position-relative">
        <label class="label-top-input-special-takhasos" for="userId">موبایل</label>
-       <input type="text" name="mobile" id="userMobile" class="form-control h-50">
+       <input type="text" name="mobile" id="userMobile" class="form-control h-50 mb-3">
       </div>
       <div class="form-group position-relative">
        <label class="label-top-input-special-takhasos" for="startDate">تاریخ شروع مسدودیت</label>
-       <input type="text" id="startDate" name="blocked_at" class="form-control h-50" placeholder="1402/01/15">
+       <input type="text" id="startDate" name="blocked_at" class="form-control h-50 mb-3" placeholder="1402/01/15">
       </div>
       <div class="form-group position-relative">
        <label class="label-top-input-special-takhasos" for="endDate">تاریخ پایان مسدودیت</label>
-       <input type="text" id="endDate" name="unblocked_at" class="form-control h-50" placeholder="1402/01/20">
+       <input type="text" id="endDate" name="unblocked_at" class="form-control h-50 mb-3" placeholder="1402/01/20">
       </div>
       <div class="form-group position-relative">
        <label class="label-top-input-special-takhasos" for="reason">دلیل مسدودیت</label>
-       <textarea id="reason" name="reason" class="form-control h-50" placeholder="دلیل مسدودیت را وارد کنید"></textarea>
+       <textarea id="reason" name="reason" class="form-control h-50 mb-3" placeholder="دلیل مسدودیت را وارد کنید"></textarea>
       </div>
       <div class="mt-2 w-100">
        <button id="saveBlockedUserBtn" type="submit"
@@ -180,15 +180,15 @@
      @csrf
      <div class="form-group position-relative">
       <label class="label-top-input-special-takhasos" for="smsTitle">عنوان پیام</label>
-      <input type="text" id="smsTitle" name="title" class="form-control h-50" placeholder="عنوان پیام">
+      <input type="text" id="smsTitle" name="title" class="form-control h-50 mb-3" placeholder="عنوان پیام">
      </div>
      <div class="form-group position-relative">
       <label class="label-top-input-special-takhasos" for="smsMessage">متن پیام</label>
-      <textarea id="smsMessage" name="content" class="form-control h-50" rows="4" placeholder="متن پیام"></textarea>
+      <textarea id="smsMessage" name="content" class="form-control h-50 mb-3" rows="4" placeholder="متن پیام"></textarea>
      </div>
      <div class="form-group position-relative">
       <label class="label-top-input-special-takhasos" for="smsRecipient">گیرنده</label>
-      <select id="smsRecipient" name="recipient_type" class="form-control h-50">
+      <select id="smsRecipient" name="recipient_type" class="form-control h-50 mb-3">
        <option value="all">همه کاربران</option>
        <option value="blocked">کاربران مسدود</option>
        <option value="specific">کاربر خاص</option>
@@ -196,7 +196,7 @@
      </div>
      <div class="form-group position-relative" id="specificRecipientField" style="display: none;">
       <label class="label-top-input-special-takhasos" for="specificRecipient">شماره موبایل گیرنده</label>
-      <input type="text" id="specificRecipient" name="specific_recipient" class="form-control h-50"
+      <input type="text" id="specificRecipient" name="specific_recipient" class="form-control h-50 mb-3"
        placeholder="09123456789">
      </div>
      <div class="mt-2 w-100">

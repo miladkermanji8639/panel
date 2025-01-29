@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware\Dr;
 
 use Closure;
@@ -10,19 +9,25 @@ class CheckSecretaryPermission
 {
     public function handle(Request $request, Closure $next, $permission = null)
     {
-        $user = Auth::guard('secretary')->user();
-
-        // اگر کاربر پزشک باشد، اجازه دسترسی دارد
+        // اگر پزشک وارد شده باشد، بدون بررسی دیگر، درخواست را عبور بدهد
         if (Auth::guard('doctor')->check()) {
             return $next($request);
         }
 
-        // بررسی دسترسی‌های منشی
-        if ($user && in_array($permission, json_decode($user->permissions->permissions ?? '[]', true))) {
+        // بررسی ورود منشی
+        $user = Auth::guard('secretary')->user();
+        if (!$user) {
+            return abort(403, 'منشی احراز هویت نشده است.');
+        }
+
+        // دریافت لیست مجوزهای منشی
+        $permissionsArray = array_filter(json_decode($user->permissions->permissions ?? '[]', true));
+
+        // اگر منشی مجوز لازم را دارد، اجازه‌ی عبور داده شود
+        if ($permission && in_array($permission, $permissionsArray, true)) {
             return $next($request);
         }
 
-        // اگر دسترسی نداشت
         return abort(403, 'شما اجازه‌ی دسترسی به این بخش را ندارید.');
     }
 }

@@ -1,29 +1,50 @@
 <?php
 namespace App\Http\Controllers\Dr\Panel\Turn;
+
 use Illuminate\Http\Request;
 use App\Models\Dr\Appointment;
 use Illuminate\Support\Facades\Auth;
+use Morilog\Jalali\Jalalian;
+
 class DrScheduleController
 {
+    /**
+     * دریافت دکتر مرتبط با کاربر لاگین شده (پزشک یا منشی)
+     */
     public function getAuthenticatedDoctor()
     {
+        // بررسی پزشک لاگین شده
         $doctor = Auth::guard('doctor')->user();
+
+        // اگر پزشک لاگین نکرده بود، بررسی دکتر مرتبط با منشی
         if (!$doctor) {
-            abort(403, 'دسترسی غیرمجاز. لطفاً دوباره وارد شوید.');
+            $secretary = Auth::guard('secretary')->user();
+            if ($secretary && $secretary->doctor) {
+                $doctor = $secretary->doctor;
+            }
         }
+
+        // اگر دکتر مرتبط وجود نداشت، بازگشت مقدار null
         return $doctor;
     }
 
+    /**
+     * نمایش نوبت‌های امروز
+     */
     public function index(Request $request)
     {
+        // دریافت پزشک مرتبط
         $doctor = $this->getAuthenticatedDoctor();
 
+        // اگر دکتر یافت نشد، دسترسی غیرمجاز است
         if (!$doctor) {
-            return redirect()->route('dr.auth.login-register-form')->with('error', 'لطفاً ابتدا وارد شوید.');
+            abort(403, 'شما به این بخش دسترسی ندارید.');
         }
 
+        // دریافت تاریخ امروز
         $now = \Carbon\Carbon::now()->format('Y-m-d');
 
+        // دریافت نوبت‌ها
         $appointments = Appointment::with(['doctor', 'patient', 'insurance', 'clinic'])
             ->where('doctor_id', $doctor->id)
             ->where('appointment_date', $now)
@@ -32,39 +53,67 @@ class DrScheduleController
         return view("dr.panel.turn.schedule.appointments", compact('appointments'));
     }
 
+    /**
+     * نمایش صفحه نوبت‌های من
+     */
     public function myAppointments(Request $request)
     {
         return view("dr.panel.turn.schedule.my-appointments");
     }
+
+    /**
+     * دریافت نوبت‌ها بر اساس تاریخ انتخاب شده
+     */
     public function showByDateAppointments(Request $request)
     {
-
+        // دریافت پزشک مرتبط
         $doctor = $this->getAuthenticatedDoctor();
-        $selectedDate = $request->input('date', \Morilog\Jalali\Jalalian::now()->format('Y/m/d'));
-        // تبدیل تاریخ شمسی به میلادی برای جستجو در دیتابیس
-        $gregorianDate = \Morilog\Jalali\Jalalian::fromFormat('Y/m/d', $selectedDate)->toCarbon();
-        // فیلتر نوبت‌ها بر اساس تاریخ
+
+        // اگر دکتر یافت نشد، دسترسی غیرمجاز است
+        if (!$doctor) {
+            abort(403, 'شما به این بخش دسترسی ندارید.');
+        }
+
+        // دریافت تاریخ انتخاب شده یا پیش‌فرض به امروز
+        $selectedDate = $request->input('date', Jalalian::now()->format('Y/m/d'));
+
+        // بررسی فرمت تاریخ ورودی
+        try {
+            $gregorianDate = Jalalian::fromFormat('Y/m/d', $selectedDate)->toCarbon()->format('Y-m-d');
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'فرمت تاریخ وارد شده نامعتبر است.',
+            ], 400);
+        }
+
+        // دریافت نوبت‌ها بر اساس تاریخ انتخاب شده
         $appointments = Appointment::with(['doctor', 'patient', 'insurance', 'clinic'])
             ->where('doctor_id', $doctor->id)
             ->where('appointment_date', '=', $gregorianDate)
             ->get();
+
         return response()->json([
-            'appointments' => $appointments
+            'appointments' => $appointments,
         ]);
     }
+
     public function show(string $id)
     {
         //
     }
+
     public function edit(string $id)
     {
         //
     }
+
     public function update(Request $request, string $id)
     {
         //
     }
+
     public function destroy($id)
     {
+        //
     }
 }

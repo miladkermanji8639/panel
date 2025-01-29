@@ -21,7 +21,7 @@ class ScheduleSettingController
    */
   public function workhours()
   {
-    $doctorId = Auth::guard('doctor')->id();
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
     // بررسی کش برای اطلاعات ساعات کاری
     $cacheKey = "doctor_workhours_{$doctorId}";
     $workHoursData = Cache::remember($cacheKey, 3600, function () use ($doctorId) {
@@ -52,7 +52,8 @@ class ScheduleSettingController
       'target_days' => 'required|array|min:1',
       'override' => 'nullable', // اجازه به null یا مقدار بولی
     ]);
-    $doctor = Auth::guard('doctor')->user();
+    $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
     DB::beginTransaction();
     try {
       // بازیابی برنامه کاری روز مبدأ
@@ -164,7 +165,8 @@ class ScheduleSettingController
       'override' => 'nullable|in:0,1,true,false'
     ]);
     $override = filter_var($request->input('override', false), FILTER_VALIDATE_BOOLEAN);
-    $doctor = Auth::guard('doctor')->user();
+    $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
     DB::beginTransaction();
     try {
       $sourceSlot = AppointmentSlot::findOrFail($validated['slot_id']);
@@ -263,7 +265,8 @@ class ScheduleSettingController
     $validated = $request->validate([
       'day' => 'required|string'
     ]);
-    $doctor = Auth::guard('doctor')->user();
+    $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
     // تلاش برای بازیابی اطلاعات از کش
     $cacheKey = "doctor_{$doctor->id}_day_slots_{$validated['day']}";
     $hasSlots = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($doctor, $validated) {
@@ -286,7 +289,8 @@ class ScheduleSettingController
       'end_time' => 'required|date_format:H:i|after:start_time',
       'max_appointments' => 'required|integer|min:1'
     ]);
-    $doctor = Auth::guard('doctor')->user();
+    $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
     try {
       // بازیابی یا ایجاد رکورد WorkSchedule
       $workSchedule = DoctorWorkSchedule::firstOrCreate(
@@ -356,7 +360,8 @@ class ScheduleSettingController
       'is_working' => 'required|in:0,1,true,false'
     ]);
     try {
-      $doctor = Auth::guard('doctor')->user();
+      $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
       // تبدیل مقدار به boolean
       $isWorking = filter_var($validated['is_working'], FILTER_VALIDATE_BOOLEAN);
       // بروزرسانی یا ایجاد رکورد برای روز مورد نظر
@@ -405,7 +410,8 @@ class ScheduleSettingController
     // Convert to strict boolean
     $autoScheduling = filter_var($validated['auto_scheduling'], FILTER_VALIDATE_BOOLEAN);
     try {
-      $doctor = Auth::guard('doctor')->user();
+      $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
       $appointmentConfig = DoctorAppointmentConfig::updateOrCreate(
         ['doctor_id' => $doctor->id],
         ['auto_scheduling' => $autoScheduling]
@@ -437,7 +443,8 @@ class ScheduleSettingController
       'selected_days' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday'
     ]);
     try {
-      $doctor = Auth::guard('doctor')->user();
+      $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
       // تبدیل selected_days به آرایه
       $selectedDays = is_array($request->input('selected_days'))
         ? $request->input('selected_days')
@@ -525,7 +532,8 @@ class ScheduleSettingController
   }
   public function getAppointmentSettings(Request $request)
   {
-    $doctor = Auth::guard('doctor')->user();
+    $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
     $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctor->id)
       ->where('day', $request->day)
       ->first();
@@ -552,7 +560,8 @@ class ScheduleSettingController
     ]);
     DB::beginTransaction();
     try {
-      $doctor = Auth::guard('doctor')->user();
+      $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
       // حذف تنظیمات قبلی
       DoctorWorkSchedule::where('doctor_id', $doctor->id)->delete();
       AppointmentSlot::whereHas('workSchedule', function ($query) use ($doctor) {
@@ -612,7 +621,8 @@ class ScheduleSettingController
   public function getAllDaysSettings(Request $request)
   {
     try {
-      $doctor = Auth::guard('doctor')->user();
+      $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
       // دریافت داده‌های ارسال‌شده از درخواست
       $inputDay = $request->input('day');
       $inputStartTime = $request->input('start_time');
@@ -675,7 +685,8 @@ class ScheduleSettingController
     ]);
     Log::info($request);
     try {
-      $doctor = Auth::guard('doctor')->user();
+      $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
       // کلید کش برای ذخیره تنظیمات
       DB::beginTransaction();
       // یافتن تنظیمات برای روز مشخص
@@ -739,7 +750,8 @@ class ScheduleSettingController
    */
   public function getWorkSchedule()
   {
-    $doctor = Auth::guard('doctor')->user();
+    $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
     $appointmentConfig = DoctorAppointmentConfig::where('doctor_id', $doctor->id)->first();
     $workSchedules = DoctorWorkSchedule::with('slots')
       ->where('doctor_id', $doctor->id)
@@ -765,7 +777,7 @@ class ScheduleSettingController
   public function getAppointmentsCountPerDay(Request $request)
   {
     try {
-      $doctorId = Auth::guard('doctor')->id();
+      $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
       // استخراج تعداد نوبت‌های هر روز
       $appointments = DB::table('appointments')
         ->select(DB::raw('appointment_date, COUNT(*) as appointment_count'))
@@ -797,7 +809,7 @@ class ScheduleSettingController
     $validated = $request->validate([
       'date' => 'required|date', // تاریخ به فرمت میلادی
     ]);
-    $doctorId = Auth::guard('doctor')->id();
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
     // بازیابی یا ایجاد رکورد تعطیلات
     $holidayRecord = DoctorHoliday::firstOrCreate(
       ['doctor_id' => $doctorId],
@@ -834,7 +846,7 @@ class ScheduleSettingController
   }
   public function getHolidayDates()
   {
-    $doctorId = Auth::guard('doctor')->id();
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
     $holidayRecord = DoctorHoliday::where('doctor_id', $doctorId)->first();
     $holidays = [];
     if ($holidayRecord && !empty($holidayRecord->holiday_dates)) {
@@ -851,7 +863,7 @@ class ScheduleSettingController
     $validated = $request->validate([
       'date' => 'required|date',
     ]);
-    $doctorId = Auth::guard('doctor')->id();
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
     $holidayRecord = DoctorHoliday::where('doctor_id', $doctorId)->first();
     $holidayDates = json_decode($holidayRecord->holiday_dates ?? '[]', true);
     $isHoliday = in_array($validated['date'], $holidayDates);
@@ -881,7 +893,7 @@ class ScheduleSettingController
       'old_date' => 'required|date', // تاریخ قبلی نوبت
       'new_date' => 'required|date', // تاریخ جدید نوبت
     ]);
-    $doctorId = Auth::guard('doctor')->id();
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
     try {
       // پیدا کردن نوبت با تاریخ قبلی
       $appointment = Appointment::where('doctor_id', $doctorId)
@@ -911,7 +923,7 @@ class ScheduleSettingController
   }
   public function getNextAvailableDate()
   {
-    $doctorId = Auth::guard('doctor')->id();
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
     // تعطیلات پزشک را بازیابی کنید
     $holidays = DoctorHoliday::where('doctor_id', $doctorId)->first();
     $holidayDates = json_decode($holidays->holiday_dates ?? '[]', true);
@@ -956,7 +968,7 @@ class ScheduleSettingController
       'old_date' => 'required|date', // تاریخ جدید که باید جایگزین شود
       'new_date' => 'required|date' // تاریخ جدید که باید جایگزین شود
     ]);
-    $doctorId = Auth::guard('doctor')->id();
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
     try {
       // پیدا کردن اولین نوبت
       $firstAppointment = Appointment::where('doctor_id', $doctorId)
@@ -1005,7 +1017,7 @@ class ScheduleSettingController
       'date' => 'required|date', // تاریخ به فرمت میلادی
     ]);
     try {
-      $doctorId = Auth::guard('doctor')->id();
+      $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
       // بررسی وجود تعطیلی برای همان تاریخ
       $existingHoliday = DoctorHoliday::where('doctor_id', $doctorId)
         ->where('holiday_dates', $validated['date'])
@@ -1029,7 +1041,7 @@ class ScheduleSettingController
     $validated = $request->validate([
       'date' => 'required|date', // تاریخ به فرمت میلادی
     ]);
-    $doctorId = Auth::guard('doctor')->id();
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
     $holidayRecord = DoctorHoliday::firstOrCreate(
       ['doctor_id' => $doctorId],
       ['holiday_dates' => json_encode([])]
@@ -1056,7 +1068,7 @@ class ScheduleSettingController
   public function getHolidays(Request $request)
   {
     try {
-      $doctorId = Auth::guard('doctor')->id();
+      $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
       $holidays = DoctorHoliday::where('doctor_id', $doctorId)->get(['holiday_dates']);
       return response()->json([
         'status' => true,

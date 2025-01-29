@@ -75,14 +75,14 @@ return [
             'dr-bime'
         ],
     ],
-    'permissions' => [
+/*     'permissions' => [
         'title' => 'دسترسی‌ها',
         'icon' => 'i-checkout__request', // کلاس آیکون برای دسترسی‌ها
         'routes' => [
             'dr-secretary-permissions'
         ],
-    ],
-    'profile' => [
+    ], */
+/*     'profile' => [
         'title' => 'حساب کاربری',
         'icon' => 'i-users', // کلاس آیکون برای حساب کاربری
         'routes' => [
@@ -93,7 +93,7 @@ return [
             'dr-my-performance' => 'عملکرد و رتبه من',
             'dr-subuser' => 'کاربران زیرمجموعه',
         ],
-    ],
+    ], */
     'messages' => [
         'title' => 'پیام‌ها',
         'icon' => 'i-comments', // کلاس آیکون برای پیام‌ها

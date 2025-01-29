@@ -2,7 +2,7 @@
 @section('styles')
  <link type="text/css" href="{{ asset('dr-assets/panel/css/panel.css') }}" rel="stylesheet" />
  <link type="text/css" href="{{ asset('dr-assets/panel/css/noskhe-electronic/prescription/prescription.css') }}" rel="stylesheet" />
- <link type="text/css" href="{{ asset('dr-assets/panel/css/noskhe-electronic/providers./providers.css') }}" rel="stylesheet" />
+ <link type="text/css" href="{{ asset('dr-assets/panel/css/noskhe-electronic/providers/providers.css') }}" rel="stylesheet" />
  <link type="text/css" href="{{ asset('dr-assets/panel/css/noskhe-electronic/favorite/templates/index.css') }}" rel="stylesheet" />
  <link type="text/css" href="{{ asset('dr-assets/panel/css/noskhe-electronic/favorite/templates/create.css') }}"
   rel="stylesheet" />

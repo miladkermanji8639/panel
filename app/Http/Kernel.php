@@ -15,6 +15,7 @@ class Kernel extends HttpKernel
     \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     \App\Http\Middleware\CorsMiddleware::class,
     'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
+
   ];
 
   protected $routeMiddleware = [
@@ -42,11 +43,13 @@ class Kernel extends HttpKernel
     'doctor' => [
       'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
       'doctor' => \App\Http\Middleware\doctor::class,
+
     ],
 
     'secretary' => [
       'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
       'secretary' => \App\Http\Middleware\secretary::class,
+      
     ],
   ];
 

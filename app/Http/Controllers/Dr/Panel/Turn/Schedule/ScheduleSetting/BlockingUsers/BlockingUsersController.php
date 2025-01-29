@@ -27,7 +27,7 @@ class BlockingUsersController
 
  public function store(Request $request)
  {
-  $doctorId = Auth::guard('doctor')->user()->id;
+  $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id ;
 
   try {
    $validated = $request->validate([

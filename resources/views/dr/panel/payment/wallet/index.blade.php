@@ -97,7 +97,6 @@
  $(function() {  
     $('.card').css({   
         'width': '100%',   
-        'height': '258px'   
     });  
 });
 </script>

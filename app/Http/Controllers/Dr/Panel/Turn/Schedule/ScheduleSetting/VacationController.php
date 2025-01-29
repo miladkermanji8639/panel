@@ -13,7 +13,7 @@ class VacationController
 
  public function index(Request $request)
  {
-  $doctorId = Auth::guard('doctor')->user()->id;
+  $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id ;
 
   try {
    // استفاده از متد has برای بررسی وجود پارامترها
@@ -75,7 +75,7 @@ class VacationController
  public function edit($id)
  {
   $vacation = Vacation::where('id', $id)
-   ->where('doctor_id', Auth::guard('doctor')->user()->id)
+   ->where('doctor_id', Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id )
    ->firstOrFail();
 
   return response()->json(['success' => true, 'vacation' => $vacation]);
@@ -83,7 +83,7 @@ class VacationController
 
  public function store(Request $request)
  {
-  $doctorId = Auth::guard('doctor')->user()->id;
+  $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id ;
 
   $validatedData = $request->validate([
    'date' => 'required|date',
@@ -140,7 +140,7 @@ class VacationController
  public function update(Request $request, $id)
  {
   $vacation = Vacation::where('id', $id)
-   ->where('doctor_id', Auth::guard('doctor')->user()->id)
+   ->where('doctor_id', Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id )
    ->firstOrFail();
 
   $validatedData = $request->validate([
@@ -193,7 +193,7 @@ class VacationController
 
  public function destroy($id)
  {
-  $doctorId = Auth::guard('doctor')->user()->id;
+  $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id ;
 
   $vacation = Vacation::where('id', $id)->where('doctor_id', $doctorId)->firstOrFail();
   $vacation->delete();
