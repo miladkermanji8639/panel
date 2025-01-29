@@ -169,8 +169,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\MenuServiceProvider::class,
-        \Hekmatinasser\Verta\Laravel\VertaServiceProvider::class
-//        App\Providers\LoginConfirmationFormServiceProvider::class
+        \Hekmatinasser\Verta\Laravel\VertaServiceProvider::class,
+        App\Providers\ViewComposerServiceProvider::class,
+
+        //        App\Providers\LoginConfirmationFormServiceProvider::class
     ])->toArray(),
 
     /*

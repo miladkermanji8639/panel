@@ -7,16 +7,31 @@ class DrScheduleController
 {
     public function getAuthenticatedDoctor()
     {
-        return Auth::guard('doctor')->user()->first();
+        $doctor = Auth::guard('doctor')->user();
+        if (!$doctor) {
+            abort(403, 'دسترسی غیرمجاز. لطفاً دوباره وارد شوید.');
+        }
+        return $doctor;
     }
+
     public function index(Request $request)
     {
         $doctor = $this->getAuthenticatedDoctor();
-        $now = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
-        $now = explode(" ", $now)[0];
-        $appointments = Appointment::with(['doctor', 'patient', 'insurance', 'clinic'])->where('doctor_id', $doctor->id)->where('appointment_date', $now)->get();
+
+        if (!$doctor) {
+            return redirect()->route('dr.auth.login-register-form')->with('error', 'لطفاً ابتدا وارد شوید.');
+        }
+
+        $now = \Carbon\Carbon::now()->format('Y-m-d');
+
+        $appointments = Appointment::with(['doctor', 'patient', 'insurance', 'clinic'])
+            ->where('doctor_id', $doctor->id)
+            ->where('appointment_date', $now)
+            ->get();
+
         return view("dr.panel.turn.schedule.appointments", compact('appointments'));
     }
+
     public function myAppointments(Request $request)
     {
         return view("dr.panel.turn.schedule.my-appointments");

@@ -13,8 +13,14 @@ class SecretaryPermissionController
  public function index()
  {
   $doctor = auth()->guard('doctor')->user();
-  $secretaries = $doctor->secretaries; // دریافت لیست منشی‌ها
-  $permissions = config('permissions'); // دریافت لیست بخش‌های پنل از کانفیگ
+
+  if (!$doctor) {
+   return redirect()->route('dr.auth.login-register-form');
+  }
+
+  $secretaries = $doctor->secretaries()->with('permissions')->get(); // دریافت منشی‌ها همراه با دسترسی‌ها
+  $permissions = config('permissions'); // لیست دسترسی‌های قابل انتخاب
+
   return view('dr.panel.secretary_permissions.index', compact('secretaries', 'permissions'));
  }
 
@@ -22,16 +28,25 @@ class SecretaryPermissionController
  {
   $doctor = auth()->guard('doctor')->user();
 
+  if (!$doctor) {
+   return response()->json([
+    'success' => false,
+    'message' => 'شما اجازه‌ی این عملیات را ندارید.'
+   ], 403);
+  }
+
   $request->validate([
-   'permissions' => 'array', // مقدار باید یک آرایه باشد
+   'permissions' => 'array'
   ]);
 
-  // ذخیره اطلاعات
   SecretaryPermission::updateOrCreate(
    ['doctor_id' => $doctor->id, 'secretary_id' => $secretaryId],
-   ['permissions' => $request->permissions]
+   ['permissions' => json_encode($request->permissions)]
   );
 
-  return response()->json(['success' => true, 'message' => 'دسترسی‌ها با موفقیت ذخیره شد.']);
+  return response()->json([
+   'success' => true,
+   'message' => 'دسترسی‌های منشی با موفقیت ذخیره شد.'
+  ]);
  }
 }

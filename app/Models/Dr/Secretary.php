@@ -2,8 +2,9 @@
 
 namespace App\Models\Dr;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Dr\SecretaryPermission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Secretary extends Authenticatable
 {
@@ -35,5 +36,9 @@ class Secretary extends Authenticatable
     public function doctor()
     {
         return $this->belongsTo(Doctor::class);
+    }
+    public function permissions()
+    {
+        return $this->hasOne(SecretaryPermission::class, 'secretary_id', 'id');
     }
 }

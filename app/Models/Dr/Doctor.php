@@ -2,6 +2,7 @@
 namespace App\Models\Dr;
 
 use App\Models\User;
+use App\Models\Dr\Secretary;
 use App\Models\Dr\Specialty;
 use App\Models\Dr\DrSpecialty;
 use App\Models\Dr\SubSpecialty;
@@ -153,7 +154,10 @@ class Doctor extends Authenticatable
                 return $messenger->phone_number || $messenger->username;
             });
     }
-
+    public function secretaries()
+    {
+        return $this->hasMany(Secretary::class, 'doctor_id');
+    }
     public function getIncompleteProfileSections(): array
     {
         $incompleteSections = [];
