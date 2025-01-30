@@ -17,19 +17,20 @@
   <div class="subuser-content-wrapper">
 
     <!-- تاریخچه ورود منشی -->
-    <div class="card">
-      <div class="card-header">📜 تاریخچه ورود منشی</div>
-      <div class="card-body" id="secretaryLogsContainer">
-        @include('dr.panel.profile.partials.secretary_logs')
-      </div>
+  <div class="card">
+    <div class="card-header">📜 تاریخچه ورود منشی</div>
+    <div class="card-body" id="secretaryLogsContainer">
+      @include('dr.panel.profile.partials.secretary_logs')
     </div>
-    
-    <div class="card">
-      <div class="card-header">📜 تاریخچه ورود دکتر</div>
-      <div class="card-body" id="doctorLogsContainer">
-        @include('dr.panel.profile.partials.doctor_logs')
-      </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-header">📜 تاریخچه ورود دکتر</div>
+    <div class="card-body" id="doctorLogsContainer">
+      @include('dr.panel.profile.partials.doctor_logs')
     </div>
+  </div>
+
 
   </div>
 </div>
@@ -75,7 +76,7 @@
       }).then((result) => {
         if (result.isConfirmed) {
           $.ajax({
-            url: "{{ route('delete-log',':id') }}".replace(':id',logId),
+            url: "{{ route('delete-log', ':id') }}".replace(':id',logId),
             type: 'DELETE',
             headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -88,6 +89,45 @@
           });
         }
       });
+    });
+  });
+  
+</script>
+<script>
+  $(document).ready(function () {
+    function loadDoctorLogs(page) {
+      $.ajax({
+        url: "{{ route('dr-get-doctor-logs') }}?page=" + page,
+        type: 'GET',
+        success: function (response) {
+          $('#doctorLogsContainer').html(response.doctorLogsHtml); // تغییر نام متغیر به `doctorLogsHtml`
+        }
+      });
+    }
+
+    function loadSecretaryLogs(page) {
+      $.ajax({
+        url: "{{ route('dr-get-secretary-logs') }}?page=" + page,
+        type: 'GET',
+        success: function (response) {
+          $('#secretaryLogsContainer').html(response.secretaryLogsHtml); // تغییر نام متغیر به `secretaryLogsHtml`
+        }
+      });
+    }
+
+    // پیجینیشن دکتر
+    $(document).on('click', '#doctorLogsContainer .pagination-links a', function (e) {
+      e.preventDefault();
+      let page = $(this).attr('href').split('page=')[1];
+      loadDoctorLogs(page);
+    });
+
+    // پیجینیشن منشی
+    $(document).on('click', '#secretaryLogsContainer .pagination-links a', function (e) {
+      e.preventDefault();
+      let page = $(this).attr('href').split('page=')[1];
+      loadSecretaryLogs(page);
+
     });
   });
 </script>

@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\Dr\Panel\Profile\SubUserController;
 use Mockery\Container;
 use Illuminate\Support\Facades\Route;
 use App\Models\Dr\SecretaryPermission;
@@ -594,10 +595,16 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
             Route::post('dr-two-factor-update', [DrProfileController::class, 'updateTwoFactorAuth'])->middleware('secretary.permission:profile')->name('dr-two-factor-update');
             Route::get('niceId', [DrProfileController::class, 'niceId'])->middleware('secretary.permission:profile')->name('dr-edit-profile-niceId');
             Route::get('security', [LoginLogsController::class, 'security'])->middleware('secretary.permission:profile')->name('dr-edit-profile-security');
+            Route::get('/dr/panel/profile/security/doctor-logs', [LoginLogsController::class, 'getDoctorLogs'])->name('dr-get-doctor-logs');
+            Route::get('/dr/panel/profile/security/secretary-logs', [LoginLogsController::class, 'getSecretaryLogs'])->name('dr-get-secretary-logs');
             Route::delete('/dr/panel/profile/security/logs/{id}', [LoginLogsController::class, 'deleteLog'])->middleware('secretary.permission:profile')->name('delete-log');
 
             Route::get('upgrade', [DrProfileController::class, 'upgrade'])->middleware('secretary.permission:profile')->name('dr-edit-profile-upgrade');
-            Route::get('subuser', [DrProfileController::class, 'subuser'])->middleware('secretary.permission:profile')->name('dr-subuser');
+            Route::get('subuser', [SubUserController::class, 'index'])->middleware('secretary.permission:profile')->name('dr-subuser');
+            Route::post('sub-users/store', [SubUserController::class, 'store'])->name('dr-sub-users-store');
+            Route::get('sub-users/edit/{id}', [SubUserController::class, 'edit'])->name('dr-sub-users-edit');
+            Route::post('sub-users/update/{id}', [SubUserController::class, 'update'])->name('dr-sub-users-update');
+            Route::delete('sub-users/delete/{id}', [SubUserController::class, 'destroy'])->name('dr-sub-users-delete');
         });
     });
 });

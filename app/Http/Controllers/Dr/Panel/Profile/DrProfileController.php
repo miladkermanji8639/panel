@@ -40,10 +40,7 @@ class DrProfileController
     public function index()
     {
     }
-    public function subuser()
-    {
-        return view('dr.panel.profile.subuser');
-    }
+  
     /**
      * Show the form for creating a new resource.
      */
