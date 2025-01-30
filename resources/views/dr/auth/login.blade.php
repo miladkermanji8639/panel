@@ -5,6 +5,8 @@
  <meta name="csrf-token" content="{{ csrf_token() }}">
  <link rel="stylesheet" href="{{ asset('dr-asset/login/toast/toastify.css') }}">
  <script src="{{ asset('dr-asset/login/toast/toastify.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('dr-assets/panel/css/toastr/toastr.min.css') }}">
+
 @endsection
 @section('site-header')
  <title>پنل دکتر به نوبه</title>
@@ -202,6 +204,8 @@ $step = $step ?? 1;
 @section('scripts')
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
  <script src="{{ asset('dr-assets/js/login.js') }}"></script>
+<script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
+
  @php
 // محاسبه زمان باقی‌مانده برای تایمر
 $remainingTime = 0;
@@ -246,18 +250,6 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
  <script>
   /* set timer */
   /* set timer */
-  function showToast(message, type) {
-   Toastify({
-    text: message,
-    duration: 5000,
-    close: true,
-    gravity: "top",
-    position: 'right',
-    style: {
-     background: type === 'success' ? 'green' : 'red'
-    }
-   }).showToast();
-  }
   $(document).ready(function() {
    // Check if we have a token for the AJAX request
    const token = "{{ $token ?? '' }}"; // Use an empty string as a fallback
@@ -323,7 +315,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
     e.preventDefault();
 
     if (!token) {
-     showToast('توکن نامعتبر است', 'error');
+      toastr.success('توکن نامعتبر است');
      return;
     }
     $.ajax({
@@ -342,7 +334,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       $('#timer').removeClass('d-none');
 
       // نمایش پیام موفقیت
-      showToast("کد تأیید جدید با موفقیت ارسال شد", 'success');
+       toastr.success("کد تأیید جدید با موفقیت ارسال شد");
      },
      error: function(xhr) {
 
@@ -351,7 +343,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
        showRateLimitAlert(remainingTime);
       } else if (xhr.status === 422) {
        const errorMessage = xhr.responseJSON?.message || 'خطا در ارسال مجدد کد';
-       showToast(errorMessage, 'error');
+        toastr.success(errorMessage);
       }
      }
     });
@@ -398,7 +390,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
      method: 'POST',
      data: form.serialize(),
      success: function(response) {
-      showToast("کد تایید با موفقیت ارسال شد", 'success');
+       toastr.success("کد تایید با موفقیت ارسال شد");
       window.location.href = "{{ route('dr.auth.login-confirm-form', ['token' => ':token']) }}".replace(
        ':token', response.token);
      },
@@ -483,7 +475,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       if (response.otp_code) {
          onOtpReceived(response.otp_code); // نمایش نوتیفیکیشن و پر کردن خودکار
        }
-      showToast(" با موفقیت وارد شدید ", 'success');
+       toastr.success(" با موفقیت وارد شدید ");
       window.location.href = response.redirect;
      },
      error: function(xhr) {
@@ -513,7 +505,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
      method: 'POST',
      data: form.serialize(),
      success: function(response) {
-      showToast("موفقیت آمیز", 'success');
+       toastr.success("موفقیت آمیز");
       window.location.href = response.redirect; // انتقال به استپ 4
      },
      error: function(xhr) {
@@ -544,7 +536,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
      method: 'POST',
      data: form.serialize(),
      success: function(response) {
-      showToast("  با موفقیت وارد شدید", 'success');
+       toastr.success("  با موفقیت وارد شدید");
       window.location.href = response.redirect;
      },
      error: function(xhr) {

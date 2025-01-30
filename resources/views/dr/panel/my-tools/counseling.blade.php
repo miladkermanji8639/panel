@@ -27,15 +27,7 @@
 
   // بررسی اینکه زمان پایان از زمان شروع بزرگتر باشد
   if (startMinutes >= endMinutes) {
-   Toastify({
-    text: 'زمان پایان باید بزرگتر از زمان شروع باشد',
-    duration: 3000,
-    gravity: "top",
-    position: 'right',
-    style: {
-     background: "red"
-    }
-   }).showToast();
+    toastr.error('زمان پایان باید بزرگتر از زمان شروع باشد');
    return false;
   }
 
@@ -58,15 +50,7 @@
   });
 
   if (hasConflict) {
-   Toastify({
-    text: 'این بازه زمانی با برنامه کاری‌های موجود تداخل دارد',
-    duration: 3000,
-    gravity: "top",
-    position: 'right',
-    style: {
-     background: "red"
-    }
-   }).showToast();
+    toastr.error('این بازه زمانی با برنامه کاری‌های موجود تداخل دارد');
    return false;
   }
 
@@ -139,15 +123,7 @@
   });
 
   if (targetDays.length === 0) {
-   Toastify({
-    text: 'لطفاً حداقل یک روز را انتخاب کنید',
-    duration: 3000,
-    gravity: 'top',
-    position: 'right',
-    style: {
-     background: 'red'
-    }
-   }).showToast();
+    toastr.error('لطفاً حداقل یک روز را انتخاب کنید');
    return;
   }
 
@@ -163,15 +139,7 @@
    },
    success: function (response) {
     hideLoading();
-    Toastify({
-     text: 'ساعات کاری با موفقیت کپی شد',
-     duration: 3000,
-     gravity: 'top',
-     position: 'right',
-     style: {
-      background: 'green'
-     }
-    }).showToast();
+    toastr.success('ساعات کاری با موفقیت کپی شد');
     $("#checkboxModal").modal("hide"); // بستن مدال
     $("#checkboxModal").removeClass("show");
     $(".modal-backdrop").remove();
@@ -236,15 +204,7 @@
           $(`.work-hours-${day}`).removeClass('d-none');
           reloadDayData(day); // بازسازی داده‌های روز مقصد
          });
-         Toastify({
-          text: response.message,
-          duration: 3000,
-          gravity: 'top',
-          position: 'right',
-          style: {
-           background: 'green'
-          }
-         }).showToast();
+    toastr.success(response.message);
          $("#checkboxModal").modal("hide"); // بستن مدال
          $("#checkboxModal").removeClass("show");
          $(".modal-backdrop").remove();
@@ -256,15 +216,7 @@
 
         },
         error: function (xhr) {
-         Toastify({
-          text: xhr.responseJSON?.message || 'خطا در کپی ساعات کاری',
-          duration: 3000,
-          gravity: 'top',
-          position: 'right',
-          style: {
-           background: 'red'
-          }
-         }).showToast();
+    toastr.error(xhr.responseJSON?.message || 'خطا در کپی ساعات کاری');
         }
        });
 
@@ -272,27 +224,11 @@
 
 
       } else {
-       Toastify({
-        text: 'عملیات جایگزینی لغو شد',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        style: {
-         background: 'orange'
-        }
-       }).showToast();
+    toastr.warning('عملیات جایگزینی لغو شد');
       }
      });
     } else {
-     Toastify({
-      text: xhr.responseJSON?.message || 'خطا در کپی ساعات کاری',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      style: {
-       background: 'red'
-      }
-     }).showToast();
+    toastr.error(xhr.responseJSON?.message || 'خطا در کپی ساعات کاری');
     }
    }
   });
@@ -501,15 +437,7 @@
   });
 
   if (targetDays.length === 0) {
-   Toastify({
-    text: 'لطفاً حداقل یک روز را انتخاب کنید',
-    duration: 3000,
-    gravity: 'top',
-    position: 'right',
-    style: {
-     background: 'red'
-    }
-   }).showToast();
+    toastr.error('لطفاً حداقل یک روز را انتخاب کنید');
    $button.data('submitting', false); // بازنشانی فلگ
    return;
   }
@@ -537,16 +465,7 @@
      }
      $(`.work-hours-${day}`).removeClass('d-none');
     });
-    Toastify({
-     text: 'برنامه با موفقیت کپی شد',
-     duration: 3000,
-     gravity: 'top',
-     position: 'right',
-     style: {
-      background: 'green'
-     }
-    }).showToast();
-    
+    toastr.success('برنامه با موفقیت کپی شد');    
     $("#checkboxModal").modal("hide"); // بستن مدال
     $("#checkboxModal").removeClass("show");
     $(".modal-backdrop").remove();
@@ -609,55 +528,22 @@
           $(`.work-hours-${day}`).removeClass('d-none');
           reloadDayData(day);
          });
-
-         Toastify({
-          text: 'برنامه کاری با موفقیت جایگزین شد.',
-          duration: 3000,
-          gravity: 'top',
-          position: 'right',
-          style: {
-           background: 'green'
-          },
-         }).showToast();
+    toastr.success('برنامه کاری با موفقیت جایگزین شد.');    
          $("#checkboxModal").modal("hide"); // بستن مدال
          $("#checkboxModal").removeClass("show");
          $(".modal-backdrop").remove();
 
         },
         error: function (xhr) {
-         Toastify({
-          text: xhr.responseJSON?.message || 'خطا در جایگزینی برنامه کاری',
-          duration: 3000,
-          gravity: 'top',
-          position: 'right',
-          style: {
-           background: 'red'
-          },
-         }).showToast();
+    toastr.error(xhr.responseJSON?.message || 'خطا در جایگزینی برنامه کاری');    
         },
        });
       } else {
-       Toastify({
-        text: 'عملیات لغو شد.',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        style: {
-         background: 'orange'
-        },
-       }).showToast();
+    toastr.warning('عملیات لغو شد.');    
       }
      });
     } else {
-     Toastify({
-      text: xhr.responseJSON?.message || 'خطا در عملیات',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      style: {
-       background: 'red'
-      },
-     }).showToast();
+    toastr.error(xhr.responseJSON?.message || 'خطا در عملیات');    
     }
    }
   });
@@ -1062,28 +948,11 @@
             `;
     $container.append(newRow);
     initializeTimepicker();
-    Toastify({
-     text: 'موفقیت آمیز',
-     duration: 3000,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "green"
-     }
-    }).showToast();
+    toastr.success('موفقیت آمیز');    
    },
    error: function (xhr) {
 
-
-    Toastify({
-     text: xhr.responseJSON.message,
-     duration: 3000,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+     toastr.error(xhr.responseJSON.message);    
    }
   });
  });
@@ -1243,26 +1112,10 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
      },
      success: function (response) {
       $(`[data-slot-id="${slotId}"]`).remove();
-      Toastify({
-       text: 'حذف موفقیت آمیز',
-       duration: 3000,
-       gravity: "top",
-       position: 'right',
-       style: {
-        background: "green"
-       }
-      }).showToast();
+     toastr.success('حذف موفقیت آمیز');    
      },
      error: function (xhr) {
-      Toastify({
-       text: 'خطا در حذف ',
-       duration: 3000,
-       gravity: "top",
-       position: 'right',
-       style: {
-        background: "red"
-       }
-      }).showToast();
+     toastr.error('خطا در حذف ');    
      }
     });
    }
@@ -1321,16 +1174,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
      buttonText.style.display = 'block';
      loader.style.display = 'none';
      // نمایش پیام موفقیت
-     Toastify({
-      text: ' تنظیمات با موفقیت ذخیره شد',
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "green"
-      }
-     }).showToast();
+     toastr.success(' تنظیمات با موفقیت ذخیره شد');    
     
      if (response.data) {
       $('input[name="call_15min_1"]').val(response.data.price_15min);
@@ -1353,28 +1197,10 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
        errorMessage += messages.join('\n') + '\n';
       });
       // نمایش خطا با SweetAlert
-      Toastify({
-       text: xhr.responseJSON.message || 'خطا در برقراری ارتباط با سرور',
-       duration: 3000,
-       title: 'خطا',
-       close: true,
-       gravity: "top",
-       position: 'right',
-       style: {
-        background: "red"
-       }
-      }).showToast();
+     toastr.error(xhr.responseJSON.message || 'خطا در برقراری ارتباط با سرور');    
      } else {
-      Toastify({
-       text: 'خطا در برقراری ارتباط با سرور',
-       duration: 3000,
-       close: true,
-       gravity: "top",
-       position: 'right',
-       style: {
-        background: "red"
-       }
-      }).showToast();
+     toastr.error('خطا در برقراری ارتباط با سرور');    
+
      }
     }
    });
@@ -1427,26 +1253,11 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
       // نمایش بخش مربوط به روز
       if (isWorking) {
        $(`.work-hours-${day}`).removeClass('d-none');
-       Toastify({
-        text: `روز ${getPersianDayName(day)} فعال شد`,
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        style: {
-         background: "green"
-        }
-       }).showToast();
+     toastr.success(`روز ${getPersianDayName(day)} فعال شد`);    
+
       } else {
        $(`.work-hours-${day}`).addClass('d-none');
-       Toastify({
-        text: `روز ${getPersianDayName(day)} غیرفعال شد`,
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        style: {
-         background: "red"
-        }
-       }).showToast();
+     toastr.error(`روز ${getPersianDayName(day)} غیرفعال شد`);    
       }
      },
      error: function (xhr) {
@@ -1459,15 +1270,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
       } else if (xhr.responseJSON && xhr.responseJSON.message) {
        errorMessage = xhr.responseJSON.message;
       }
-      Toastify({
-       text: errorMessage,
-       duration: 3000,
-       gravity: "top",
-       position: 'right',
-       style: {
-        background: "red"
-       }
-      }).showToast();
+     toastr.error(errorMessage);    
      }
     });
    });
@@ -1503,17 +1306,11 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
      _token: '{{ csrf_token() }}'
     },
     success: function (response) {
-     
-     Toastify({
-      text: isAutoSchedulingEnabled ?
-       'مشاوره انلاین  فعال شد' : 'مشاوره آنلاین  غیرفعال شد',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      style: {
-       background: isAutoSchedulingEnabled ? 'green' : 'red'
+   if (isAutoSchedulingEnabled) {
+        toastr.success('مشاوره  فعال شد', 'موفقیت');
+      } else {
+        toastr.error(' مشاوره غیرفعال شد', 'خطا');
       }
-     }).showToast();
     },
     error: function (xhr, status, error) {
 
@@ -1521,16 +1318,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
 
      // Revert checkbox state
      $('#appointment-toggle').prop('checked', !isAutoSchedulingEnabled);
-
-     Toastify({
-      text: xhr.responseJSON?.message || 'خطا در به‌روزرسانی تنظیمات',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      style: {
-       background: 'red'
-      }
-     }).showToast();
+      toastr.error(xhr.responseJSON?.message || 'خطا در به‌روزرسانی تنظیمات');
     }
    });
   });
@@ -1636,12 +1424,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
     }
    },
    error: function () {
-    Toastify({
-     text: 'خطا در بارگذاری تنظیمات',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+      toastr.error('خطا در بارگذاری تنظیمات');
    }
   });
  });
@@ -1904,15 +1687,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
     }
    },
    error: function () {
-    Toastify({
-     text: 'خطا در دریافت تنظیمات',
-     duration: 3000,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+      toastr.error('خطا در بارگذاری تنظیمات');
    }
   });
  }
@@ -2015,15 +1790,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
    const existingSetting = $(`.setting-item[data-day="${dayEn}"]`);
 
    if (existingSetting.length > 0) {
-    Toastify({
-     text: `شما از قبل برای ${selected_day_choice_fa} تنظیمات دارید. لطفاً ابتدا تنظیمات قبلی را حذف کنید.`,
-     duration: 3000,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+      toastr.error(`شما از قبل برای ${selected_day_choice_fa} تنظیمات دارید. لطفاً ابتدا تنظیمات قبلی را حذف کنید.`);
     return;
    }
 
@@ -2039,15 +1806,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
    });
 
    if (!dayEn) {
-    Toastify({
-     text: 'لطفاً حداقل یک روز را انتخاب کنید',
-     duration: 3000,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+     toastr.error('لطفاً حداقل یک روز را انتخاب کنید');
 
     $loader.hide();
     $buttonText.show();
@@ -2066,15 +1825,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
      _token: '{{ csrf_token() }}'
     },
     success: function (response) {
-     Toastify({
-      text: 'تنظیمات با موفقیت ذخیره شد',
-      duration: 3000,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "green"
-      }
-     }).showToast();
+      toastr.success('تنظیمات با موفقیت ذخیره شد')
      $('.settings-list').remove();
 
      // به‌روزرسانی UI برای نمایش تنظیمات جدید
@@ -2084,15 +1835,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
      $buttonText.show();
     },
     error: function (xhr) {
-     Toastify({
-      text: xhr.responseJSON.message || 'خطا در ذخیره‌سازی',
-      duration: 3000,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "red"
-      }
-     }).showToast();
+      toastr.error(xhr.responseJSON.message || 'خطا در ذخیره‌سازی')
 
      $loader.hide();
      $buttonText.show();
@@ -2161,27 +1904,10 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
          .removeClass('btn-secondary')
          .addClass('btn-primary');
        }
-
-       Toastify({
-        text: 'تنظیمات با موفقیت حذف شد',
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        style: {
-         background: "green"
-        }
-       }).showToast();
+        toastr.success('تنظیمات با موفقیت حذف شد')
       },
       error: function (xhr) {
-       Toastify({
-        text: 'خطا در حذف تنظیمات',
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        style: {
-         background: "red"
-        }
-       }).showToast();
+        toastr.error('خطا در حذف تنظیمات')
       }
      });
     }

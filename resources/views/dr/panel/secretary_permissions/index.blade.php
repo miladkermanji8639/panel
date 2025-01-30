@@ -5,7 +5,6 @@
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/turn/schedule/scheduleSetting/scheduleSetting.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/profile/edit-profile.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/secretary_options/secretary_option.css') }}">
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr/build/toastr.min.css">
 @endsection
 
 @section('site-header', 'به نوبه | پنل دکتر')
@@ -31,8 +30,8 @@
       <tbody>
        @foreach ($secretaries as $secretary)
    @php
-   $savedPermissions = json_decode($secretary->permissions->permissions ?? '[]', true);
-   $savedPermissions = is_array($savedPermissions) ? $savedPermissions : []; // اطمینان از آرایه بودن
+  $savedPermissions = json_decode($secretary->permissions->permissions ?? '[]', true);
+  $savedPermissions = is_array($savedPermissions) ? $savedPermissions : []; // اطمینان از آرایه بودن
    @endphp
    <tr>
     <td>{{ $secretary->first_name }} {{ $secretary->last_name }}</td>
@@ -76,7 +75,6 @@
 <script src="{{ asset('dr-assets/panel/jalali-datepicker/run-jalali.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/dr-panel.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/turn/scehedule/sheduleSetting/workhours/workhours.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/toastr/build/toastr.min.js"></script>
 
 <script>
  $(document).ready(function() {

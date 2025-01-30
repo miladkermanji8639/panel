@@ -20,3 +20,4 @@
 <script src="{{ asset('dr-asset/panel/js/tom-select.complete.min.js') }}"></script>
 {{-- tom select --}}
 <script src="{{ asset('dr-assets/panel/js/moment/jalali-moment.browser.js') }}"></script>
+<script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>

@@ -9,3 +9,4 @@
 
 <script src="{{ asset("dr-assets/js/main.js") }}"></script>
 
+<script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
