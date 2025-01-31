@@ -4,16 +4,15 @@
 <head>
  @include('dr.panel.layouts.partials.head-tags')
  @yield('styles')
-<title>
+ <title>
   @if (Auth::guard('doctor')->check())
-    پنل دکتر | به نوبه
+   پنل دکتر | به نوبه
   @elseif (Auth::guard('secretary')->check())
-    پنل منشی | به نوبه
+   پنل منشی | به نوبه
   @else
-    به نوبه
+   به نوبه
   @endif
-</title>
-
+ </title>
  @include('dr.panel.my-tools.loader-btn')
 </head>
 
@@ -21,8 +20,6 @@
  @include('dr.panel.layouts.partials.sidebar')
  <div class="content">
   @include('dr.panel.layouts.partials.header')
- @include('dr.panel.my-tools.loader-btn')
-
   <div class="top-dr-panel d-flex justify-content-between w-100 align-items-start">
    <div class="p-3 bg-white">
     <nav aria-label="breadcrumb">
@@ -53,7 +50,7 @@
         class="dropdown-trigger btn  h-40 w-300 bg-light-blue text-left d-flex justify-content-between align-items-center"
         aria-haspopup="true" aria-expanded="false">
         <div>
-         <span class="dropdown-label ">ویزیت آنلاین به نوبه</span>
+         <span class="dropdown-label">ویزیت آنلاین به نوبه</span>
         </div>
         <div>
          <svg width="7" height="11" viewBox="0 0 7 11" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +64,7 @@
        <div class="my-dropdown-menu d-none">
         <div class="" aria-hidden="true">
          <div class="" aria-hidden="true">
-          <div class="d-flex align-items-center p-3 option-card card-active">
+          <div class="d-flex align-items-center p-3 option-card card-active" data-id="default">
            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
              d="M17.62 10.7501C17.19 10.7501 16.85 10.4001 16.85 9.9801C16.85 9.6101 16.48 8.8401 15.86 8.1701C15.25 7.5201 14.58 7.1401 14.02 7.1401C13.59 7.1401 13.25 6.7901 13.25 6.3701C13.25 5.9501 13.6 5.6001 14.02 5.6001C15.02 5.6001 16.07 6.1401 16.99 7.1101C17.85 8.0201 18.4 9.1501 18.4 9.9701C18.4 10.4001 18.05 10.7501 17.62 10.7501Z"
@@ -89,29 +86,39 @@
            </div>
           </div>
          </div>
-        @foreach ($clinics as $clinic) 
-         <div class="d-flex justify-content-between align-items-center option-card" aria-hidden="true" data-id="{{ $clinic->id }}">
-        <div class="d-flex align-items-center p-3 ">
-         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-         d="M20.83 8.01002L14.28 2.77002C13 1.75002 11 1.74002 9.73002 2.76002L3.18002 8.01002C2.24002 8.76002 1.67002 10.26 1.87002 11.44L3.13002 18.98C3.42002 20.67 4.99002 22 6.70002 22H17.3C18.99 22 20.59 20.64 20.88 18.97L22.14 11.43C22.32 10.26 21.75 8.76002 20.83 8.01002ZM12.75 18C12.75 18.41 12.41 18.75 12 18.75C11.59 18.75 11.25 18.41 11.25 18V15C11.25 14.59 11.59 14.25 12 14.25C12.41 14.25 12.75 14.59 12.75 15V18Z"
-         fill="#3F3F79"></path>
-         </svg>
-         <div class="d-flex flex-column mx-3">
-        <span class="font-weight-bold d-block fs-15"> {{ $clinic->name }}</span>
-        <span class="font-weight-bold d-block fs-13">{{ $clinic->province->name }} ، {{ $clinic->address }}</span>
-         </div>
+         @foreach ($clinics as $clinic)
+        <div
+         class="d-flex justify-content-between align-items-center option-card {{ !$clinic->is_active ? 'inactive-clinic' : '' }}"
+         aria-hidden="true" data-id="{{ $clinic->id }}" data-active="{{ $clinic->is_active ? '1' : '0' }}">
+
+         <div class="d-flex align-items-center p-3 position-relative">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path
+          d="M20.83 8.01002L14.28 2.77002C13 1.75002 11 1.74002 9.73002 2.76002L3.18002 8.01002C2.24002 8.76002 1.67002 10.26 1.87002 11.44L3.13002 18.98C3.42002 20.67 4.99002 22 6.70002 22H17.3C18.99 22 20.59 20.64 20.88 18.97L22.14 11.43C22.32 10.26 21.75 8.76002 20.83 8.01002Z"
+          fill="#3F3F79"></path>
+        </svg>
+
+        <div class="d-flex flex-column mx-3">
+         <span class="font-weight-bold d-block fs-15"> {{ $clinic->name }}</span>
+         <span class="font-weight-bold d-block fs-13">{{ $clinic->province->name }} ، {{ $clinic->address }}</span>
         </div>
-        <div class="mx-2">
-       @if (!$clinic->is_active) 
-          <button class="btn btn-primary fs-13 btn-sm h-35" tabindex="0" type="button"
-         onclick="window.location.href='{{ route('activation-doctor-clinic',$clinic ) }}'">فعال
-         سازی<span class="MuiTouchRipple-root muirtl-w0pj6f"></span>
-          </button>
-       @endif
-        </div>
+
+        @if (!$clinic->is_active)
+         <div class="inactive-dot"></div> <!-- نقطه قرمز برای کلینیک‌های غیرفعال -->
+        @endif
          </div>
-    @endforeach
+
+         <div class="mx-2">
+        @if (!$clinic->is_active)
+         <button class="btn btn-primary fs-13 btn-sm h-35" tabindex="0" type="button"
+          onclick="window.location.href='{{ route('activation-doctor-clinic', $clinic) }}'">فعال‌سازی
+         </button>
+        @endif
+         </div>
+
+        </div>
+     @endforeach
+
         </div>
        </div>
       </div>
@@ -120,7 +127,6 @@
    </div>
   </div>
   @yield('content')
-  {{-- @include("dr.panel.layouts.partials.preloader") --}}
 </body>
 @include('dr.panel.layouts.partials.scripts')
 @yield('scripts')

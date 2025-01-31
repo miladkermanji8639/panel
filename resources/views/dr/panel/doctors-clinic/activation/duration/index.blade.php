@@ -65,12 +65,7 @@
         </span>
        </div>
        <div class="" tabindex="0" role="button">
-        <span class="badge-time-styles active-hours">60 دقیقه<svg width="16" height="16" viewBox="0 0 16 16"
-          fill="#7c82fc">
-          <path fill-rule="evenodd" clip-rule="evenodd"
-           d="M13.8405 3.44714C14.1458 3.72703 14.1664 4.20146 13.8865 4.5068L6.55319 12.5068C6.41496 12.6576 6.22113 12.7454 6.01662 12.7498C5.8121 12.7543 5.61464 12.675 5.47 12.5303L2.13666 9.197C1.84377 8.90411 1.84377 8.42923 2.13666 8.13634C2.42956 7.84345 2.90443 7.84345 3.19732 8.13634L5.97677 10.9158L12.7808 3.49321C13.0607 3.18787 13.5351 3.16724 13.8405 3.44714Z">
-          </path>
-         </svg></span>
+        <span class="badge-time-styles">60 دقیقه</span>
         <span class="">
         </span>
        </div>
@@ -114,81 +109,76 @@
  <script src="{{ asset('dr-assets/panel/js/turn/scehedule/sheduleSetting/workhours/workhours.js') }}"></script>
  <script src="{{ asset('dr-asset/panel/js/toastify/toastify.min.js') }}"></script>
 <script>
- // انتخاب بج‌ها (Badge Selection)
- document.querySelectorAll('.badge-time-styles').forEach(element => {
-  element.addEventListener('click', () => {
-   // پاک کردن حالت انتخاب قبلی
-   // افزودن کلاس انتخاب به المان کلیک شده
-   // تنظیم مقدار مدت زمان در فیلد مخفی
-   const duration = element.textContent.trim().replace(' دقیقه', '');
-   document.getElementById('appointment_duration').value = duration;
-  });
- });
+  document.addEventListener("DOMContentLoaded", function () {
+      const badgeElements = document.querySelectorAll('.badge-time-styles');
+      const appointmentInput = document.getElementById('appointment_duration');
+      const saveButton = document.getElementById('saveButton');
 
- // ذخیره اطلاعات فرم
- document.getElementById('workingHoursForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
+      // ✅ انتخاب و حذف انتخاب زمان
+      badgeElements.forEach(element => {
+        element.addEventListener('click', function () {
+          const selectedDuration = this.textContent.trim().replace(' دقیقه', '');
 
-  const form = e.target;
-  const formData = new FormData(form);
+          // بررسی اینکه این گزینه قبلاً انتخاب شده یا نه
+          if (appointmentInput.value === selectedDuration) {
+            appointmentInput.value = ""; // حذف انتخاب
+            this.classList.remove('selected'); // استایل غیرفعال کردن
+          } else {
+            appointmentInput.value = selectedDuration;
 
-  // تغییر دکمه به حالت لودینگ
-  const saveButton = document.getElementById('saveButton');
-  saveButton.disabled = true;
-  saveButton.innerHTML = `
+            // حذف کلاس انتخاب از بقیه گزینه‌ها
+            badgeElements.forEach(el => el.classList.remove('selected'));
+            this.classList.add('selected');
+          }
+        });
+      });
+
+      // ✅ ثبت فرم و بررسی خطا در انتخاب نوبت
+      document.getElementById('workingHoursForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!appointmentInput.value) {
+          toastr.error("لطفاً یک مدت زمان برای نوبت انتخاب کنید.");
+          return;
+        }
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        saveButton.disabled = true;
+        saveButton.innerHTML = `
       <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
       در حال ثبت...
     `;
 
-  try {
-   const response = await fetch("{{ route('duration.store') }}", {
-    method: "POST",
-    headers: {
-     "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,
-    },
-    body: formData,
-   });
+        try {
+          const response = await fetch("{{ route('duration.store') }}", {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value },
+            body: formData,
+          });
 
-   const data = await response.json();
+          const data = await response.json();
 
-   if (data.success) {
-    Toastify({
-     text: data.message,
-     duration: 3000,
-     close: true,
-     gravity: "top",
-     position: "right",
-     backgroundColor: "#4caf50",
-    }).showToast();
-    location.href = "{{ route('activation.workhours.index',$clinicId) }}"
-   } else {
-    Toastify({
-     text: data.message || "مشکلی در ذخیره اطلاعات رخ داد.",
-     duration: 3000,
-     close: true,
-     gravity: "top",
-     position: "right",
-     backgroundColor: "#f44336",
-    }).showToast();
-   }
-  } catch (error) {
-   Toastify({
-    text: "خطا در ارتباط با سرور.",
-    duration: 3000,
-    close: true,
-    gravity: "top",
-    position: "right",
-    backgroundColor: "#f44336",
-   }).showToast();
-  } finally {
-   // بازگرداندن دکمه به حالت اولیه
-   saveButton.disabled = false;
-   saveButton.innerHTML = "ثبت ساعت کاری";
-  }
- });
+          if (data.success) {
+            toastr.success(data.message);
+            location.href = "{{ route('activation.workhours.index', $clinicId) }}";
+          } else {
+            toastr.error(data.message || "مشکلی در ذخیره اطلاعات رخ داد.");
+          }
+        } catch (error) {
+          toastr.error("خطا در ارتباط با سرور.");
+        } finally {
+          saveButton.disabled = false;
+          saveButton.innerHTML = "ثبت ساعت کاری";
+        }
+      });
+    });
+
 </script>
 
 
 </body>
 
 </html>
+c

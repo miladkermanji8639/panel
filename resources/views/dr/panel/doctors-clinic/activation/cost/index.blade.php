@@ -176,63 +176,85 @@
    }
   });
  }
+  function validateDepositAmount() {
+    const depositSelect = document.getElementById('depositAmount');
+    const customPriceInput = document.getElementById('customPrice');
 
+    // بررسی اینکه آیا مقدار بیعانه انتخاب شده است یا خیر
+    if (depositSelect.value === "") {
+      toastr.error("لطفاً مبلغ بیعانه را انتخاب کنید.");
+      return false;
+    }
+
+    // بررسی مقدار ورودی برای قیمت دلخواه
+    if (depositSelect.value === "custom" && customPriceInput.value.trim() === "") {
+      toastr.error("لطفاً مبلغ دلخواه را وارد کنید.");
+      return false;
+    }
+
+    return true; // مقدار معتبر است
+  }
  // لود کردن لیست بیعانه‌ها هنگام بارگذاری صفحه
  document.addEventListener("DOMContentLoaded", loadDeposits);
 
- document.getElementById('depositAmount').addEventListener('change', function () {
-  const customPrice = document.getElementById('customPrice');
-  const isCustomPrice = document.getElementById('isCustomPrice');
+  document.getElementById('depositAmount').addEventListener('change', function () {
+    const customPrice = document.getElementById('customPrice');
+    const isCustomPrice = document.getElementById('isCustomPrice');
 
-  if (this.value === 'custom') {
-   customPrice.classList.remove('d-none');
-   customPrice.setAttribute('name', 'deposit_amount');
-   isCustomPrice.value = 1; // تنظیم به true
-  } else {
-   customPrice.classList.add('d-none');
-   customPrice.removeAttribute('name');
-   isCustomPrice.value = 0; // تنظیم به false
-  }
- });
+    if (this.value === 'custom') {
+      customPrice.classList.remove('d-none');
+      customPrice.setAttribute('name', 'deposit_amount');
+      isCustomPrice.value = 1;
+    } else {
+      customPrice.classList.add('d-none');
+      customPrice.removeAttribute('name');
+      isCustomPrice.value = 0;
+    }
+  });
 
 
 
-  document.getElementById('saveButton').addEventListener('click', function () {
-    const form = document.getElementById('depositForm');
-    const formData = new FormData(form);
-    fetch("{{ route('cost.store') }}", {
-     method: "POST",
-     headers: {
-      "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,
-     },
-     body: formData,
-    })
-     .then(response => response.json())
-     .then(data => {
-      if (data.success) {
-       Swal.fire({
-        icon: "success",
-        title: "ذخیره موفقیت‌آمیز",
-        text: data.message,
-       });
-       loadDeposits();
-       location.href = "{{ route('duration.index',$clinicId) }}"
-      } else {
-       Swal.fire({
-        icon: "error",
-        title: "خطا",
-        text: data.message, // نمایش پیام خطا از سرور
-       });
+   document.getElementById('saveButton').addEventListener('click', function () {
+      if (!validateDepositAmount()) {
+        return; // اگر مقدار معتبر نبود، ادامه ندهد
       }
-     })
-     .catch(error => {
-      Swal.fire({
-       icon: "error",
-       title: "خطا",
-       text: "مشکلی در ارسال اطلاعات رخ داد.",
-      });
-     });
-   });
+
+      const form = document.getElementById('depositForm');
+      const formData = new FormData(form);
+
+      fetch("{{ route('cost.store') }}", {
+        method: "POST",
+        headers: {
+          "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,
+        },
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire({
+              icon: "success",
+              title: "ذخیره موفقیت‌آمیز",
+              text: data.message,
+            });
+            loadDeposits();
+            location.href = "{{ route('duration.index', $clinicId) }}";
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "خطا",
+              text: data.message, // نمایش پیام خطا از سرور
+            });
+          }
+        })
+        .catch(error => {
+          Swal.fire({
+            icon: "error",
+            title: "خطا",
+            text: "مشکلی در ارسال اطلاعات رخ داد.",
+          });
+        });
+    });
 
 
 </script>

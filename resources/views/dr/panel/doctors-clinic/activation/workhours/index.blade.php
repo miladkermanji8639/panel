@@ -331,17 +331,17 @@
         .map(badge => badge.getAttribute('data-day'));
 
       if (!selectedDays || selectedDays.length === 0) {
-        alert('لطفاً حداقل یک روز را انتخاب کنید.');
+        toastr.error('لطفاً حداقل یک روز را انتخاب کنید.');
         return;
       }
 
       if (!startTime || !endTime) {
-        alert('لطفاً ساعات کاری را وارد کنید.');
+        toastr.error('لطفاً ساعات کاری را وارد کنید.');
         return;
       }
 
       if (endTime <= startTime) {
-        alert('زمان پایان باید بعد از زمان شروع باشد.');
+        toastr.error('زمان پایان باید بعد از زمان شروع باشد.');
         return;
       }
 
