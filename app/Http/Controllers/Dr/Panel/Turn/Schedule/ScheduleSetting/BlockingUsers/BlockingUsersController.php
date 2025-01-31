@@ -104,6 +104,7 @@ class BlockingUsersController
    'recipient_type' => 'required|in:all,blocked,specific',
    'specific_recipient' => 'nullable|exists:users,mobile',
   ]);
+  
 
   try {
    $recipients = [];
@@ -121,19 +122,20 @@ class BlockingUsersController
     }
     $recipients[] = $validated['specific_recipient'];
    }
-
    foreach ($recipients as $recipient) {
     $messagesService = new MessageService(
      SmsService::create($validated['content'], $recipient)
     );
     $messagesService->send();
    }
-
+   $user = User::where('mobile',$validated['specific_recipient'])->first();
    SmsTemplate::create([
-    'doctor_id' => auth()->id(),
+    'doctor_id' => Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id,
+    'user_id' => $user->id,
     'title' => $validated['title'],
     'content' => $validated['content'],
     'type' => 'manual',
+    'identifier' => uniqid(),
    ]);
 
    return response()->json(['success' => true, 'message' => 'پیام با موفقیت ارسال شد.']);

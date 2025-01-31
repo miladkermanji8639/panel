@@ -36,8 +36,6 @@
      </table>
     </div>
    </div>
-
-
   </div>
   <div class="btn-425-left">
    <button class="btn btn-primary h-50 fs-13" data-toggle="modal" data-target="#addNewPatientModal" data-toggle="modal"
@@ -62,46 +60,39 @@
          <input type="text" name="first_name" class="form-control h-50" placeholder="نام بیمار را وارد کنید">
         </div>
         <small class="text-danger error-first_name"></small>
-
         <div class="mt-3 position-relative">
          <label class="label-top-input-special-takhasos">نام خانوادگی بیمار:</label>
          <input type="text" name="last_name" class="form-control h-50"
           placeholder="نام و نام خانوادگی بیمار را وارد کنید">
         </div>
         <small class="text-danger error-last_name"></small>
-
         <div class="mt-3 position-relative">
          <label class="label-top-input-special-takhasos">شماره موبایل:</label>
          <input type="text" name="mobile" class="form-control h-50" placeholder="شماره موبایل بیمار را وارد کنید">
         </div>
         <small class="text-danger error-mobile"></small>
-
         <div class="mt-3 position-relative">
          <label class="label-top-input-special-takhasos">کد ملی:</label>
          <input type="text" name="national_code" class="form-control h-50" placeholder="کد ملی بیمار را وارد کنید">
         </div>
         <small class="text-danger error-national_code"></small>
-
         <div class="mt-3 position-relative">
          <label class="label-top-input-special-takhasos">تاریخ مراجعه:</label>
          <input type="text" placeholder="1403/05/02" name="appointment_date"
           class="form-control w-100 h-50 position-relative text-start">
         </div>
         <small class="text-danger error-appointment_date"></small>
-
         <div class="mt-3 position-relative timepicker-ui w-100">
          <label class="label-top-input-special-takhasos">ساعت مراجعه:</label>
          <input type="text" class="form-control w-100 h-50 position-relative timepicker-ui-input"
           style="width: 100% !important" name="appointment_time">
         </div>
         <small class="text-danger error-appointment_time"></small>
-
         <div class="mt-3 position-relative">
          <label class="label-top-input-special-takhasos">توضیحات:</label>
          <textarea name="description" class="form-control h-50" rows="3"></textarea>
         </div>
         <small class="text-danger error-description"></small>
-
        </div>
        <div class="modal-footer">
         <button type="submit" id="submit-button"
@@ -114,8 +105,6 @@
      </div>
     </div>
    </div>
-
-
   </div>
  </div>
 </div>
@@ -127,7 +116,8 @@
     <form method="post" action="{{ route('manual-nobat.store') }}" id="manual-appointment-form" autocomplete="off">
      @csrf
      <input type="hidden" id="user-id" name="user_id" value="">
-     <input type="hidden" id="doctor-id" name="doctor_id" value="{{ auth('doctor')->id() ?? auth('secretary')->user()->doctor_id  }}">
+     <input type="hidden" id="doctor-id" name="doctor_id"
+      value="{{ auth('doctor')->id() ?? auth('secretary')->user()->doctor_id }}">
      <div class="mt-3 position-relative">
       <label class="label-top-input-special-takhasos"> نام بیمار:</label>
       <input type="text" name="fristname" class="form-control h-50" placeholder="نام بیمار را وارد کنید"
@@ -165,8 +155,6 @@
           fill="#000"></path>
         </svg>
        </button>
-
-
       </div>
      </div>
      <div class="mt-3 position-relative timepicker-ui w-100">
@@ -207,7 +195,6 @@
   </div>
  </div>
 </div>
-
 <div class="manual-nobat-content w-100 d-flex justify-content-center mt-3">
  <div class="manual-nobat-content-wrapper p-3">
   <div class="main-content">
@@ -231,22 +218,21 @@
          </thead>
          <tbody id="result_nobat">
           @foreach ($appointments as $appointment)
-           <tr>
-            <td>{{ $appointment->id }}</td>
-            <td>{{ $appointment->user->first_name }} {{ $appointment->user->last_name }}</td>
-            <td>{{ $appointment->user->mobile }}</td>
-            <td>{{ $appointment->user->national_code }}</td>
-            <td>{{ $appointment->appointment_date }}</td>
-            <td>{{ $appointment->appointment_time }}</td>
-            <td>{{ $appointment->description ?? '---' }}</td>
-            <td>
-             <button class="btn btn-sm btn-warning edit-btn" data-id="{{ $appointment->id }}">ویرایش</button>
-             <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $appointment->id }}">حذف</button>
-            </td>
-           </tr>
-          @endforeach
+       <tr>
+      <td>{{ $appointment->id }}</td>
+      <td>{{ $appointment->user->first_name }} {{ $appointment->user->last_name }}</td>
+      <td>{{ $appointment->user->mobile }}</td>
+      <td>{{ $appointment->user->national_code }}</td>
+      <td>{{ $appointment->appointment_date }}</td>
+      <td>{{ $appointment->appointment_time }}</td>
+      <td>{{ $appointment->description ?? '---' }}</td>
+      <td>
+       <button class="btn btn-sm btn-light edit-btn rounded-circle" data-id="{{ $appointment->id }}"><img src="{{ asset('dr-assets/icons/edit.svg') }}"></button>
+       <button class="btn btn-sm btn-light rounded-circle delete-btn" data-id="{{ $appointment->id }}"><img src="{{ asset('dr-assets/icons/trash.svg') }}"></button>
+      </td>
+       </tr>
+      @endforeach
          </tbody>
-
         </table>
        </div>
       </div>
@@ -258,83 +244,76 @@
 </div>
 <!-- مودال ویرایش بیمار -->
 <div class="modal fade" id="editPatientModal" tabindex="-1" role="dialog" aria-labelledby="editPatientLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content border-radius-8">
-      <form id="edit-patient-form">
-        @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="editPatientLabel">ویرایش بیمار</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="appointment_id" id="edit-appointment-id">
-          <div class="mt-3 position-relative">
-            <label class="label-top-input-special-takhasos">نام بیمار:</label>
-            <input type="text" name="first_name" id="edit-first-name" class="form-control h-50"
-              placeholder="نام بیمار را وارد کنید">
-          </div>
-          <small class="text-danger error-first_name"></small>
-
-          <div class="mt-3 position-relative">
-            <label class="label-top-input-special-takhasos">نام خانوادگی بیمار:</label>
-            <input type="text" name="last_name" id="edit-last-name" class="form-control h-50"
-              placeholder="نام و نام خانوادگی بیمار را وارد کنید">
-          </div>
-          <small class="text-danger error-last_name"></small>
-
-          <div class="mt-3 position-relative">
-            <label class="label-top-input-special-takhasos">شماره موبایل:</label>
-            <input type="text" name="mobile" id="edit-mobile" class="form-control h-50"
-              placeholder="شماره موبایل بیمار را وارد کنید">
-          </div>
-          <small class="text-danger error-mobile"></small>
-
-          <div class="mt-3 position-relative">
-            <label class="label-top-input-special-takhasos">کد ملی:</label>
-            <input type="text" name="national_code" id="edit-national-code" class="form-control h-50"
-              placeholder="کد ملی بیمار را وارد کنید">
-          </div>
-          <small class="text-danger error-national_code"></small>
-
-          <div class="mt-3 position-relative">
-            <label class="label-top-input-special-takhasos">تاریخ مراجعه:</label>
-            <input type="text" name="appointment_date" id="edit-appointment-date" class="form-control h-50">
-          </div>
-          <small class="text-danger error-appointment_date"></small>
-
-          <div class="mt-3 position-relative timepicker-ui w-100">
-            <label class="label-top-input-special-takhasos">ساعت مراجعه:</label>
-            <input type="text" name="appointment_time" id="edit-appointment-time" class="form-control w-100 h-50" style="width: 100% !important">
-          </div>
-          <small class="text-danger error-appointment_time"></small>
-
-          <div class="mt-3 position-relative">
-            <label class="label-top-input-special-takhasos">توضیحات:</label>
-            <textarea name="description" id="edit-description" class="form-control h-50" rows="3"></textarea>
-          </div>
-          <small class="text-danger error-description"></small>
-        </div>
-        <div class="modal-footer">
-          <button type="submit"
-            class="w-100 btn btn-primary h-50 border-radius-4 d-flex justify-content-center align-items-center">
-            <span class="button_text">ذخیره تغییرات</span>
-            <div class="loader"></div>
-          </button>
-        </div>
-      </form>
+ aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content border-radius-8">
+   <form id="edit-patient-form">
+    @csrf
+    <div class="modal-header">
+     <h5 class="modal-title" id="editPatientLabel">ویرایش بیمار</h5>
+     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+     </button>
     </div>
+    <div class="modal-body">
+     <input type="hidden" name="appointment_id" id="edit-appointment-id">
+     <div class="mt-3 position-relative">
+      <label class="label-top-input-special-takhasos">نام بیمار:</label>
+      <input type="text" name="first_name" id="edit-first-name" class="form-control h-50"
+       placeholder="نام بیمار را وارد کنید">
+     </div>
+     <small class="text-danger error-first_name"></small>
+     <div class="mt-3 position-relative">
+      <label class="label-top-input-special-takhasos">نام خانوادگی بیمار:</label>
+      <input type="text" name="last_name" id="edit-last-name" class="form-control h-50"
+       placeholder="نام و نام خانوادگی بیمار را وارد کنید">
+     </div>
+     <small class="text-danger error-last_name"></small>
+     <div class="mt-3 position-relative">
+      <label class="label-top-input-special-takhasos">شماره موبایل:</label>
+      <input type="text" name="mobile" id="edit-mobile" class="form-control h-50"
+       placeholder="شماره موبایل بیمار را وارد کنید">
+     </div>
+     <small class="text-danger error-mobile"></small>
+     <div class="mt-3 position-relative">
+      <label class="label-top-input-special-takhasos">کد ملی:</label>
+      <input type="text" name="national_code" id="edit-national-code" class="form-control h-50"
+       placeholder="کد ملی بیمار را وارد کنید">
+     </div>
+     <small class="text-danger error-national_code"></small>
+     <div class="mt-3 position-relative">
+      <label class="label-top-input-special-takhasos">تاریخ مراجعه:</label>
+      <input type="text" name="appointment_date" id="edit-appointment-date" class="form-control h-50">
+     </div>
+     <small class="text-danger error-appointment_date"></small>
+     <div class="mt-3 position-relative timepicker-ui w-100">
+      <label class="label-top-input-special-takhasos">ساعت مراجعه:</label>
+      <input type="text" name="appointment_time" id="edit-appointment-time" class="form-control w-100 h-50"
+       style="width: 100% !important">
+     </div>
+     <small class="text-danger error-appointment_time"></small>
+     <div class="mt-3 position-relative">
+      <label class="label-top-input-special-takhasos">توضیحات:</label>
+      <textarea name="description" id="edit-description" class="form-control h-50" rows="3"></textarea>
+     </div>
+     <small class="text-danger error-description"></small>
+    </div>
+    <div class="modal-footer">
+     <button type="submit"
+      class="w-100 btn btn-primary h-50 border-radius-4 d-flex justify-content-center align-items-center">
+      <span class="button_text">ذخیره تغییرات</span>
+      <div class="loader"></div>
+     </button>
+    </div>
+   </form>
   </div>
+ </div>
 </div>
-
 @endsection
 @section('scripts')
 <script src="{{ asset('dr-assets/panel/jalali-datepicker/run-jalali.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/turn/scehedule/sheduleSetting/workhours/workhours.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/dr-panel.js') }}"></script>
-
 <script>
  $(document).ready(function() {
   $('.card').css({
@@ -342,7 +321,6 @@
    'height': '100%'
   })
  });
-
  var appointmentsSearchUrl = "{{ route('search.appointments') }}";
  var updateStatusAppointmentUrl =
   "{{ route('updateStatusAppointment', ':id') }}";
@@ -352,7 +330,6 @@
   // AJAX search functionality
   $('#search-input').on('input', function() {
    const query = $(this).val();
-
    if (query.length > 2) { // حداقل ۳ کاراکتر برای جستجو
     $.ajax({
      url: "{{ route('dr-panel-search.users') }}",
@@ -375,29 +352,23 @@
       } else {
        resultsHtml = '<tr><td colspan="4" class="text-center">نتیجه‌ای یافت نشد</td></tr>';
       }
-
       $('#search-results-body').html(resultsHtml);
       $('#search-results-body').html(resultsHtml);
-
       // نمایش جدول در صورت وجود نتایج
       if (resultsHtml.trim() !== '') {
        $('#search-results').css('display', 'block'); // جدول را نمایش می‌دهد
       } else {
        $('#search-results').css('display', 'none'); // در صورت خالی بودن نتایج، جدول را مخفی می‌کند
       }
-
      },
      error: function() {
-      showToast('خطا در جستجو!', 'error');
+      toastr.error('خطا در جستجو!');
      }
     });
    } else {
     $('#search-results-body').empty(); // پاک کردن جدول
    }
   });
-
-
-
   // Insert selected user data into the form fields and search input
   $(document).on('click', '.search-result-item', function() {
    const userId = $(this).data('user-id');
@@ -405,68 +376,29 @@
    const lastName = $(this).data('last-name');
    const mobile = $(this).data('mobile');
    const nationalCode = $(this).data('national-code');
-
    // پر کردن فیلدهای فرم
    $('#user-id').val(userId);
    $('input[name="fristname"]').val(firstName);
    $('input[name="lastname"]').val(lastName);
    $('input[name="mobile"]').val(mobile);
    $('input[name="codemeli"]').val(nationalCode);
-
    // نمایش فرم اطلاعات بیمار
    $('.my-patient-content').removeClass('d-none');
-
    // پاک کردن نتایج جستجو
    $('#search-results-body').empty();
    $('#search-input').val('');
    $('#search-results').css('display', 'none');
   });
-
-
   // Hide patient information section initially
   $('.my-patient-content').addClass('d-none');
  });
 </script>
 <script src="{{ asset('dr-assets/panel/js/calendar/custm-calendar.js') }}"></script>
 <script>
- function showToast(message, type = 'success') {
-  let backgroundColor;
-
-  // تنظیم رنگ بر اساس نوع پیام
-  switch (type) {
-   case 'success':
-    backgroundColor = 'green';
-    break;
-   case 'error':
-    backgroundColor = 'red';
-    break;
-   case 'warning':
-    backgroundColor = 'orange';
-    break;
-   default:
-    backgroundColor = 'blue';
-  }
-
-  // فراخوانی Toastify
-  Toastify({
-   text: message || "عملیات با موفقیت انجام شد",
-   duration: 3000, // مدت نمایش
-   close: true, // دکمه بستن
-   gravity: "top", // موقعیت: بالا یا پایین
-   position: 'right', // جهت: چپ یا راست
-   style: {
-    background: backgroundColor,
-    color: 'white', // رنگ متن
-    fontSize: '14px',
-   },
-  }).showToast();
- }
-
  // نمونه استفاده
  function addRowToTable(data) {
   // تبدیل تاریخ میلادی به شمسی
   const jalaliDate = moment(data.appointment_date, 'YYYY-MM-DD').format('jYYYY/jMM/jDD');
-
   const newRow = `
         <tr>
             <td>${data.id || '---'}</td>
@@ -477,15 +409,12 @@
             <td>${data.appointment_time || '---'}</td>
             <td>${data.description || '---'}</td>
             <td>
-                <button class="btn btn-sm btn-warning edit-btn" data-id="${data.id}">ویرایش</button>
-                <button class="btn btn-sm btn-danger delete-btn" data-id="${data.id}">حذف</button>
+                <button class="btn btn-sm btn-light edit-btn rounded-circle" data-id="${data.id}"><img src="{{ asset('dr-assets/icons/edit.svg') }}"></button>
+                <button class="btn btn-sm btn-light delete-btn rounded-circle" data-id="${data.id}"><img src="{{ asset('dr-assets/icons/trash.svg') }}"></button>
             </td>
         </tr>`;
   $('#result_nobat').append(newRow);
  }
-
-
-
  function loadAppointments() {
   $.ajax({
    url: "{{ route('dr-manual_nobat') }}",
@@ -497,16 +426,14 @@
       addRowToTable(appointment);
      });
     } else {
-     showToast('داده‌ای برای نمایش وجود ندارد!', 'warning');
+     toastr.error('داده‌ای برای نمایش وجود ندارد!');
     }
    },
    error: function() {
-    showToast('خطا در بارگذاری نوبت‌ها!', 'error');
+    toastr.error('خطا در بارگذاری نوبت‌ها!');
    }
   });
  }
-
-
  $(document).ready(function() {
   $('#manual-appointment-form').on('submit', function(e) {
    e.preventDefault();
@@ -514,7 +441,6 @@
    const submitButton = form.querySelector('button[type="submit"]');
    const loader = submitButton.querySelector('.loader');
    const buttonText = submitButton.querySelector('.button_text');
-
    const data = {
     user_id: $('#user-id').val(),
     doctor_id: $('#doctor-id').val(),
@@ -522,16 +448,13 @@
     appointment_time: $('#appointment-time').val(),
     description: $('#description').val(),
    };
-
    // بررسی خالی نبودن فیلدها
    if (!data.user_id || !data.doctor_id || !data.appointment_date || !data.appointment_time) {
-    showToast('لطفاً تمام فیلدهای ضروری را تکمیل کنید!', 'error');
+    toastr.error('لطفاً تمام فیلدهای ضروری را تکمیل کنید!');
     return;
    }
-
    buttonText.style.display = 'none';
    loader.style.display = 'block';
-
    $.ajax({
     url: "{{ route('manual-nobat.store') }}",
     method: 'POST',
@@ -540,18 +463,18 @@
     },
     data: data,
     success: function(response) {
-     showToast(response.message || 'نوبت با موفقیت ثبت شد!', 'success');
+     toastr.success(response.message || 'نوبت با موفقیت ثبت شد!');
      form.reset();
-       $('.patient-information-content').removeClass('d-flex')
-      $('.patient-information-content').addClass('d-none')
+     $('.patient-information-content').removeClass('d-flex')
+     $('.patient-information-content').addClass('d-none')
      loadAppointments();
     },
     error: function(xhr) {
      const errors = xhr.responseJSON.errors || {};
      let errorMessages = Object.values(errors).map(errArray => errArray[0]).join(' - ');
-     showToast(errorMessages || xhr.responseJSON.message, 'error');
-      $('.patient-information-content').removeClass('d-flex')
-      $('.patient-information-content').addClass('d-none')
+     toastr.error(errorMessages || xhr.responseJSON.message);
+     $('.patient-information-content').removeClass('d-flex')
+     $('.patient-information-content').addClass('d-none')
     },
     complete: function() {
      buttonText.style.display = 'block';
@@ -559,7 +482,6 @@
     },
    });
   });
-
  });
  $(document).ready(function() {
   // افزودن کاربر جدید و ثبت نوبت
@@ -585,107 +507,97 @@
       },
       success: function(response) {
        if (response.success) {
-        showToast('نوبت با موفقیت حذف شد!', 'success');
+        toastr.success('نوبت با موفقیت حذف شد!');
         loadAppointments(); // بازخوانی لیست
        } else {
-        showToast('خطا در حذف نوبت!', 'error');
+        toastr.error('خطا در حذف نوبت!');
        }
       },
       error: function() {
-       showToast('خطا در عملیات حذف!', 'error');
+       toastr.error('خطا در عملیات حذف!');
       }
      });
     }
    });
   });
-   $(document).on('click', '.edit-btn', function () {
-     const appointmentId = $(this).data('id');
-
-     // درخواست AJAX برای دریافت اطلاعات نوبت
-     $.ajax({
-        url: "{{ route('manual-appointments.edit', ':id') }}".replace(':id', appointmentId),
-       method: 'GET',
-       success: function (response) {
-         if (response.success) {
-           const appointment = response.data;
-
-           // مقداردهی فیلدهای مودال
-           $('#edit-appointment-id').val(appointment.id);
-           $('#edit-first-name').val(appointment.user.first_name);
-           $('#edit-last-name').val(appointment.user.last_name);
-           $('#edit-mobile').val(appointment.user.mobile);
-           $('#edit-national-code').val(appointment.user.national_code);
-           $('#edit-appointment-date').val(moment(appointment.appointment_date, 'YYYY-MM-DD').format('jYYYY/jMM/jDD'));
-          $('#edit-appointment-time').val(appointment.appointment_time.substring(0, 5));
-
-           $('#edit-description').val(appointment.description);
-
-           // نمایش مودال
-           $('#editPatientModal').modal('show');
-         } else {
-           showToast('خطا در دریافت اطلاعات نوبت!', 'error');
-         }
-       },
-       error: function () {
-         showToast('خطا در دریافت اطلاعات نوبت!', 'error');
-       }
-     });
+  $(document).on('click', '.edit-btn', function() {
+   const appointmentId = $(this).data('id');
+   // درخواست AJAX برای دریافت اطلاعات نوبت
+   $.ajax({
+    url: "{{ route('manual-appointments.edit', ':id') }}".replace(':id', appointmentId),
+    method: 'GET',
+    success: function(response) {
+     if (response.success) {
+      const appointment = response.data;
+      // مقداردهی فیلدهای مودال
+      $('#edit-appointment-id').val(appointment.id);
+      $('#edit-first-name').val(appointment.user.first_name);
+      $('#edit-last-name').val(appointment.user.last_name);
+      $('#edit-mobile').val(appointment.user.mobile);
+      $('#edit-national-code').val(appointment.user.national_code);
+      $('#edit-appointment-date').val(moment(appointment.appointment_date, 'YYYY-MM-DD').format(
+      'jYYYY/jMM/jDD'));
+      $('#edit-appointment-time').val(appointment.appointment_time.substring(0, 5));
+      $('#edit-description').val(appointment.description);
+      // نمایش مودال
+      $('#editPatientModal').modal('show');
+     } else {
+      toastr.error('خطا در دریافت اطلاعات نوبت!');
+     }
+    },
+    error: function() {
+     toastr.error('خطا در دریافت اطلاعات نوبت!');
+    }
    });
-
-   $('#edit-patient-form').on('submit', function (e) {
-     e.preventDefault();
-
-     const form = $(this);
-     const submitButton = form.find('button[type="submit"]');
-     const loader = submitButton.find('.loader');
-     const buttonText = submitButton.find('.button_text');
-
-     // مخفی کردن متن دکمه و نمایش لودینگ
-     buttonText.hide();
-     loader.show();
-
-     const appointmentId = $('#edit-appointment-id').val();
-     const data = {
-       first_name: $('#edit-first-name').val(),
-       last_name: $('#edit-last-name').val(),
-       mobile: $('#edit-mobile').val(),
-       national_code: $('#edit-national-code').val(),
-       appointment_date: $('#edit-appointment-date').val(),
-       appointment_time: $('#edit-appointment-time').val(),
-       description: $('#edit-description').val(),
-     };
-
-     $.ajax({
-       url: "{{ route('manual-appointments.update', ':id') }}".replace(':id', appointmentId),
-       method: 'POST',
-       headers: {
-         'X-CSRF-TOKEN': '{{ csrf_token() }}',
-       },
-       data: data,
-       success: function (response) {
-         if (response.success) {
-           showToast(response.message, 'success');
-           $('#editPatientModal').modal('hide');
-           loadAppointments(); // به‌روزرسانی لیست نوبت‌ها
-         } else {
-           showToast(response.message, 'error');
-         }
-       },
-       error: function (xhr) {
-         const errors = xhr.responseJSON.errors || {};
-         Object.keys(errors).forEach(function (key) {
-           $(`.error-${key}`).text(errors[key][0]);
-         });
-       },
-       complete: function () {
-         // بازگرداندن وضعیت دکمه به حالت اولیه
-         buttonText.show();
-         loader.hide();
-       },
+  });
+  $('#edit-patient-form').on('submit', function(e) {
+   e.preventDefault();
+   const form = $(this);
+   const submitButton = form.find('button[type="submit"]');
+   const loader = submitButton.find('.loader');
+   const buttonText = submitButton.find('.button_text');
+   // مخفی کردن متن دکمه و نمایش لودینگ
+   buttonText.hide();
+   loader.show();
+   const appointmentId = $('#edit-appointment-id').val();
+   const data = {
+    first_name: $('#edit-first-name').val(),
+    last_name: $('#edit-last-name').val(),
+    mobile: $('#edit-mobile').val(),
+    national_code: $('#edit-national-code').val(),
+    appointment_date: $('#edit-appointment-date').val(),
+    appointment_time: $('#edit-appointment-time').val(),
+    description: $('#edit-description').val(),
+   };
+   $.ajax({
+    url: "{{ route('manual-appointments.update', ':id') }}".replace(':id', appointmentId),
+    method: 'POST',
+    headers: {
+     'X-CSRF-TOKEN': '{{ csrf_token() }}',
+    },
+    data: data,
+    success: function(response) {
+     if (response.success) {
+      toastr.success(response.message);
+      $('#editPatientModal').modal('hide');
+      loadAppointments(); // به‌روزرسانی لیست نوبت‌ها
+     } else {
+      toastr.error(response.message);
+     }
+    },
+    error: function(xhr) {
+     const errors = xhr.responseJSON.errors || {};
+     Object.keys(errors).forEach(function(key) {
+      $(`.error-${key}`).text(errors[key][0]);
      });
+    },
+    complete: function() {
+     // بازگرداندن وضعیت دکمه به حالت اولیه
+     buttonText.show();
+     loader.hide();
+    },
    });
-
-
+  });
   // اضافه کردن ردیف به جدول
   function addRowToTable(data) {
    const jalaliDate = moment(data.appointment_date, 'YYYY-MM-DD').format('jYYYY/jMM/jDD'); // تبدیل تاریخ به شمسی
@@ -705,22 +617,14 @@
         </tr>`;
    $('#result_nobat').append(newRow);
   }
-
-
-
-
-
-
   $('#add-new-patient-form').on('submit', function(e) {
    e.preventDefault();
    const form = $(this);
    const submitButton = form.find('#submit-button');
    const loader = submitButton.find('.loader');
    const buttonText = submitButton.find('.button_text');
-
    buttonText.hide();
    loader.show();
-
    $.ajax({
     url: "{{ route('manual-nobat.store-with-user') }}",
     method: 'POST',
@@ -732,9 +636,9 @@
       $('#addNewPatientModal').modal('hide');
       $('body').removeClass('modal-open'); // حذف کلاس مربوط به باز بودن مودال
       $('.modal-backdrop').remove(); // بستن مودال
-      showToast('بیمار با موفقیت اضافه شد!', 'success');
+      toastr.success('بیمار با موفقیت اضافه شد!');
      } else {
-      showToast('خطا در اضافه کردن بیمار!', 'error');
+      toastr.error('خطا در اضافه کردن بیمار!');
      }
     },
     error: function(xhr) {
@@ -748,14 +652,10 @@
      loader.hide();
     }
    });
-
   });
-
-
   // حذف نوبت
   $(document).on('click', '.delete-btn', function() {
    const id = $(this).data('id');
-
    Swal.fire({
     title: 'آیا مطمئن هستید؟',
     text: "این عمل قابل بازگشت نیست!",
@@ -775,21 +675,19 @@
       },
       success: function(response) {
        if (response.success) {
-        showToast(response.message, 'success');
+        toastr.success(response.message);
         loadAppointments(); // جدول را مجدداً بارگذاری کنید.
        } else {
-        showToast(response.message, 'error');
+        toastr.error(response.message);
        }
       },
       error: function(xhr) {
-       showToast('خطا در حذف نوبت!', 'error');
+       toastr.error('خطا در حذف نوبت!');
       },
      });
     }
    });
   });
-
-
   // ویرایش نوبت
   $(document).on('click', '.edit-btn', function() {
    const id = $(this).data('id');

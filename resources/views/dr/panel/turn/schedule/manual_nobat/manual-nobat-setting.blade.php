@@ -117,13 +117,15 @@
         },
         success: function (response) {
           if (response.success) {
-            showToast(response.message || 'تغییرات با موفقیت ذخیره شد!', 'success');
+            toastr.success(response.message || 'تغییرات با موفقیت ذخیره شد!');
           } else {
-            showToast(response.message || 'خطا در ذخیره تغییرات!', 'error');
+            toastr.error(response.message || 'خطا در ذخیره تغییرات!');
+
           }
         },
         error: function () {
-          showToast('خطا در ارتباط با سرور!', 'error');
+            toastr.error('خطا در ارتباط با سرور!');
+
         },
         complete: function () {
           // بازگرداندن حالت اولیه دکمه
@@ -132,36 +134,7 @@
       });
     });
 
-    function showToast(message, type = 'success') {
-      let backgroundColor;
-
-      switch (type) {
-        case 'success':
-          backgroundColor = 'green';
-          break;
-        case 'error':
-          backgroundColor = 'red';
-          break;
-        case 'warning':
-          backgroundColor = 'orange';
-          break;
-        default:
-          backgroundColor = 'blue';
-      }
-
-      Toastify({
-        text: message,
-        duration: 3000,
-        close: true,
-        gravity: 'top',
-        position: 'right',
-        style: {
-          background: backgroundColor,
-          color: 'white',
-          fontSize: '14px',
-        },
-      }).showToast();
-    }
+    
   });
 
 </script>

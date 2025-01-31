@@ -279,8 +279,7 @@
     $('.vacation-list').html(html);
    },
    error: function(xhr, status, error) {
-    console.error(xhr.responseJSON);
-    showToast("خطا در بارگذاری مرخصی‌ها!", "error");
+    toastr.error("خطا در بارگذاری مرخصی‌ها!");
    }
   });
  }
@@ -326,7 +325,8 @@
     'X-CSRF-TOKEN': '{{ csrf_token() }}',
    },
    success: function(response) {
-    showToast(response.message, "success");
+    toastr.success(response.message);
+
     const modal = $('#exampleModalCenterAddVacation');
     modal.modal('hide');
     modal.on('hidden.bs.modal', function() {
@@ -348,15 +348,17 @@
 
         // نمایش پیام‌های خطای فیلدها (در صورت وجود)
         if (messages.size > 0) {
-          messages.forEach(message => showToast(message, "error"));
+          messages.forEach(message => toastr.success(message);
+);
         } else if (xhr.responseJSON.message) {
           // نمایش پیام کلی فقط در صورت عدم وجود خطاهای فیلدی
-          showToast(xhr.responseJSON.message, "error");
+          toastr.error(xhr.responseJSON.message);
         }
       } else {
         // نمایش خطاهای غیر از 422
         const errorMessage = xhr.responseJSON?.message || "خطا در ثبت اطلاعات!";
-        showToast(errorMessage, "error");
+          toastr.error(errorMessage);
+
       }
     },
 
@@ -408,7 +410,8 @@
     $('#exampleModalCenterEditVacation').modal('show');
    },
    error: function() {
-    showToast("خطا در بارگذاری اطلاعات!", "error");
+          toastr.error("خطا در بارگذاری اطلاعات!");
+
    }
   });
  });
@@ -433,7 +436,8 @@
    method: "POST",
    data: formData,
    success: function(response) {
-    showToast(response.message, "success");
+          toastr.success(response.message);
+
     const modal = $('#exampleModalCenterEditVacation');
     modal.modal('hide');
     modal.on('hidden.bs.modal', function() {
@@ -443,7 +447,8 @@
     loadVacations(); // بروزرسانی لیست
    },
    error: function() {
-    showToast("خطا در ذخیره تغییرات!", "error");
+          toastr.error("خطا در ذخیره تغییرات!");
+
    },
    complete: function() {
     buttonText.css({
@@ -477,12 +482,14 @@
     'X-CSRF-TOKEN': '{{ csrf_token() }}',
    },
    success: function(response) {
-    showToast(response.message, "success");
+          toastr.success(response.message);
+
     $('#exampleModalCenterEditVacation').modal('hide');
     loadVacations(); // بارگذاری مجدد لیست
    },
    error: function() {
-    showToast("خطا در ویرایش مرخصی!", "error");
+          toastr.error("خطا در ویرایش مرخصی!");
+
    },
    complete: function() {
     buttonText.show();
@@ -511,34 +518,19 @@
       'X-CSRF-TOKEN': '{{ csrf_token() }}',
      },
      success: function(response) {
-      showToast(response.message, "success");
+          toastr.success(response.message);
+
       loadVacations(); // بروزرسانی لیست مرخصی‌ها
      },
      error: function() {
-      showToast("خطا در حذف مرخصی!", "error");
+          toastr.error("خطا در حذف مرخصی!");
+
      }
     });
    }
   });
  });
 
-
- function showToast(message, type = "success") {
-  let backgroundColor = type === "success" ? "green" : type === "error" ? "red" : "orange";
-
-  Toastify({
-   text: message || "عملیات با موفقیت انجام شد",
-   duration: 3000,
-   close: true,
-   gravity: "top",
-   position: "right",
-   style: {
-    background: backgroundColor,
-    color: "white",
-    fontSize: "14px",
-   },
-  }).showToast();
- }
 
  $('#filter-year, #filter-month').on('change', function() {
 

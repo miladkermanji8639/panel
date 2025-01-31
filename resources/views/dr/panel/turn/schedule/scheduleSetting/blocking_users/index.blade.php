@@ -249,7 +249,8 @@
     data: data,
     success: function (response) {
      if (response.success) {
-      showToast(response.message, "success");
+    toastr.success(response.message);
+
       const modal = $('#sendSmsModal');
       modal.modal('hide');
       modal.on('hidden.bs.modal', function () {
@@ -259,15 +260,19 @@
       form[0].reset();
       loadMessages(); // بروزرسانی لیست پیام‌ها
      } else {
-      showToast(response.message, "error");
+     
+    toastr.error(response.message);
+
      }
     },
     error: function (xhr) {
      if (xhr.status === 422) {
       const errorMessage = xhr.responseJSON.message || "خطای اعتبارسنجی رخ داده است.";
-      showToast(errorMessage, "error");
+    toastr.error(errorMessage);
+
      } else {
-      showToast("خطا در ارسال پیام!", "error");
+    toastr.error("خطا در ارسال پیام!");
+
      }
     },
     complete: function () {
@@ -338,7 +343,8 @@
     data: data,
     success: function (response) {
      if (response.success) {
-      showToast(response.message, "success");
+    toastr.success(response.message);
+
       appendBlockedUser(response.blocking_user); // ارسال داده به تابع
       form[0].reset();
         const modal = $('#addUserModal');
@@ -351,7 +357,8 @@
     },
     error: function (xhr) {
      const errorMessage = xhr.responseJSON?.message || "خطا در ذخیره‌سازی!";
-     showToast(errorMessage, "error");
+        toastr.error(errorMessage);
+
     },
     complete: function () {
      button.prop('disabled', false);
@@ -362,21 +369,7 @@
   });
 
 
- function showToast(message, type = "success") {
-  const backgroundColor = type === "success" ? "green" : type === "error" ? "red" : "orange";
-  Toastify({
-   text: message || "عملیات با موفقیت انجام شد",
-   duration: 3000,
-   close: true,
-   gravity: "top",
-   position: "right",
-   style: {
-    background: backgroundColor,
-    color: "white",
-    fontSize: "14px",
-   },
-  }).showToast();
- }
+
 
 
 
@@ -420,7 +413,8 @@
     });
    },
    error: function() {
-    showToast("خطا در بارگذاری لیست کاربران!", "error");
+        toastr.error("خطا در بارگذاری لیست کاربران!");
+
    }
   });
  }
@@ -527,7 +521,8 @@
      });
     },
     error: function () {
-     showToast("خطا در بارگذاری پیام‌ها!", "error");
+        toastr.error("خطا در بارگذاری پیام‌ها!");
+
     }
    });
   }
@@ -576,16 +571,19 @@
          .text(statusText);
         $(element).data('status', newStatus);
 
-        showToast(response.message, 'success');
+        toastr.success(response.message);
+
 
         // بروزرسانی لیست پیام‌ها
         loadMessages();
        } else {
-        showToast(response.message, 'error');
+        toastr.error(response.message);
+
        }
       },
       error: function () {
-       showToast('خطا در تغییر وضعیت.', 'error');
+        toastr.error('خطا در تغییر وضعیت.');
+
       },
      });
     }
@@ -618,13 +616,16 @@
        $(element).closest('tr').remove();
 
        // نمایش پیام موفقیت
-       showToast('پیام با موفقیت حذف شد.', 'success');
+        toastr.success('پیام با موفقیت حذف شد.');
+
       } else {
-       showToast('خطا در حذف پیام.', 'error');
+        toastr.error('خطا در حذف پیام.');
+
       }
      },
      error: function() {
-      showToast('خطا در ارتباط با سرور.', 'error');
+        toastr.error('خطا در ارتباط با سرور.');
+
      }
     });
    }
