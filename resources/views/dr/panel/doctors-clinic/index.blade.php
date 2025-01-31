@@ -360,13 +360,7 @@
      }
     },
     error: function() {
-     Toastify({
-      text: 'خطا در دریافت اطلاعات مطب!',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: 'red',
-     }).showToast();
+        toastr.error('خطا در دریافت اطلاعات مطب!');
     },
    });
   });
@@ -389,25 +383,15 @@
     method: 'POST',
     data: form.serialize(),
     success: function() {
-     Toastify({
-      text: 'مطب با موفقیت اضافه شد!',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: 'green',
-     }).showToast();
+        toastr.success('مطب با موفقیت اضافه شد!');
+
+    
      $('#clinicModal').modal('hide');
      loadClinics(); // بروزرسانی لیست مطب‌ها
     },
     error: function(xhr) {
      handleValidationErrors(xhr, form);
-     Toastify({
-      text: 'خطا در ذخیره اطلاعات!',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: 'red',
-     }).showToast();
+        toastr.error('خطا در ذخیره اطلاعات!');
     },
     complete: function() {
      buttonText.show();
@@ -429,25 +413,14 @@
     method: 'POST',
     data: form.serialize(),
     success: function() {
-     Toastify({
-      text: 'مطب با موفقیت ویرایش شد!',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: 'green',
-     }).showToast();
+        toastr.success('مطب با موفقیت ویرایش شد!');
+
      $('#clinicEditModal').modal('hide');
      loadClinics();
     },
     error: function(xhr) {
      handleValidationErrors(xhr, form);
-     Toastify({
-      text: 'خطا در ذخیره اطلاعات!',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: 'red',
-     }).showToast();
+        toastr.error('خطا در ذخیره اطلاعات!');
     },
     complete: function() {
      buttonText.show();
@@ -475,23 +448,11 @@
        _token: $('meta[name="csrf-token"]').attr('content'),
       },
       success: function() {
-       Toastify({
-        text: 'مطب با موفقیت حذف شد!',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: 'green',
-       }).showToast();
+        toastr.success('مطب با موفقیت حذف شد!');
        loadClinics();
       },
       error: function() {
-       Toastify({
-        text: 'خطا در حذف مطب!',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: 'red',
-       }).showToast();
+        toastr.error('خطا در حذف مطب!');
       },
      });
     }

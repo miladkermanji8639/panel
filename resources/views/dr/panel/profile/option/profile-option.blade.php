@@ -454,49 +454,20 @@
     buttonText.style.display = 'block';
     loader.style.display = 'none';
     if (data.success) {
-     // نمایش توست موفقیت
-     Toastify({
-      text: data.message || "تخصص با موفقیت به‌روز شد",
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "green"
-      }
-     }).showToast();
+      toastr.success(data.message || "تخصص با موفقیت به‌روز شد");
+
      updateAlert();
      callCheckProfileCompleteness();
      updateProfileSections(data);
     } else {
-     // نمایش توست خطا
-     Toastify({
-      text: data.message || "خطا در به‌روزرسانی تخصص",
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "red"
-      }
-     }).showToast();
+         toastr.error(data.message || "خطا در به‌روزرسانی تخصص");
     }
    })
    .catch(error => {
     // بازگردانی دکمه به حالت اولیه
     buttonText.style.display = 'block';
     loader.style.display = 'none';
-    // نمایش توست خطا
-    Toastify({
-     text: error.message || 'خطا در برقراری ارتباط با سرور',
-     duration: 3000,
-     close: true,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+           toastr.error(error.message || 'خطا در برقراری ارتباط با سرور');
    });
  });
  document.getElementById("specialtyEdit").addEventListener('submit', function(e) {
@@ -543,17 +514,7 @@
       updateSpecialties(data.specialties);
      }
     } else {
-     // نمایش توست خطا
-     Toastify({
-      text: data.message || "خطا در به‌روزرسانی تخصص",
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "red"
-      }
-     }).showToast();
+               toastr.error(data.message || "خطا در به‌روزرسانی تخصص");
     }
    })
    .catch(error => {
@@ -561,16 +522,7 @@
     buttonText.style.display = 'block';
     loader.style.display = 'none';
     // نمایش توست خطا
-    Toastify({
-     text: error.message || 'خطا در برقراری ارتباط با سرور',
-     duration: 3000,
-     close: true,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+    toastr.error(error.message || 'خطا در برقراری ارتباط با سرور');
    });
  });
 
@@ -667,32 +619,12 @@
     buttonText.style.display = 'block';
     loader.style.display = 'none';
     if (data.success) {
-     // نمایش توست موفقیت
-     Toastify({
-      text: data.message || "آیدی شما با موفقیت به‌روز شد",
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "green"
-      }
-     }).showToast();
+    toastr.success(data.message || "آیدی شما با موفقیت به‌روز شد");
      updateAlert();
      callCheckProfileCompleteness();
      updateProfileSections(data);
     } else {
-     // نمایش توست خطا
-     Toastify({
-      text: data.message || "خطا در به‌روزرسانی آیدی",
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "red"
-      }
-     }).showToast();
+        toastr.error(data.message || "خطا در به‌روزرسانی آیدی");
     }
    })
    .catch(error => {
@@ -700,16 +632,7 @@
     buttonText.style.display = 'block';
     loader.style.display = 'none';
     // نمایش توست خطا
-    Toastify({
-     text: error.message || 'خطا در برقراری ارتباط با سرور',
-     duration: 3000,
-     close: true,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+    toastr.error(error.message || 'خطا در برقراری ارتباط با سرور');
    });
  });
  // تابع نمایش خطاهای اعتبارسنجی
@@ -732,16 +655,7 @@
    }
   });
   // نمایش توست خطا
-  Toastify({
-   text: "لطفاً خطاهای فرم را بررسی کنید",
-   duration: 3000,
-   close: true,
-   gravity: "top",
-   position: 'right',
-   style: {
-    background: "red"
-   }
-  }).showToast();
+  toastr.error(data.message || "خطا در به‌روزرسانی آیدی");
  }
  // تابع پاک کردن خطاهای قبلی
  function clearPreviousErrors() {
@@ -767,15 +681,8 @@
   const mobileRegex =
    /^(?!09{1}(\d)\1{8}$)09(?:01|02|03|12|13|14|15|16|18|19|20|21|22|30|33|35|36|38|39|90|91|92|93|94)\d{7}$/;
   if (!mobileRegex.test(newMobile)) {
-   Toastify({
-    text: "شماره موبایل نامعتبر است",
-    duration: 3000,
-    gravity: "top",
-    position: "right",
-    style: {
-     background: "red"
-    }
-   }).showToast();
+  toastr.error("شماره موبایل نامعتبر است");
+
    // بازگردانی دکمه به حالت اولیه
    buttonText.style.display = 'block';
    loader.style.display = 'none';
@@ -799,26 +706,11 @@
     // فوکوس روی اولین اینپوت
     document.querySelector('.otp-input').focus();
     startResendTimer();
-    Toastify({
-     text: "کد تایید ارسال شد",
-     duration: 3000,
-     gravity: "top",
-     position: "right",
-     style: {
-      background: "green"
-     }
-    }).showToast();
+  toastr.success("کد تایید ارسال شد");
+
    },
    error: function(xhr) {
-    Toastify({
-     text: xhr.responseJSON.message || "خطا در ارسال کد",
-     duration: 5000,
-     gravity: "top",
-     position: "right",
-     style: {
-      background: "red"
-     }
-    }).showToast();
+  toastr.error(xhr.responseJSON.message || "خطا در ارسال کد");
    },
    complete: function() {
     // بازگردانی دکمه به حالت اولیه
@@ -837,15 +729,8 @@
   const buttonText = verifyButton.querySelector('.button_text');
   // بررسی کامل بودن کد
   if (otpCode.length !== 4) {
-   Toastify({
-    text: "لطفاً تمام ارقام کد را وارد کنید",
-    duration: 3000,
-    gravity: "top",
-    position: "right",
-    style: {
-     background: "red"
-    }
-   }).showToast();
+  toastr.error("لطفاً تمام ارقام کد را وارد کنید");
+
    return;
   }
   // مخفی کردن متن دکمه و نمایش لودینگ
@@ -865,15 +750,8 @@
    success: function(response) {
     // بررسی دقیق پاسخ موفقیت
     if (response.success) {
-     Toastify({
-      text: response.message,
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: {
-       background: "green"
-      }
-     }).showToast();
+  toastr.success(response.message);
+
      // به‌روزرسانی المان‌های موبایل در صفحه
      $('input[name="mobile"]').val(response.mobile);
      // بستن مودال
@@ -883,15 +761,7 @@
       location.reload();
      }, 1000);
     } else {
-     Toastify({
-      text: response.message || "خطا در تغییر شماره موبایل",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: {
-       background: "red"
-      }
-     }).showToast();
+  toastr.error(response.message || "خطا در تغییر شماره موبایل");
     }
    },
    error: function(xhr) {
@@ -900,15 +770,7 @@
     if (xhr.responseJSON && xhr.responseJSON.message) {
      errorMessage = xhr.responseJSON.message;
     }
-    Toastify({
-     text: errorMessage,
-     duration: 3000,
-     gravity: "top",
-     position: "right",
-     style: {
-      background: "red"
-     }
-    }).showToast();
+  toastr.error(errorMessage);
    },
    complete: function() {
     // بازگردانی دکمه به حالت اولیه
@@ -988,28 +850,13 @@
      loader.style.display = 'none';
      // نمایش پیام موفقیت یا خطا
      if (data.success) {
-      Toastify({
-       text: data.message,
-       duration: 3000,
-       gravity: "top",
-       position: "right",
-       style: {
-        background: "green",
-       },
-      }).showToast();
+  toastr.success(data.message);
+
       updateAlert();
       callCheckProfileCompleteness();
       updateProfileSections(data);
      } else {
-      Toastify({
-       text: data.message || "خطا در به‌روزرسانی اطلاعات",
-       duration: 3000,
-       gravity: "top",
-       position: "right",
-       style: {
-        background: "red",
-       },
-      }).showToast();
+  toastr.error(data.message || "خطا در به‌روزرسانی اطلاعات");
      }
     })
     .catch(error => {
@@ -1017,15 +864,7 @@
      buttonText.style.display = 'block';
      loader.style.display = 'none';
      // نمایش خطا
-     Toastify({
-      text: "خطا در برقراری ارتباط با سرور",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: {
-       background: "red",
-      },
-     }).showToast();
+  toastr.error("خطا در برقراری ارتباط با سرور");
     });
   });
  });
@@ -1062,28 +901,12 @@
     loader.style.display = 'none';
     if (data.success) {
      // Show success toast
-     Toastify({
-      text: data.message || "تنظیمات با موفقیت به‌روزرسانی شد",
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "green"
-      }
-     }).showToast();
+
+  toastr.success(data.message || "تنظیمات با موفقیت به‌روزرسانی شد");
+
     } else {
      // Show error toast
-     Toastify({
-      text: data.message || "خطا در به‌روزرسانی تنظیمات",
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "red"
-      }
-     }).showToast();
+  toastr.error(data.message || "خطا در به‌روزرسانی تنظیمات");
     }
    })
    .catch(error => {
@@ -1095,16 +918,8 @@
      handleValidationErrors(error.errors);
     } else {
      // Show error toast
-     Toastify({
-      text: error.message || 'خطا در برقراری ارتباط با سرور',
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: 'right',
-      style: {
-       background: "red"
-      }
-     }).showToast();
+  toastr.error(error.message || 'خطا در برقراری ارتباط با سرور');
+
     }
    });
  });
@@ -1128,16 +943,7 @@
    }
   });
   // نمایش توست خطا
-  Toastify({
-   text: "لطفاً خطاهای فرم را بررسی کنید",
-   duration: 3000,
-   close: true,
-   gravity: "top",
-   position: 'right',
-   style: {
-    background: "red"
-   }
-  }).showToast();
+  toastr.error(data.message || "خطا در به‌روزرسانی آیدی");
  }
 
  function clearPreviousErrors() {
@@ -1174,37 +980,13 @@
      .then(response => response.json())
      .then(data => {
       if (data.success) {
-       Toastify({
-        text: data.message,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        style: {
-         background: "green",
-        },
-       }).showToast();
+  toastr.success(data.message);
       } else {
-       Toastify({
-        text: data.message || "خطا در به‌روزرسانی تنظیمات",
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        style: {
-         background: "red",
-        },
-       }).showToast();
+       toastr.error(data.message || "خطا در به‌روزرسانی تنظیمات");
       }
      })
      .catch(error => {
-      Toastify({
-       text: "خطا در برقراری ارتباط با سرور",
-       duration: 3000,
-       gravity: "top",
-       position: "right",
-       style: {
-        background: "red",
-       },
-      }).showToast();
+      toastr.error("خطا در برقراری ارتباط با سرور");
      });
    }
   });
@@ -1262,37 +1044,14 @@
      .then(response => response.json())
      .then(data => {
       if (data.success) {
-       Toastify({
-        text: data.message,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        style: {
-         background: "green",
-        },
-       }).showToast();
+       toastr.success(data.message);
+
       } else {
-       Toastify({
-        text: data.message || "خطا در به‌روزرسانی تنظیمات",
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        style: {
-         background: "red",
-        },
-       }).showToast();
+       toastr.error(data.message || "خطا در به‌روزرسانی تنظیمات");
       }
      })
      .catch(error => {
-      Toastify({
-       text: "خطا در برقراری ارتباط با سرور",
-       duration: 3000,
-       gravity: "top",
-       position: "right",
-       style: {
-        background: "red",
-       },
-      }).showToast();
+      toastr.error("خطا در برقراری ارتباط با سرور");
      });
    }
   });
@@ -1308,16 +1067,8 @@
    loader.style.display = 'block';
    // اعتبارسنجی کلید مخفی اگر تاگل فعال باشد
    if (toggleSwitch.checked && !secretInput.value) {
-    Toastify({
-     text: "لطفاً کلید مخفی را وارد کنید",
-     duration: 3000,
-     close: true,
-     gravity: "top",
-     position: 'right',
-     style: {
-      background: "red"
-     }
-    }).showToast();
+       toastr.error("لطفاً کلید مخفی را وارد کنید");
+
     buttonText.style.display = 'block';
     loader.style.display = 'none';
     return;
@@ -1341,28 +1092,11 @@
      loader.style.display = 'none';
      if (data.success) {
       // Show success toast
-      Toastify({
-       text: data.message || "تنظیمات با موفقیت به‌روزرسانی شد",
-       duration: 3000,
-       close: true,
-       gravity: "top",
-       position: 'right',
-       style: {
-        background: "green"
-       }
-      }).showToast();
+       toastr.success(data.message || "تنظیمات با موفقیت به‌روزرسانی شد");
+
      } else {
       // Show error toast
-      Toastify({
-       text: data.message || "خطا در به‌روزرسانی تنظیمات",
-       duration: 3000,
-       close: true,
-       gravity: "top",
-       position: 'right',
-       style: {
-        background: "red"
-       }
-      }).showToast();
+       toastr.error(data.message || "خطا در به‌روزرسانی تنظیمات");
      }
     })
     .catch(error => {
@@ -1373,17 +1107,8 @@
      if (error.errors) {
       handleValidationErrors(error.errors);
      } else {
-      // Show error toast
-      Toastify({
-       text: error.message || 'خطا در برقراری ارتباط با سرور',
-       duration: 3000,
-       close: true,
-       gravity: "top",
-       position: 'right',
-       style: {
-        background: "red"
-       }
-      }).showToast();
+       toastr.error(error.message || 'خطا در برقراری ارتباط با سرور');
+
      }
     });
   });
@@ -1423,18 +1148,7 @@
     // کدهای قبلی...
    })
    .catch(error => {
-    console.error('خطا در بررسی وضعیت پروفایل:', error);
-
-    // نمایش توست خطا
-    Toastify({
-     text: "خطا در دریافت اطلاعات پروفایل",
-     duration: 3000,
-     gravity: "top",
-     position: "right",
-     style: {
-      background: "red"
-     }
-    }).showToast();
+       toastr.error("خطا در دریافت اطلاعات پروفایل");
    });
  }
 

@@ -245,16 +245,6 @@
   "{{ route('updateStatusAppointment', ':id') }}";
 </script>
 <script>
- function showToast(message, type = 'success') {
-  Toastify({
-   text: message,
-   duration: 3000,
-   close: true,
-   gravity: 'top',
-   position: 'right',
-   backgroundColor: type === 'success' ? 'green' : 'red',
-  }).showToast();
- }
   $(document).on('click', '.add-secretary-btn', function () {
     const modal = $('#addSecretaryModal');
     if (modal.length) {
@@ -334,7 +324,8 @@
     method: 'POST',
     data: form.serialize(),
     success: function(response) {
-     showToast('منشی با موفقیت اضافه شد!', 'success');
+        toastr.success('منشی با موفقیت اضافه شد!');
+
      $('#addSecretaryModal').modal('hide');
      $('body').removeClass('modal-open'); // حذف کلاس جلوگیری از اسکرول
      $('.modal-backdrop').remove();
@@ -368,7 +359,8 @@
       });
 
      } else {
-      showToast('خطا در ذخیره اطلاعات!', 'error');
+        toastr.error('خطا در ذخیره اطلاعات!');
+
      }
     },
     complete: function() {
@@ -409,7 +401,8 @@
     method: 'POST',
     data: form.serialize(),
     success: function(response) {
-     showToast('منشی با موفقیت ویرایش شد!');
+        toastr.success('منشی با موفقیت ویرایش شد!');
+
       buttonText.show();
       loader.hide();
      $('#editSecretaryModal').modal('hide');
@@ -421,7 +414,8 @@
     error: function() {
        buttonText.show();
       loader.hide();
-     showToast('خطا در ویرایش منشی!', 'error');
+        toastr.error('خطا در ویرایش منشی!');
+
     },
    });
   });
@@ -444,11 +438,13 @@
        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(response) {
-       showToast('منشی با موفقیت حذف شد!');
+        toastr.success('منشی با موفقیت حذف شد!');
+
        updateSecretaryList(response.secretaries);
       },
       error: function() {
-       showToast('خطا در حذف منشی!', 'error');
+        toastr.error('خطا در حذف منشی!');
+
       },
      });
     }

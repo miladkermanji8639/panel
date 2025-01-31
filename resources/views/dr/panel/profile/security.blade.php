@@ -84,7 +84,7 @@
             success: function () {
               row.remove();
               loadLogs();
-              Swal.fire('حذف شد!', 'لاگ با موفقیت حذف شد.', 'success');
+              toastr.success('تارخچه مورد نظر با موفقیت حذف شد.');
             }
           });
         }
