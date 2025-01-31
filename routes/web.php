@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\Dr\Panel\Profile\DrUpgradeProfileController;
 use App\Http\Controllers\Dr\Panel\Profile\SubUserController;
 use Mockery\Container;
 use Illuminate\Support\Facades\Route;
@@ -599,7 +600,9 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
             Route::get('/dr/panel/profile/security/secretary-logs', [LoginLogsController::class, 'getSecretaryLogs'])->name('dr-get-secretary-logs');
             Route::delete('/dr/panel/profile/security/logs/{id}', [LoginLogsController::class, 'deleteLog'])->middleware('secretary.permission:profile')->name('delete-log');
 
-            Route::get('upgrade', [DrProfileController::class, 'upgrade'])->middleware('secretary.permission:profile')->name('dr-edit-profile-upgrade');
+            Route::get('upgrade', [DrUpgradeProfileController::class, 'index'])->middleware('secretary.permission:profile')->name('dr-edit-profile-upgrade');
+            Route::delete('/doctor/payments/delete/{id}', [DrUpgradeProfileController::class, 'deletePayment'])->name('dr-payment-delete');
+
             Route::get('subuser', [SubUserController::class, 'index'])->middleware('secretary.permission:profile')->name('dr-subuser');
             Route::post('sub-users/store', [SubUserController::class, 'store'])->name('dr-sub-users-store');
             Route::get('sub-users/edit/{id}', [SubUserController::class, 'edit'])->name('dr-sub-users-edit');
