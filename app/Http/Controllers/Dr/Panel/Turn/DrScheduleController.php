@@ -1,10 +1,11 @@
 <?php
 namespace App\Http\Controllers\Dr\Panel\Turn;
 
+use App\Models\Dr\SubUser;
 use Illuminate\Http\Request;
+use Morilog\Jalali\Jalalian;
 use App\Models\Dr\Appointment;
 use Illuminate\Support\Facades\Auth;
-use Morilog\Jalali\Jalalian;
 
 class DrScheduleController
 {
@@ -56,10 +57,29 @@ class DrScheduleController
     /**
      * نمایش صفحه نوبت‌های من
      */
-    public function myAppointments(Request $request)
+    public function myAppointments()
     {
-        return view("dr.panel.turn.schedule.my-appointments");
+        $doctor = $this->getAuthenticatedDoctor();
+
+        if (!$doctor) {
+            abort(403, 'شما به این بخش دسترسی ندارید.');
+        }
+
+        // دریافت لیست کاربران زیرمجموعه پزشک
+        $subUserIds = SubUser::where('doctor_id', $doctor->id)
+            ->pluck('user_id')
+            ->toArray();
+
+        // دریافت نوبت‌های کاربران زیرمجموعه
+        $appointments = Appointment::with(['patient'])
+            ->whereIn('patient_id', $subUserIds)
+            ->orderBy('appointment_date', 'desc')
+            ->paginate(10); // صفحه‌بندی
+
+        return view("dr.panel.turn.schedule.my-appointments", compact('appointments'));
     }
+
+
 
     /**
      * دریافت نوبت‌ها بر اساس تاریخ انتخاب شده
