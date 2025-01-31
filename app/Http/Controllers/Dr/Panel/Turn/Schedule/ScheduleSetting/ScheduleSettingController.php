@@ -21,29 +21,24 @@ class ScheduleSettingController
    */
   public function workhours()
   {
-    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
-    // بررسی کش برای اطلاعات ساعات کاری
-    $cacheKey = "doctor_workhours_{$doctorId}";
-    $workHoursData = Cache::remember($cacheKey, 3600, function () use ($doctorId) {
-      $appointmentConfig = DoctorAppointmentConfig::firstOrCreate(
-        ['doctor_id' => $doctorId],
-        [
-          'auto_scheduling' => true,
-          'online_consultation' => false,
-          'holiday_availability' => false
-        ]
-      );
-      $workSchedules = DoctorWorkSchedule::where('doctor_id', $doctorId)->get();
-      return [
-        'appointmentConfig' => $appointmentConfig,
-        'workSchedules' => $workSchedules
-      ];
-    });
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
+
+    $appointmentConfig = DoctorAppointmentConfig::firstOrCreate(
+      ['doctor_id' => $doctorId],
+      [
+        'auto_scheduling' => true,
+        'online_consultation' => false,
+        'holiday_availability' => false
+      ]
+    );
+    $workSchedules = DoctorWorkSchedule::where('doctor_id', $doctorId)->get();
+
     return view("dr.panel.turn.schedule.scheduleSetting.workhours", [
-      'appointmentConfig' => $workHoursData['appointmentConfig'],
-      'workSchedules' => $workHoursData['workSchedules']
+      'appointmentConfig' => $appointmentConfig,
+      'workSchedules' => $workSchedules
     ]);
   }
+
   public function copyWorkHours(Request $request)
   {
     $override = filter_var($request->input('override', false), FILTER_VALIDATE_BOOLEAN);
@@ -267,20 +262,15 @@ class ScheduleSettingController
     ]);
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
 
-    // تلاش برای بازیابی اطلاعات از کش
-    $cacheKey = "doctor_{$doctor->id}_day_slots_{$validated['day']}";
-    $hasSlots = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($doctor, $validated) {
-      $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctor->id)
-        ->where('day', $validated['day'])
-        ->first();
-      if (!$workSchedule) {
-        return false;
-      }
-      $slotsCount = AppointmentSlot::where('work_schedule_id', $workSchedule->id)->count();
-      return $slotsCount > 0;
-    });
+    $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctor->id)
+      ->where('day', $validated['day'])
+      ->first();
+
+    $hasSlots = $workSchedule ? AppointmentSlot::where('work_schedule_id', $workSchedule->id)->exists() : false;
+
     return response()->json(['hasSlots' => $hasSlots]);
   }
+
   public function saveTimeSlot(Request $request)
   {
     $validated = $request->validate([
@@ -361,10 +351,8 @@ class ScheduleSettingController
     ]);
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
-
-      // تبدیل مقدار به boolean
       $isWorking = filter_var($validated['is_working'], FILTER_VALIDATE_BOOLEAN);
-      // بروزرسانی یا ایجاد رکورد برای روز مورد نظر
+
       $workSchedule = DoctorWorkSchedule::updateOrCreate(
         [
           'doctor_id' => $doctor->id,
@@ -374,31 +362,21 @@ class ScheduleSettingController
           'is_working' => $isWorking
         ]
       );
-      // به‌روزرسانی کش
-      Cache::forget("doctor_{$doctor->id}_work_schedule");
-      Cache::remember(
-        "doctor_{$doctor->id}_work_schedule",
-        now()->addMinutes(30),
-        function () use ($doctor) {
-          return DoctorWorkSchedule::where('doctor_id', $doctor->id)->get();
-        }
-      );
+
       return response()->json([
-        'message' => $isWorking
-          ? 'روز کاری با موفقیت فعال شد'
-          : 'روز کاری با موفقیت غیرفعال شد',
+        'message' => $isWorking ? 'روز کاری با موفقیت فعال شد' : 'روز کاری با موفقیت غیرفعال شد',
         'status' => true,
         'data' => $workSchedule
       ], 200);
     } catch (\Exception $e) {
-      Log::error('Error updating work day status: ' . $e->getMessage());
+      Log::error('خطا در بروزرسانی وضعیت روز کاری: ' . $e->getMessage());
       return response()->json([
         'message' => 'خطا در بروزرسانی وضعیت روز کاری',
-        'status' => false,
-        'error' => config('app.debug') ? $e->getMessage() : null
+        'status' => false
       ], 500);
     }
   }
+
   public function updateAutoScheduling(Request $request)
   {
     $validated = $request->validate([
@@ -686,27 +664,25 @@ class ScheduleSettingController
     Log::info($request);
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
-
-      // کلید کش برای ذخیره تنظیمات
       DB::beginTransaction();
-      // یافتن تنظیمات برای روز مشخص
+
       $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctor->id)
         ->where('day', $validated['day'])
         ->first();
+
       if ($workSchedule && $workSchedule->appointment_settings) {
         $settings = json_decode($workSchedule->appointment_settings, true);
-        // حذف بازه مورد نظر
         $settings = array_filter($settings, function ($setting) use ($validated) {
           return !(
             $setting['start_time'] === $validated['start_time'] &&
             $setting['end_time'] === $validated['end_time']
           );
         });
-        // ذخیره تنظیمات جدید
+
         $workSchedule->appointment_settings = json_encode(array_values($settings));
         $workSchedule->save();
-        Cache::forget("doctor_{$doctor->id}_work_schedule_{$validated['day']}");
         DB::commit();
+
         return response()->json([
           'message' => 'تنظیمات با موفقیت حذف شد',
           'status' => true,
@@ -726,6 +702,7 @@ class ScheduleSettingController
       ], 500);
     }
   }
+
   /**
    * تعیین نوع اسلات بر اساس زمان
    */
@@ -756,11 +733,13 @@ class ScheduleSettingController
     $workSchedules = DoctorWorkSchedule::with('slots')
       ->where('doctor_id', $doctor->id)
       ->get();
+
     return response()->json([
       'appointmentConfig' => $appointmentConfig,
       'workSchedules' => $workSchedules
     ]);
   }
+
   // متدهای موجود در کنترلر اصلی
   public function index()
   {
@@ -863,19 +842,23 @@ class ScheduleSettingController
     $validated = $request->validate([
       'date' => 'required|date',
     ]);
-    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
+
     $holidayRecord = DoctorHoliday::where('doctor_id', $doctorId)->first();
     $holidayDates = json_decode($holidayRecord->holiday_dates ?? '[]', true);
     $isHoliday = in_array($validated['date'], $holidayDates);
+
     $appointments = Appointment::where('doctor_id', $doctorId)
       ->where('appointment_date', $validated['date'])
       ->get();
+
     return response()->json([
       'status' => true,
       'is_holiday' => $isHoliday,
       'data' => $appointments
     ]);
   }
+
   public function cancelAppointments(Request $request)
   {
     $validatedData = $request->validate([
@@ -923,45 +906,30 @@ class ScheduleSettingController
   }
   public function getNextAvailableDate()
   {
-    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
-    // تعطیلات پزشک را بازیابی کنید
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
     $holidays = DoctorHoliday::where('doctor_id', $doctorId)->first();
     $holidayDates = json_decode($holidays->holiday_dates ?? '[]', true);
-    $today = Carbon::now()->startOfDay(); // تاریخ امروز
-    $daysToCheck = DoctorAppointmentConfig::where('doctor_id', $doctorId)
-      ->value('calendar_days'); // فقط مقدار calendar_days را دریافت می‌کند
-    // در صورتی که مقدار پیدا نشود، مقدار پیش‌فرض تنظیم کنید
-    $daysToCheck = $daysToCheck ?? 30;
+
+    $today = Carbon::now()->startOfDay();
+    $daysToCheck = DoctorAppointmentConfig::where('doctor_id', $doctorId)->value('calendar_days') ?? 30;
+
     $datesToCheck = collect();
     for ($i = 1; $i <= $daysToCheck; $i++) {
       $date = $today->copy()->addDays($i)->format('Y-m-d');
       $datesToCheck->push($date);
     }
-    // جستجوی تاریخ‌هایی که تعطیل نیستند و نوبت ندارند
+
     $nextAvailableDate = $datesToCheck->first(function ($date) use ($doctorId, $holidayDates) {
-      // بررسی تعطیل نبودن
-      if (in_array($date, $holidayDates)) {
-        return false;
-      }
-      // بررسی نداشتن نوبت
-      $hasAppointments = Appointment::where('doctor_id', $doctorId)
-        ->where('appointment_date', $date)
-        ->exists();
-      return !$hasAppointments;
+      return !in_array($date, $holidayDates) &&
+        !Appointment::where('doctor_id', $doctorId)->where('appointment_date', $date)->exists();
     });
-    // اگر تاریخی پیدا نشد
-    if (!$nextAvailableDate) {
-      return response()->json([
-        'status' => false,
-        'message' => 'هیچ نوبت خالی یافت نشد.'
-      ]);
-    }
-    // بازگشت اولین تاریخ خالی
+
     return response()->json([
-      'status' => true,
-      'date' => $nextAvailableDate
+      'status' => $nextAvailableDate ? true : false,
+      'date' => $nextAvailableDate ?? 'هیچ نوبت خالی یافت نشد.'
     ]);
   }
+
   public function updateFirstAvailableAppointment(Request $request)
   {
     $validated = $request->validate([

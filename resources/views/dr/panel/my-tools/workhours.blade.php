@@ -616,83 +616,12 @@
   $(`#morning-patients-${day}`).val(maxAppointments);
  }
 
- // بعد از بارگذاری برنامه کاری‌ها، المان اصلی را مقداردهی کنید
 
- // تابع ذخیره‌سازی در localStorage
- function cacheWorkSchedule(data) {
-  try {
-   // افزودن تاریخ انقضا به داده‌ها
-   const cachedData = {
-    data: data,
-    timestamp: Date.now(),
-    // انقضا بعد از 24 ساعت
-    expiry: Date.now() + (24 * 60 * 60 * 1000)
-   };
 
-   localStorage.setItem('workSchedule', JSON.stringify(cachedData));
-  } catch (error) {}
- }
 
- // تابع بازیابی از localStorage
- function getCachedWorkSchedule() {
-  try {
-   const cachedDataString = localStorage.getItem('workSchedule');
 
-   if (!cachedDataString) return null;
 
-   const cachedData = JSON.parse(cachedDataString);
 
-   // بررسی تاریخ انقضا
-   if (Date.now() > cachedData.expiry) {
-    // حذف داده‌های منقضی شده
-    localStorage.removeItem('workSchedule');
-    return null;
-   }
-
-   return cachedData.data;
-  } catch (error) {
-   return null;
-  }
- }
-
- // تابع بارگذاری داده‌های کش شده
- function loadCachedSchedule(schedule) {
-  try {
-   // بازسازی المان اصلی برای هر روز
-   schedule.workSchedules.forEach(function(schedule) {
-    $(`#${schedule.day}`).prop('checked', schedule.is_working);
-
-    if (schedule.is_working) {
-     $(`.work-hours-${schedule.day}`).removeClass('d-none');
-
-     const mainRowHtml = createMainRowHtml(schedule.day);
-     $(`#morning-${schedule.day}-details`).html(mainRowHtml);
-    } else {
-     $(`.work-hours-${schedule.day}`).addClass('d-none');
-    }
-
-    // بارگذاری برنامه کاری‌ها
-    if (schedule.slots && schedule.slots.length > 0) {
-     const $container = $(`#morning-${schedule.day}-details`);
-
-     schedule.slots.forEach(function(slot) {
-      const newRow = createSlotHtml(slot, schedule.day);
-      $container.append(newRow);
-     });
-    }
-   });
-
-   // تنظیم مقادیر کانفیگ
-   if (schedule.appointmentConfig) {
-    $('#appointment-toggle').prop('checked', schedule.appointmentConfig.auto_scheduling);
-    $('input[name="calendar_days"]').val(schedule.appointmentConfig.calendar_days || 30);
-    $('#posible-appointments').prop('checked', schedule.appointmentConfig.online_consultation);
-    $('#posible-appointments-inholiday').prop('checked', schedule.appointmentConfig.holiday_availability);
-   }
-
-   // مجدداً راه‌اندازی تایم پیکرها
-  } catch (error) {}
- }
 
  // تابع بارگذاری داده‌های سرور
  function loadWorkSchedule(response) {
@@ -811,21 +740,16 @@
 
  // استفاده از کش
  $(document).ready(function() {
-  const cachedSchedule = getCachedWorkSchedule();
-  if (cachedSchedule) {
-   // بارگذاری داده‌های کش شده
-   loadCachedSchedule(cachedSchedule);
-  } else {
+ 
    // اگر کش وجود ندارد، داده‌ها را از سرور بارگذاری کنید
    $.ajax({
     url: "{{ route('dr-get-work-schedule') }}",
     method: 'GET',
     success: function(response) {
-     cacheWorkSchedule(response); // ذخیره‌سازی در کش
      loadWorkSchedule(response); // بارگذاری داده‌ها
     }
    });
-  }
+  
  });
  $(document).on('click', '.copy-to-other-day-btn', function() {
   const currentDay = $(this).data('day');

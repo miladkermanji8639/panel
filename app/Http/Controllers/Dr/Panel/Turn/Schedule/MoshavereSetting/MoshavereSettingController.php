@@ -13,54 +13,49 @@ use App\Models\Dr\DoctorCounselingConfig;
 use App\Models\Dr\DoctorCounselingWorkSchedule;
 class MoshavereSettingController
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->user()->doctor_id;
-        // بررسی یا ایجاد تنظیمات مشاوره آنلاین
-        $appointmentConfig = DoctorCounselingConfig::firstOrCreate(
-            ['doctor_id' => $doctorId],
-            [
-                'auto_scheduling' => true,
-                'calendar_days' => 30,
-                'online_consultation' => false,
-                'holiday_availability' => false,
-            ]
-        );
-        return view('dr.panel.turn.schedule.moshavere_setting.index', [
-            'appointmentConfig' => $appointmentConfig,
-        ]);
-    }
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function workhours()
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
   {
-    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();;
-    // بررسی کش برای اطلاعات ساعات کاری
-    $cacheKey = "doctor_workhours_{$doctorId}";
-    $workHoursData = Cache::remember($cacheKey, 3600, function () use ($doctorId) {
-      $appointmentConfig = DoctorCounselingConfig::firstOrCreate(
-        ['doctor_id' => $doctorId],
-        [
-          'auto_scheduling' => true,
-          'online_consultation' => false,
-          'holiday_availability' => false
-        ]
-      );
-      $workSchedules = DoctorCounselingWorkSchedule::where('doctor_id', $doctorId)->get();
-      return [
-        'appointmentConfig' => $appointmentConfig,
-        'workSchedules' => $workSchedules
-      ];
-    });
-    return view("dr.panel.turn.schedule.scheduleSetting.workhours", [
-      'appointmentConfig' => $workHoursData['appointmentConfig'],
-      'workSchedules' => $workHoursData['workSchedules']
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->user()->doctor_id;
+    // بررسی یا ایجاد تنظیمات مشاوره آنلاین
+    $appointmentConfig = DoctorCounselingConfig::firstOrCreate(
+      ['doctor_id' => $doctorId],
+      [
+        'auto_scheduling' => true,
+        'calendar_days' => 30,
+        'online_consultation' => false,
+        'holiday_availability' => false,
+      ]
+    );
+    return view('dr.panel.turn.schedule.moshavere_setting.index', [
+      'appointmentConfig' => $appointmentConfig,
     ]);
   }
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function workhours()
+  {
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
+
+    $appointmentConfig = DoctorCounselingConfig::firstOrCreate(
+      ['doctor_id' => $doctorId],
+      [
+        'auto_scheduling' => true,
+        'online_consultation' => false,
+        'holiday_availability' => false
+      ]
+    );
+    $workSchedules = DoctorCounselingWorkSchedule::where('doctor_id', $doctorId)->get();
+
+    return view("dr.panel.turn.schedule.moshavere_setting.workhours", [
+      'appointmentConfig' => $appointmentConfig,
+      'workSchedules' => $workSchedules
+    ]);
+  }
+
   public function copyWorkHours(Request $request)
   {
     $override = filter_var($request->input('override', false), FILTER_VALIDATE_BOOLEAN);
@@ -178,7 +173,7 @@ class MoshavereSettingController
     $validated = $request->validate([
       'source_day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
       'target_days' => 'required|array|min:1',
-      'slot_id' => 'required|exists:appointment_slots,id',
+      'slot_id' => 'required|exists:doctor_counseling_slots,id',
       'override' => 'nullable|in:0,1,true,false'
     ]);
     $override = filter_var($request->input('override', false), FILTER_VALIDATE_BOOLEAN);
@@ -284,20 +279,15 @@ class MoshavereSettingController
     ]);
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
 
-    // تلاش برای بازیابی اطلاعات از کش
-    $cacheKey = "doctor_{$doctor->id}_day_slots_{$validated['day']}";
-    $hasSlots = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($doctor, $validated) {
-      $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
-        ->where('day', $validated['day'])
-        ->first();
-      if (!$workSchedule) {
-        return false;
-      }
-      $slotsCount = DoctorCounselingSlot::where('work_schedule_id', $workSchedule->id)->count();
-      return $slotsCount > 0;
-    });
+    $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
+      ->where('day', $validated['day'])
+      ->first();
+
+    $hasSlots = $workSchedule ? DoctorCounselingSlot::where('work_schedule_id', $workSchedule->id)->exists() : false;
+
     return response()->json(['hasSlots' => $hasSlots]);
   }
+
   public function saveTimeSlot(Request $request)
   {
     $validated = $request->validate([
@@ -378,10 +368,8 @@ class MoshavereSettingController
     ]);
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
-
-      // تبدیل مقدار به boolean
       $isWorking = filter_var($validated['is_working'], FILTER_VALIDATE_BOOLEAN);
-      // بروزرسانی یا ایجاد رکورد برای روز مورد نظر
+
       $workSchedule = DoctorCounselingWorkSchedule::updateOrCreate(
         [
           'doctor_id' => $doctor->id,
@@ -391,31 +379,21 @@ class MoshavereSettingController
           'is_working' => $isWorking
         ]
       );
-      // به‌روزرسانی کش
-      Cache::forget("doctor_{$doctor->id}_work_schedule");
-      Cache::remember(
-        "doctor_{$doctor->id}_work_schedule",
-        now()->addMinutes(30),
-        function () use ($doctor) {
-          return DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)->get();
-        }
-      );
+
       return response()->json([
-        'message' => $isWorking
-          ? 'روز کاری با موفقیت فعال شد'
-          : 'روز کاری با موفقیت غیرفعال شد',
+        'message' => $isWorking ? 'روز کاری با موفقیت فعال شد' : 'روز کاری با موفقیت غیرفعال شد',
         'status' => true,
         'data' => $workSchedule
       ], 200);
     } catch (\Exception $e) {
-      Log::error('Error updating work day status: ' . $e->getMessage());
+      Log::error('خطا در بروزرسانی وضعیت روز کاری: ' . $e->getMessage());
       return response()->json([
         'message' => 'خطا در بروزرسانی وضعیت روز کاری',
-        'status' => false,
-        'error' => config('app.debug') ? $e->getMessage() : null
+        'status' => false
       ], 500);
     }
   }
+
   public function updateAutoScheduling(Request $request)
   {
     $validated = $request->validate([
@@ -703,27 +681,25 @@ class MoshavereSettingController
     Log::info($request);
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
-
-      // کلید کش برای ذخیره تنظیمات
       DB::beginTransaction();
-      // یافتن تنظیمات برای روز مشخص
+
       $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
         ->where('day', $validated['day'])
         ->first();
+
       if ($workSchedule && $workSchedule->appointment_settings) {
         $settings = json_decode($workSchedule->appointment_settings, true);
-        // حذف بازه مورد نظر
         $settings = array_filter($settings, function ($setting) use ($validated) {
           return !(
             $setting['start_time'] === $validated['start_time'] &&
             $setting['end_time'] === $validated['end_time']
           );
         });
-        // ذخیره تنظیمات جدید
+
         $workSchedule->appointment_settings = json_encode(array_values($settings));
         $workSchedule->save();
-        Cache::forget("doctor_{$doctor->id}_work_schedule_{$validated['day']}");
         DB::commit();
+
         return response()->json([
           'message' => 'تنظیمات با موفقیت حذف شد',
           'status' => true,
@@ -743,6 +719,7 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   /**
    * تعیین نوع اسلات بر اساس زمان
    */
@@ -773,25 +750,27 @@ class MoshavereSettingController
     $workSchedules = DoctorCounselingWorkSchedule::with('slots')
       ->where('doctor_id', $doctor->id)
       ->get();
+
     return response()->json([
       'appointmentConfig' => $appointmentConfig,
       'workSchedules' => $workSchedules
     ]);
   }
-    public function destroy($id)
-    {
-        try {
-            $DoctorCounselingSlot = DoctorCounselingSlot::findOrFail($id);
-            $DoctorCounselingSlot->delete();
-            return response()->json([
-                'message' => 'حذف موفقیت آمیز',
-                'status' => true
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'خطا در حذف  ',
-                'status' => false
-            ], 500);
-        }
+
+  public function destroy($id)
+  {
+    try {
+      $DoctorCounselingSlot = DoctorCounselingSlot::findOrFail($id);
+      $DoctorCounselingSlot->delete();
+      return response()->json([
+        'message' => 'حذف موفقیت آمیز',
+        'status' => true
+      ]);
+    } catch (\Exception $e) {
+      return response()->json([
+        'message' => 'خطا در حذف  ',
+        'status' => false
+      ], 500);
     }
+  }
 }
