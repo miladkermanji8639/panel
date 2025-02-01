@@ -5,16 +5,12 @@
   $(document).on('hidden.bs.modal', '.modal', function() {
    // حذف تمام بک‌دراپ‌های باقی‌مانده
    $('.modal-backdrop').remove();
-
    // اطمینان از حذف کلاس modal-open از body
    $('body').removeClass('modal-open');
-
    // اطمینان از حذف خاصیت استایل اضافه‌شده
    $('body').css('padding-right', '');
   });
-
  });
-
  $(document).on('change', '#select-all-copy-modal', function() {
   const isChecked = $(this).is(':checked');
   $('#checkboxModal input[type="checkbox"]').not(this).prop('checked', isChecked);
@@ -24,13 +20,11 @@
   // تبدیل زمان‌ها به دقیقه
   const startMinutes = timeToMinutes(startTime);
   const endMinutes = timeToMinutes(endTime);
-
   // بررسی اینکه زمان پایان از زمان شروع بزرگتر باشد
   if (startMinutes >= endMinutes) {
    toastr.error('زمان پایان باید بزرگتر از زمان شروع باشد')
    return false;
   }
-
   // بررسی تداخل با برنامه کاری‌های موجود
   const existingSlots = $(`#morning-${day}-details .form-row`);
   let hasConflict = false;
@@ -38,7 +32,6 @@
   existingSlots.each(function() {
    const existingStart = $(this).find('.start-time').val();
    const existingEnd = $(this).find('.end-time').val();
-
    if (isTimeConflict(startTime, endTime, existingStart, existingEnd)) {
     conflictingSlots.push({
      start: existingStart,
@@ -48,12 +41,10 @@
     return false; // خروج از حلقه
    }
   });
-
   if (hasConflict) {
    toastr.error('این بازه زمانی با برنامه کاری‌های موجود تداخل دارد');
    return false;
   }
-
   return true;
  }
 
@@ -67,12 +58,10 @@
   const newEndMinutes = timeToMinutes(newEnd);
   const existingStartMinutes = timeToMinutes(existingStart);
   const existingEndMinutes = timeToMinutes(existingEnd);
-
   return (
    (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes)
   );
  }
-
 
  function initializeTimepicker() {
   const DOMElement = $(".timepicker-ui");
@@ -92,43 +81,31 @@
    }
   });
  }
-
  $(document).ready(function() {
   setTimeout(() => {
    initializeTimepicker();
-
   }, 3000);
  });
-
  $(document).on('dynamicContentLoaded', function() {
   initializeTimepicker(); // Initialize timepicker for dynamically loaded content
  });
-
  // تابع برای بررسی و فعال/غیرفعال کردن دکمه کپی
-
-
  // بررسی وضعیت دکمه کپی برای همه روزها
-
-
  // در زمان بارگذاری صفحه
  $(document).on('click', '#saveSelection', function() {
   const sourceDay = 'saturday'; // مقدار روز مبدأ
   const targetDays = [];
-
   // جمع‌آوری روزهای انتخاب‌شده
   $('#checkboxModal input[type="checkbox"]:checked').each(function() {
    if ($(this).attr('id') !== 'select-all-copy-modal') {
     targetDays.push($(this).attr('id').replace('-copy-modal', ''));
    }
   });
-
   if (targetDays.length === 0) {
    toastr.error('لطفاً حداقل یک روز را انتخاب کنید');
    return;
   }
-
   showLoading();
-
   $.ajax({
    url: "{{ route('copy-work-hours') }}",
    method: 'POST',
@@ -143,37 +120,26 @@
     $("#checkboxModal").modal("hide"); // بستن مدال
     $("#checkboxModal").removeClass("show");
     $(".modal-backdrop").remove();
-
-
     response.workSchedules.forEach(function(schedule) {
      const day = schedule.day; // روز مقصد
-
      // 1. فعال کردن تیک روز مقصد
      $(`#${day}`).prop('checked', true);
-
      // 2. نمایش بخش ساعات کاری برای روز مقصد
      $(`.work-hours-${day}`).removeClass('d-none');
-
      // 3. به‌روزرسانی محتوا (برنامه کاری‌های جدید) برای روز مقصد
      updateDayUI(schedule);
     });
-
    },
    error: function(xhr) {
     hideLoading();
-
     // بررسی خطای تداخل
     if (xhr.status === 400) {
-
      const conflict = Array.isArray(xhr.responseJSON.conflicting_slots) ?
       xhr.responseJSON.conflicting_slots : []; // اطمینان از اینکه یک آرایه است
-
      let conflictMessage = 'بازه‌های زمانی  تداخل دارند: آیا میخواهید جایگزین شود؟؟<br><ul>';
-
      conflict.forEach(slot => {
       conflictMessage += `<li>${slot.start} تا ${slot.end}</li>`;
      });
-
      conflictMessage += '</ul>';
      Swal.fire({
       title: 'تداخل بازه‌های زمانی',
@@ -199,7 +165,6 @@
          response.target_days.forEach(function(day) {
           const dayCheckbox = $(`#${day}`);
           dayCheckbox.prop('checked', true);
-
           // 2. نمایش بخش ساعات کاری مربوط به روز مقصد
           $(`.work-hours-${day}`).removeClass('d-none');
           reloadDayData(day); // بازسازی داده‌های روز مقصد
@@ -210,19 +175,13 @@
          $(".modal-backdrop").remove();
          // به‌روزرسانی رابط کاربری برای روزهای مقصد
          response.workSchedules.forEach(function(schedule) {
-
           updateDayUI(schedule);
          });
-
         },
         error: function(xhr) {
          toastr.error(xhr.responseJSON?.message || 'خطا در کپی ساعات کاری');
         }
        });
-
-
-
-
       } else {
        toastr.warning('عملیات جایگزینی لغو شد')
       }
@@ -233,8 +192,6 @@
    }
   });
  });
-
-
 
  function reloadDayData(day) {
   $.ajax({
@@ -248,18 +205,18 @@
    }
   });
  }
-
  // تابع برای به‌روزرسانی رابط کاربری روز مقصد
  function updateDayUI(schedule) {
   const day = schedule.day; // روز مقصد
   const $container = $(`#morning-${day}-details`);
-
   // پاک کردن محتوای قبلی
   $container.empty();
   // اضافه کردن ردیف جدید
-  const mainRowHtml = `
+  if (schedule.slots && schedule.slots.length > 0) {
+    const mainRowHtml = `
+        <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(day)} 👇   </span></div>
         <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-            <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+            <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
                 <div class="form-group position-relative timepicker-ui">
                     <label for="morning-start-${day}" class="label-top-input-special-takhasos">از</label>
                     <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="${schedule.start_time || '08:00'}">
@@ -289,6 +246,8 @@
     `;
   $container.append(mainRowHtml);
 
+  }
+  
   // اضافه کردن برنامه کاری‌های جدید
   if (schedule.slots && schedule.slots.length > 0) {
    schedule.slots.forEach(slot => {
@@ -296,18 +255,15 @@
     $container.append(slotHtml);
    });
   }
-
   // بازسازی تایم‌پیکرها
   initializeTimepicker();
  }
 
-
-
-
  function createParentHtml(day) {
   return `
+        <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(day)} 👇   </span></div>
         <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-            <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+            <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
                 <div class="form-group position-relative timepicker-ui">
                     <label for="morning-start-${day}" class="label-top-input-special-takhasos">از</label>
                     <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="08:00">
@@ -336,8 +292,6 @@
         </div>
     `;
  }
-
-
  $(document).on('hidden.bs.modal', '#checkboxModal', function() {
   // پاکسازی کامل وضعیت مدال و حذف backdrop
   $(this).find('input[type="checkbox"]').prop('checked', false); // ریست چک‌باکس‌ها
@@ -348,21 +302,13 @@
   e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
   const $button = $(this);
   $('#saveSingleSlotSelection').attr('id', 'saveSelection');
-
   // غیرفعال کردن موقت دکمه برای جلوگیری از کلیک‌های مکرر
   $button.prop('disabled', true);
-
   setTimeout(() => {
    $button.prop('disabled', false); // دوباره فعال کردن دکمه بعد از 1 ثانیه
   }, 1000);
-
   $('#checkboxModal').modal('show');
  });
-
-
-
-
-
  // تابع بارگذاری برنامه کاری‌ها
  function loadDaySlots(day, callback) {
   $.ajax({
@@ -370,19 +316,15 @@
    method: 'GET',
    success: function(response) {
     const daySchedule = response.workSchedules.find(schedule => schedule.day === day);
-
     if (daySchedule && daySchedule.slots) {
      const $container = $(`#morning-${day}-details`);
-
      // حذف تمام ردیف‌های قبلی به جز اولین
      $container.find('.form-row:not(:first)').remove();
-
      daySchedule.slots.forEach(function(slot) {
       const slotHtml = createSlotHtml(slot, day);
       $container.append(slotHtml);
      });
     }
-
     if (callback) callback();
    },
    error: function(xhr) {}
@@ -403,10 +345,8 @@
     $(this).closest('div').addClass('d-flex').css('display', 'flex');
    }
   });
-
   // باز کردن مدال
   $('#checkboxModal').modal('show');
-
   // ذخیره‌سازی اطلاعات برنامه کاری در دکمه ذخیره
   $('#saveSelection').data('slot-id', slotId);
   $('#saveSelection').data('source-day', currentDay);
@@ -419,24 +359,20 @@
    return; // اگر در حال ارسال است، خروج
   }
   $button.data('submitting', true); // تنظیم فلگ
-
   const slotId = $(this).data('slot-id');
   const sourceDay = $(this).data('source-day');
   const targetDays = [];
-
   // جمع‌آوری روزهای انتخاب‌شده
   $('#checkboxModal input[type="checkbox"]:checked').each(function() {
    if ($(this).attr('id') !== 'select-all-copy-modal') {
     targetDays.push($(this).attr('id').replace('-copy-modal', ''));
    }
   });
-
   if (targetDays.length === 0) {
    toastr.error('لطفاً حداقل یک روز را انتخاب کنید')
    $button.data('submitting', false); // بازنشانی فلگ
    return;
   }
-
   $.ajax({
    url: "{{ route('copy-single-slot') }}",
    method: 'POST',
@@ -463,13 +399,11 @@
     $("#checkboxModal").modal("hide"); // بستن مدال
     $("#checkboxModal").removeClass("show");
     $(".modal-backdrop").remove();
-
     // به‌روزرسانی UI برای روزهای مقصد
     response.target_days.forEach(function(day) {
      // 1. فعال کردن چک‌باکس مربوط به روز مقصد
      const dayCheckbox = $(`#${day}`);
      dayCheckbox.prop('checked', true);
-
      // 2. نمایش بخش ساعات کاری مربوط به روز مقصد
      $(`.work-hours-${day}`).removeClass('d-none');
      reloadDayData(day);
@@ -479,13 +413,10 @@
     if (xhr.status === 400 && xhr.responseJSON.conflicting_slots) {
      const conflictingSlots = xhr.responseJSON.conflicting_slots;
      let conflictMessage = 'بازه‌های زمانی زیر تداخل دارند:<ul>';
-
      conflictingSlots.forEach(slot => {
       conflictMessage += `<li>روز ${slot.day}: ${slot.start} - ${slot.end}</li>`;
      });
-
      conflictMessage += '</ul> آیا مایل به جایگزینی هستید؟';
-
      Swal.fire({
       title: 'تداخل بازه‌های زمانی',
       html: conflictMessage,
@@ -517,7 +448,6 @@
           // 1. فعال کردن چک‌باکس مربوط به روز مقصد
           const dayCheckbox = $(`#${day}`);
           dayCheckbox.prop('checked', true);
-
           // 2. نمایش بخش ساعات کاری مربوط به روز مقصد
           $(`.work-hours-${day}`).removeClass('d-none');
           reloadDayData(day);
@@ -526,7 +456,6 @@
          $("#checkboxModal").modal("hide"); // بستن مدال
          $("#checkboxModal").removeClass("show");
          $(".modal-backdrop").remove();
-
         },
         error: function(xhr) {
          toastr.error(xhr.responseJSON?.message || 'خطا در جایگزینی برنامه کاری');
@@ -549,8 +478,6 @@
   const max_appointments = slot?.max_appointments || 1;
   const day = slot?.day || "sunday"; // مقدار پیش‌فرض
   const slotId = slot?.id || "";
-
-
   // تولید HTML با ورودی‌های تابع
   return `
     <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="${slotId || ''}">
@@ -589,67 +516,46 @@
     </div>
   `;
  }
-
  $(document).ready(function() {
-
-
   // برای بازگرداندن حالت اولیه مدال
   $(document).on('hidden.bs.modal', '#checkboxModal', function() {
    // نمایش مجدد همه چک‌باکس‌ها
    $('input[type="checkbox"][id$="-copy-modal"]').closest('div').show();
   });
  });
-
  // هنگام اضافه کردن برنامه کاری ج
-
  // هنگام کپی کردن
-
-
  function initializeMainElement(day) {
   const $mainElement = $(`#morning-${day}-details .form-row:first`);
   const startTime = $mainElement.find('.start-time').val() || '08:00';
   const endTime = $mainElement.find('.end-time').val() || '12:00';
   const maxAppointments = $mainElement.find('.max-appointments').val() || 1;
-
   $(`#morning-start-${day}`).val(startTime);
   $(`#morning-end-${day}`).val(endTime);
   $(`#morning-patients-${day}`).val(maxAppointments);
  }
-
-
-
-
-
-
-
-
  // تابع بارگذاری داده‌های سرور
  function loadWorkSchedule(response) {
   try {
    // بازسازی المان اصلی برای هر روز
    response.workSchedules.forEach(function(schedule) {
     $(`#${schedule.day}`).prop('checked', schedule.is_working);
-
     if (schedule.is_working) {
      $(`.work-hours-${schedule.day}`).removeClass('d-none');
-
-     const mainRowHtml = createMainRowHtml(schedule.day);
+     const mainRowHtml = createMainRowHtml(schedule.day,schedule);
      $(`#morning-${schedule.day}-details`).html(mainRowHtml);
     } else {
      $(`.work-hours-${schedule.day}`).addClass('d-none');
     }
-
     // بارگذاری برنامه کاری‌ها
     if (schedule.slots && schedule.slots.length > 0) {
      const $container = $(`#morning-${schedule.day}-details`);
-
      schedule.slots.forEach(function(slot) {
       const newRow = createSlotHtml(slot, schedule.day);
       $container.append(newRow);
      });
     }
    });
-
    // تنظیم مقادیر کانفیگ
    if (response.appointmentConfig) {
     $('#appointment-toggle').prop('checked', response.appointmentConfig.auto_scheduling);
@@ -657,16 +563,16 @@
     $('#posible-appointments').prop('checked', response.appointmentConfig.online_consultation);
     $('#posible-appointments-inholiday').prop('checked', response.appointmentConfig.holiday_availability);
    }
-
    // مجدداً راه‌اندازی تایم پیکرها
   } catch (error) {}
  }
-
  // تابع ایجاد ردیف اصلی
- function createMainRowHtml(day) {
-  return `
+ function createMainRowHtml(day,schedule) {
+   if (schedule.slots && schedule.slots.length > 0) {
+     return `
+    <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(day)} 👇   </span></div>
     <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-      <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+      <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
         <div class="form-group position-relative timepicker-ui">
           <label for="morning-start-${day}" class="label-top-input-special-takhasos">از</label>
           <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="08:00">
@@ -682,7 +588,6 @@
         <div class="form-group col-sm-1 position-relative">
           <button class="btn btn-light btn-sm add-row-btn" data-day="${day}">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="plasmic-default__svg plasmic_all__FLoMj PlasmicWorkhours_svg__zLXoO__lsZwf lucide lucide-plus" viewBox="0 0 24 24" height="1em" role="img"><path d="M5 12h14m-7-7v14"></path></svg>
-          
           </button>
         </div>
         <div class="form-group col-sm-1 position-relative">
@@ -693,8 +598,9 @@
       </div>
     </div>
   `;
+   }
+  
  }
-
  // تابع ایجاد ردیف برنامه کاری
  function createSlotHtml(slot, day) {
   const startTime = slot.time_slots ? slot.time_slots.start_time : '08:00';
@@ -737,29 +643,23 @@
     </div>
   `;
  }
-
  // استفاده از کش
  $(document).ready(function() {
- 
-   // اگر کش وجود ندارد، داده‌ها را از سرور بارگذاری کنید
-   $.ajax({
-    url: "{{ route('dr-get-work-schedule') }}",
-    method: 'GET',
-    success: function(response) {
-     loadWorkSchedule(response); // بارگذاری داده‌ها
-    }
-   });
-  
+  // اگر کش وجود ندارد، داده‌ها را از سرور بارگذاری کنید
+  $.ajax({
+   url: "{{ route('dr-get-work-schedule') }}",
+   method: 'GET',
+   success: function(response) {
+    loadWorkSchedule(response); // بارگذاری داده‌ها
+   }
+  });
  });
  $(document).on('click', '.copy-to-other-day-btn', function() {
   const currentDay = $(this).data('day');
-
   // ابتدا همه چک‌باکس‌ها را ریست کنید
   $('input[type="checkbox"][id$="-copy-modal"]').prop('checked', false);
-
   // چک باکس انتخاب همه را هم ریست کنید
   $('#select-all-copy-modal').prop('checked', false);
-
   // مخفی کردن چک‌باکس روز جاری
   $('input[type="checkbox"][id$="-copy-modal"]').each(function() {
    const dayId = $(this).attr('id');
@@ -776,21 +676,17 @@
   $('.copy-to-other-day-btn').each(function() {
    $(this).html(`<img src="${svgUrl}" alt="کپی">`);
   });
-
-
   // در زمان بستن مدال، بازگرداندن حالت اولیه
   $(document).on('hidden.bs.modal', '#checkboxModal', function() {
    // بازگرداندن نمایش تمام روزها
    $('input[type="checkbox"][id$="-copy-modal"]').each(function() {
     $(this).closest('div').addClass('d-flex').css('display', 'flex');
    });
-
    // ریست کردن چک‌باکس‌ها
    $('input[type="checkbox"][id$="-copy-modal"]').prop('checked', false);
    $('#select-all-copy-modal').prop('checked', false);
   });
  });
-
 
  function setupModalButtons() {
   // لودر برای همه مدال‌ها
@@ -798,10 +694,8 @@
    const $button = $(this);
    const $loader = $button.find('.loader');
    const $buttonText = $button.find('.button_text');
-
    $buttonText.hide();
    $loader.show();
-
    // عملیات AJAX
    $.ajax({
     // تنظیمات درخواست
@@ -812,7 +706,6 @@
    });
   });
  }
-
  // فراخوانی تابع برای تنظیم دکمه‌های مدال
  $(document).ready(setupModalButtons);
  $(document).on('click', '.add-row-btn', function() {
@@ -821,7 +714,6 @@
   const startTime = $(`#morning-start-${day}`).val();
   const endTime = $(`#morning-end-${day}`).val();
   const maxAppointments = $(`#morning-patients-${day}`).val() || 1;
-
   $.ajax({
    url: "{{ route('save-time-slot') }}",
    method: 'POST',
@@ -867,15 +759,12 @@
     $container.append(newRow);
     initializeTimepicker();
     toastr.success('موفقیت آمیز');
-
    },
    error: function(xhr) {
     toastr.error(xhr.responseJSON.message);
    }
   });
  });
-
-
  $(document).on('click', '[data-target="#scheduleModal"]', function() {
   const day = $(this).data('day');
   const start_time = $(this).data('start-time')
@@ -885,17 +774,14 @@
   $("#saveSchedule").attr('data-day', day);
   checkAllDaysSettings(day, start_time, end_time, max_appointments);
   const persianDay = getPersianDayName(day);
-
   const modal = $('#scheduleModal');
   // افزودن اتریبیوت data-max-appointments و مقداردهی
   modal.attr('data-max-appointments', $(this).data('max-appointments') || 0);
   modal.attr('data-day', $(this).data('day'));
-
   // به‌روزرسانی عنوان مدال با اطلاعات دقیق برنامه کاری
   $("#scheduleModalLabel").text(
    `برنامه زمانبندی برای نوبت های ${persianDay} ${start_time} الی ${end_time} (${max_appointments} نوبت)`
   );
-
   // تنظیم مقادیر پیش‌فرض برای مدال
   $('#schedule-start').val(start_time);
   $('#schedule-end').val(end_time);
@@ -915,20 +801,16 @@
     max_appointments: max_appointments,
    },
    success: function(response) {
-
     // حذف لیست‌های قبلی
-
     if (response.status && response.settings) {
      // تبدیل تنظیمات JSON به آرایه
      const settings = response.settings;
-
      // فیلتر تنظیمات مرتبط با برنامه کاری جاری
      const filteredSettings = settings.filter(setting =>
       setting.start_time === start_time &&
       setting.end_time === end_time &&
       response.day === day // بررسی روز
      );
-
      if (filteredSettings.length > 0) {
       let settingsListHtml = '<div class="mt-3 settings-list">';
       const dayMapFa = {
@@ -940,7 +822,6 @@
        'thursday': 'پنج‌شنبه',
        'friday': 'جمعه'
       };
-
       // ساخت HTML برای تنظیمات فیلتر شده
       filteredSettings.forEach(setting => {
        settingsListHtml += `
@@ -956,7 +837,6 @@
               </button>
             </div>`;
       });
-
       settingsListHtml += '</div>';
       $('#scheduleModal .modal-body').append(settingsListHtml);
      } else {
@@ -971,13 +851,11 @@
     console.error('خطا در دریافت تنظیمات:', xhr);
    }
   });
-
   $(document).on('click', '.badge-time-styles-day', function() {
    $('.badge-time-styles-day').removeClass('active-hover');
    const dayEn = $(this).data('day');
    $(this).addClass('active-hover');
    // بررسی تنظیمات برای روز انتخاب‌شده
-
   });
   checkAllDaysSettings(day, start_time, end_time, max_appointments);
  });
@@ -1092,7 +970,6 @@
      }
     },
     error: function(xhr) {
-
      // نمایش خطاهای دقیق
      buttonText.style.display = 'block';
      loader.style.display = 'none';
@@ -1104,7 +981,6 @@
       toastr.error(xhr.responseJSON.message || 'خطا در برقراری ارتباط با سرور');
      } else {
       toastr.error('خطا در برقراری ارتباط با سرور');
-
      }
     }
    });
@@ -1137,7 +1013,6 @@
   $(this).removeClass("show");
   $(".modal-backdrop").remove();
  });
-
  $(document).ready(function() {
   // تغییر وضعیت روزهای کاری با AJAX
   $.each(["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"], function(index, day) {
@@ -1174,13 +1049,11 @@
        errorMessage = xhr.responseJSON.message;
       }
       toastr.error(errorMessage)
-
      }
     });
    });
   });
   // تابع تبدیل نام روز به فارسی
-
  });
 
  function showLoading() {
@@ -1210,7 +1083,6 @@
     },
     dataType: 'json', // Explicitly set expected response type
     success: function(response) {
-
      if (isAutoSchedulingEnabled) {
       toastr.success('نوبت‌دهی خودکار فعال شد', 'موفقیت');
      } else {
@@ -1219,7 +1091,6 @@
     },
     error: function(xhr, status, error) {
      // Detailed error logging
-
      // Revert checkbox state
      $('#appointment-toggle').prop('checked', !isAutoSchedulingEnabled);
      toastr.error(xhr.responseJSON?.message || 'خطا در به‌روزرسانی تنظیمات');
@@ -1238,10 +1109,11 @@
      if (schedule.is_working) {
       $(`.work-hours-${schedule.day}`).removeClass('d-none');
       // بازسازی کامل المان اصلی
-
-      const mainRowHtml = `
+      if (schedule.slots && schedule.slots.length > 0) {
+        const mainRowHtml = `
+       <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(schedule.day)} 👇   </span></div>
        <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-         <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+         <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
            <div class="form-group  position-relative timepicker-ui">
              <label for="morning-start-${schedule.day}" class="label-top-input-special-takhasos">از</label>
              <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${schedule.day}" value="08:00">
@@ -1268,6 +1140,9 @@
        </div>
       `;
       $(`#morning-${schedule.day}-details`).html(mainRowHtml);
+
+      }
+      
      } else {
       $(`.work-hours-${schedule.day}`).addClass('d-none');
      }
@@ -1325,7 +1200,6 @@
    },
    error: function() {
     toastr.error('خطا در بارگذاری تنظیمات');
-
    }
   });
  });
@@ -1388,14 +1262,12 @@
   const startTime = $(`#morning-start-${day}`).val() || '08:00';
   const endTime = $(`#morning-end-${day}`).val() || '12:00';
   const appointments = $(`#morning-patients-${day}`).val() || 1;
-
   return {
    startTime,
    endTime,
    appointments
   };
  }
-
  //appointments code
  $(document).ready(function() {
   const days = [
@@ -1403,7 +1275,6 @@
    "wednesday", "thursday", "friday"
   ];
   // تبدیل نام روز به فارسی
-
   var workHoursHtml = "";
   $.each(days, function(index, day) {
    workHoursHtml += `
@@ -1422,8 +1293,9 @@
             </div>
           </div>
           <div id="morning-${day}-details" class="mt-4">
+            <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(day)} 👇   </span></div>
             <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-              <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+              <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
                 <div class="form-group  position-relative timepicker-ui">
                 <label for="morning-start-${day}" class="label-top-input-special-takhasos">از</label>
                 <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="08:00">
@@ -1517,11 +1389,7 @@
    });
   });
  });
-
-
  // در زمان انتخاب روز در مدال
-
-
  function checkAllDaysSettings(day, startTime, endTime, maxAppointments) {
   $.ajax({
    url: "{{ route('get-all-days-settings') }}",
@@ -1533,11 +1401,8 @@
     max_appointments: maxAppointments
    },
    success: function(response) {
-
-
     if (response.status && response.settings) {
      let settingsListHtml = '<div class="mt-3 settings-list">';
-
      // اضافه کردن کلاس اکتیو به روزهایی که تنظیم دارند
      response.settings.forEach(function(setting) {
       // نقشه تبدیل روز انگلیسی به فارسی
@@ -1550,11 +1415,9 @@
        'thursday': 'پنج‌شنبه',
        'friday': 'جمعه'
       };
-
       // اضافه کردن کلاس اکتیو به روز مربوطه
       $(`.badge-time-styles-day:contains('${dayMapEn[setting.day]}')`)
        .addClass('active-hover');
-
       if (setting.start_time && setting.end_time) {
        const dayMapFa = {
         'saturday': 'شنبه',
@@ -1580,9 +1443,7 @@
             `;
       }
      });
-
      settingsListHtml += '</div>';
-
      // اضافه کردن لیست تنظیمات به بدنه مدال
      $('#scheduleModal .modal-body').append(settingsListHtml);
     }
@@ -1592,7 +1453,6 @@
    }
   });
  }
-
  // Function to calculate and update input values
  $(document).ready(function() {
   let morningStart, morningEnd; // متغیر برای ذخیره زمان شروع و پایان
@@ -1670,7 +1530,6 @@
    $("#CalculatorModal").removeClass("show");
    $(".modal-backdrop").remove();
   });
-
   $(document).on('click', '#saveSchedule', function() {
    const $button = $(this);
    const $loader = $button.find('.loader');
@@ -1685,35 +1544,27 @@
     'پنج‌شنبه': 'thursday',
     'جمعه': 'friday'
    };
-
    const dayEn = dayMap[selected_day_choice_fa];
    // بررسی اینکه آیا برای این روز تنظیمات قبلی وجود دارد
    const existingSetting = $(`.setting-item[data-day="${dayEn}"]`);
-
    if (existingSetting.length > 0) {
     toastr.error(`شما از قبل برای ${selected_day_choice_fa} تنظیمات دارید. لطفاً ابتدا تنظیمات قبلی را حذف کنید.`);
     return;
    }
-
    $buttonText.hide();
    $loader.show();
-
    const scheduleStart = $('#schedule-start').val();
    const scheduleEnd = $('#schedule-end').val();
    const max_appointments = $("#scheduleModal").data('max-appointments');
-
    $('input[type="checkbox"][id$="-copy-modal"]:checked').each(function() {
     const day = $(this).attr('id').replace('-copy-modal', '');
    });
-
    if (!dayEn) {
     toastr.error('لطفاً حداقل یک روز را انتخاب کنید');
-
     $loader.hide();
     $buttonText.show();
     return;
    }
-
    $.ajax({
     url: "{{ route('save-appointment-settings') }}",
     method: 'POST',
@@ -1728,7 +1579,6 @@
     success: function(response) {
      toastr.success('تنظیمات با موفقیت ذخیره شد');
      $('.settings-list').remove();
-
      // به‌روزرسانی UI برای نمایش تنظیمات جدید
      updateSettingsUI(dayEn, scheduleStart, scheduleEnd);
      checkAllDaysSettings(dayEn, scheduleStart, scheduleEnd, max_appointments)
@@ -1742,7 +1592,6 @@
     }
    });
   });
-
   // تابع برای به‌روزرسانی UI
   function updateSettingsUI(day, startTime, endTime) {
    const persianDay = getPersianDayName(day);
@@ -1764,7 +1613,6 @@
   $(document).on('click', '.delete-schedule-setting', function() {
    const $settingItem = $(this).closest('.setting-item');
    const day = $("#saveSchedule").data('day');
-
    const startTime = $(this).data('start-time');
    const endTime = $(this).data('end-time');
    Swal.fire({
@@ -1790,13 +1638,11 @@
       success: function(response) {
        // حذف ردیف تنظیمات
        $settingItem.remove();
-
        // بررسی اینکه آیا دیگر تنظیمی باقی مانده است
        if ($('.settings-list .setting-item').length === 0) {
         // حذف هشدار
         $('.settings-list').remove();
         $('#scheduleModal .modal-body .alert').remove();
-
         // فعال کردن فیلدهای مدال
         $('#schedule-start, #schedule-end').prop('disabled', false);
         $('#saveSchedule')
@@ -1813,6 +1659,7 @@
     }
    });
   });
+
   function loadPreviousAppointmentSettings(day) {
    const start_time = $('[data-target="#scheduleModal"]').data('start-time')
    const end_time = $('[data-target="#scheduleModal"]').data('end-time')
@@ -1835,10 +1682,7 @@
     }
    });
   }
-
-
   $(document).ready(function() {
-
    // بررسی تنظیمات در زمان تغییر مقادیر
    $('#schedule-start, #schedule-end').on('change', function() {
     $('#saveSchedule').prop('disabled', false)
@@ -1852,11 +1696,7 @@
    const day = $trigger.data('day');
    loadPreviousAppointmentSettings(day);
   });
-
-
-
   // در زمان بارگذاری صفحه
-
  });
 </script>
 <div class="modal fade" id="scheduleModal" tabindex="-1" data-selected-day="" role="dialog"

@@ -298,3 +298,18 @@ label {
   display: flex !important;
   gap: 10px !important;
 }
+.top-details-header{
+  position: absolute;
+  top: 135px;
+  left: 1%;
+  background-color: #fff;
+  min-height: 10px;
+    min-width: 20px;
+    background-color: #fff;
+    box-shadow: rgba(27, 31, 35, 0.04) 0px 1px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px inset;
+    border-radius: 4px;
+    padding: 1px 4px;
+}
+.top-details-header span{
+  font-weight: bolder;
+}

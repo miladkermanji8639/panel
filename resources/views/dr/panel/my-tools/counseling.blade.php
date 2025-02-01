@@ -255,15 +255,16 @@
 
  // تابع برای به‌روزرسانی رابط کاربری روز مقصد
  function updateDayUI(schedule) {
-  const day = schedule.day; // روز مقصد
-  const $container = $(`#morning-${day}-details`);
-
-  // پاک کردن محتوای قبلی
-  $container.empty();
-  // اضافه کردن ردیف جدید
-  const mainRowHtml = `
+    const day = schedule.day; // روز مقصد
+    const $container = $(`#morning-${day}-details`);
+    // پاک کردن محتوای قبلی
+    $container.empty();
+    // اضافه کردن ردیف جدید
+    if (schedule.slots && schedule.slots.length > 0) {
+      const mainRowHtml = `
+        <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(day)} 👇   </span></div>
         <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-            <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+            <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
                 <div class="form-group position-relative timepicker-ui">
                     <label for="morning-start-${day}" class="label-top-input-special-takhasos">از</label>
                     <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="${schedule.start_time || '08:00'}">
@@ -291,27 +292,29 @@
             </div>
         </div>
     `;
-  $container.append(mainRowHtml);
+      $container.append(mainRowHtml);
 
-  // اضافه کردن برنامه کاری‌های جدید
-  if (schedule.slots && schedule.slots.length > 0) {
-   schedule.slots.forEach(slot => {
-    const slotHtml = createSlotHtml(slot, day);
-    $container.append(slotHtml);
-   });
+    }
+
+    // اضافه کردن برنامه کاری‌های جدید
+    if (schedule.slots && schedule.slots.length > 0) {
+      schedule.slots.forEach(slot => {
+        const slotHtml = createSlotHtml(slot, day);
+        $container.append(slotHtml);
+      });
+    }
+    // بازسازی تایم‌پیکرها
+    initializeTimepicker();
   }
-
-  // بازسازی تایم‌پیکرها
-  initializeTimepicker();
- }
 
 
 
 
  function createParentHtml(day) {
-  return `
+    return `
+        <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(day)} 👇   </span></div>
         <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-            <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+            <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
                 <div class="form-group position-relative timepicker-ui">
                     <label for="morning-start-${day}" class="label-top-input-special-takhasos">از</label>
                     <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="08:00">
@@ -339,8 +342,7 @@
             </div>
         </div>
     `;
- }
-
+  }
 
  $(document).on('hidden.bs.modal', '#checkboxModal', function () {
   // پاکسازی کامل وضعیت مدال و حذف backdrop
@@ -667,10 +669,12 @@
  }
 
  // تابع ایجاد ردیف اصلی
- function createMainRowHtml(day) {
-  return `
+ function createMainRowHtml(day, schedule) {
+    if (schedule.slots && schedule.slots.length > 0) {
+      return `
+    <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(day)} 👇   </span></div>
     <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-      <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+      <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
         <div class="form-group position-relative timepicker-ui">
           <label for="morning-start-${day}" class="label-top-input-special-takhasos">از</label>
           <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="08:00">
@@ -686,7 +690,6 @@
         <div class="form-group col-sm-1 position-relative">
           <button class="btn btn-light btn-sm add-row-btn" data-day="${day}">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="plasmic-default__svg plasmic_all__FLoMj PlasmicWorkhours_svg__zLXoO__lsZwf lucide lucide-plus" viewBox="0 0 24 24" height="1em" role="img"><path d="M5 12h14m-7-7v14"></path></svg>
-          
           </button>
         </div>
         <div class="form-group col-sm-1 position-relative">
@@ -697,7 +700,9 @@
       </div>
     </div>
   `;
- }
+    }
+
+  }
 
  // تابع ایجاد ردیف برنامه کاری
  function createSlotHtml(slot, day) {
@@ -1253,15 +1258,16 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
 
     // بازسازی المان اصلی برای هر روز
      if (response.workSchedules && Array.isArray(response.workSchedules)) {
-       response.workSchedules.forEach(function (schedule) {
-       $(`#${schedule.day}`).prop('checked', schedule.is_working);
-       if (schedule.is_working) {
-        $(`.work-hours-${schedule.day}`).removeClass('d-none');
-        // بازسازی کامل المان اصلی
-
-        const mainRowHtml = `
+        response.workSchedules.forEach(function (schedule) {
+         $(`#${schedule.day}`).prop('checked', schedule.is_working);
+         if (schedule.is_working) {
+           $(`.work-hours-${schedule.day}`).removeClass('d-none');
+           // بازسازی کامل المان اصلی
+           if (schedule.slots && schedule.slots.length > 0) {
+             const mainRowHtml = `
+       <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(schedule.day)} 👇   </span></div>
        <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-         <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+         <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
            <div class="form-group  position-relative timepicker-ui">
              <label for="morning-start-${schedule.day}" class="label-top-input-special-takhasos">از</label>
              <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${schedule.day}" value="08:00">
@@ -1287,18 +1293,21 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
          </div>
        </div>
       `;
-        $(`#morning-${schedule.day}-details`).html(mainRowHtml);
-       } else {
-        $(`.work-hours-${schedule.day}`).addClass('d-none');
-       }
-       // بارگذاری برنامه کاری‌ها
-       if (schedule.slots && schedule.slots.length > 0) {
-        const $container = $(`#morning-${schedule.day}-details`);
-        schedule.slots.forEach(function (slot) {
-         const startTime = slot.time_slots ? slot.time_slots.start_time : '08:00';
-         const endTime = slot.time_slots ? slot.time_slots.end_time : '12:00';
-         const maxAppointments = slot.max_appointments || 1;
-         const newRow = `
+             $(`#morning-${schedule.day}-details`).html(mainRowHtml);
+
+           }
+
+         } else {
+           $(`.work-hours-${schedule.day}`).addClass('d-none');
+         }
+         // بارگذاری برنامه کاری‌ها
+         if (schedule.slots && schedule.slots.length > 0) {
+           const $container = $(`#morning-${schedule.day}-details`);
+           schedule.slots.forEach(function (slot) {
+             const startTime = slot.time_slots ? slot.time_slots.start_time : '08:00';
+             const endTime = slot.time_slots ? slot.time_slots.end_time : '12:00';
+             const maxAppointments = slot.max_appointments || 1;
+             const newRow = `
          <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="${slot.id}">
            <div class="d-flex justify-content-start align-items-center gap-4">
              <div class="form-group position-relative timepicker-ui">
@@ -1314,7 +1323,7 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
                <input type="text" class="form-control h-50 text-center max-appointments bg-white" value="${maxAppointments}" readonly>
              </div>
               <div class="form-group col-sm-1 position-relative">
-                  <button class="btn btn-light btn-sm copy-single-slot-counseling-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${schedule.day}" data-start-time="${startTime}" data-end-time="${endTime}" data-max-appointments="${maxAppointments}" data-slot-id="${slot.id}">
+                  <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${schedule.day}" data-start-time="${startTime}" data-end-time="${endTime}" data-max-appointments="${maxAppointments}" data-slot-id="${slot.id}">
                     <img src="${svgUrl}">
                   </button>
               </div>
@@ -1331,10 +1340,10 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
            </div>
          </div>
        `;
-         $container.append(newRow);
-        });
-       }
-      });
+             $container.append(newRow);
+           });
+         }
+       });
      }
    
     // تنظیم مقادیر کانفیگ
@@ -1442,9 +1451,10 @@ checkAllDaysSettings(day,start_time,end_time,max_appointments);
      .join("")}
             </div>
           </div>
-          <div id="morning-${day}-details" class="mt-4">
+         <div id="morning-${day}-details" class="mt-4">
+            <div class="top-details-header"><span>برنامه کاری روز ${getPersianDayName(day)} 👇   </span></div>
             <div class="form-row w-100 d-flex justify-content-between align-items-center border-bottom-2">
-              <div class="d-flex justify-content-start align-items-center gap-4 mt-2 mb-3">
+              <div class="d-flex justify-content-start align-items-center gap-4 mt-3 mb-4">
                 <div class="form-group  position-relative timepicker-ui">
                 <label for="morning-start-${day}" class="label-top-input-special-takhasos">از</label>
                 <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="08:00">

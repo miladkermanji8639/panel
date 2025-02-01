@@ -38,7 +38,7 @@
        <div id="map" style="height: 400px; width: 100%;"></div>
        <p class="text-start font-weight-bold mt-3">محل مطب خود را از روی نقشه انتخاب کنید:</p>
       <div class="alert alert-secondary">
-        <span class="font-weight-bold font-size-13">برای ویرایش آدرس بر آدرس زیر کلیک کنید 👇</span>
+        <span class="font-weight-bold font-size-13">برای ویرایش آدرس بر آدرس زیر کلیک کنید 👇  </span>
       </div>
        <div class="input-group mt-2">
         <input type="text" value="{{ $clinic->address ?? "" }}" class="my-form-control w-100" placeholder="آدرس شما" readonly data-toggle="modal"
