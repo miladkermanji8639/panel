@@ -49,17 +49,17 @@ $step = $step ?? 1;
       value="{{ old('mobile') }}" placeholder="09181234567" maxlength="11">
      <div class="invalid-feedback mobile-error"></div>
     </div>
-    <a href="{{ route('dr.auth.login-user-pass-form') }}" class="text-primary text-decoration-none mb-3 d-block">
+    <a href="{{ route('dr.auth.login-user-pass-form') }}" class="text-primary text-decoration-none mb-3 d-block fw-bold">
      ورود با نام کاربری و کلمه عبور
     </a>
-    <div class="d-flex align-items-center mt-1 mb-2">
+{{--     <div class="d-flex align-items-center mt-1 mb-2">
       <input type="checkbox" class="form-check-input me-2" name="terms_accepted"
       style="vertical-align: middle; margin-top: -2px;">
       <label class="p-0 d-flex align-items-center" style="vertical-align: middle;">
       <a href="#" class="text-primary text-decoration-none px-1">شرایط و قوانین</a>
       <span>را خوانده‌ام و پذیرفته‌ام</span>
       </label>
-    </div>
+    </div> --}}
     <button type="submit"
      class="btn btn-primary w-100 custom-gradient custom-rounded py-2 d-flex justify-content-center">
      ادامه
@@ -105,7 +105,7 @@ $step = $step ?? 1;
           class="text-decoration-none text-primary fw-bold">دریافت
           مجدد کد تایید</a>
         </section>
-        <section style="font-size: 13px" class="text-black fw-bold fs-6 mt-3" id="timer"></section>
+        <section style="font-size: 14px" class="text-danger fw-bold fs-6 mt-3" id="timer"></section>
        </form>
       </div>
      </div>
@@ -372,7 +372,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
     const form = $(this);
     const submitButton = form.find('button[type="submit"]');
     const termsCheckbox = form.find('input[name="terms_accepted"]');
-
+/* 
     if (!termsCheckbox.is(':checked')) {
      Swal.fire({
       icon: 'warning',
@@ -380,7 +380,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       confirmButtonText: 'تایید'
      });
      return;
-    }
+    } */
 
     showButtonLoading(submitButton);
     $('.error-message').remove();
