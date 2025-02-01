@@ -293,7 +293,9 @@ label {
   border: 1px solid #7c82fc;
   color: #7c82fc;
 }
-
+.form-control[readonly] {
+  background-color: #fff !important;
+}
 .gap-10 {
   display: flex !important;
   gap: 10px !important;
