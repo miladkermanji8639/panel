@@ -21,6 +21,8 @@ class Kernel extends HttpKernel
   protected $routeMiddleware = [
     'complete-profile' => \App\Http\Middleware\Dr\CheckCompleteProfile::class,
     'secretary.permission' => \App\Http\Middleware\Dr\CheckSecretaryPermission::class, // 👈 اضافه شد
+    'doctor' => \App\Http\Middleware\doctor::class,
+
   ];
 
   protected $middlewareGroups = [

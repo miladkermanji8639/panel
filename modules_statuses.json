@@ -1,3 +1,4 @@
 {
-    "SendOtp": true
+    "SendOtp": true,
+    "Payment": true
 }

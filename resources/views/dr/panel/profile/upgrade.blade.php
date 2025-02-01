@@ -37,8 +37,14 @@
      <div class="tarifms"><i class="fa fa-calendar"></i> <strong>مدت زمان نمایش:</strong> 90 روز</div>
      <div class="tarifms"><i class="mdi mdi-phone"></i> <strong>هزینه</strong> 780,000 تومان</div>
      <div class="clrfix mb-3" style="float: right; width: 100%; margin-top: 20px">
-      <button onclick="location.href='https://benobe.ir/index.php?mod=users&amp;action=upgrade_payment'"
-       class="btn btn-primary text-white h-50"><i class="fa fa-credit-card"></i> پرداخت و ارتقاء حساب کاربری</button>
+      <form action="{{ route('doctor.upgrade.pay') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary text-white h-50">
+          <i class="fa fa-credit-card"></i> پرداخت و ارتقاء حساب کاربری
+        </button>
+      </form>
+
+
      </div>
     </div>
    </div>

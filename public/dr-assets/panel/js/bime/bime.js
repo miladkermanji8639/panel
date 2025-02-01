@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
  const radioButtons = document.querySelectorAll(
-  'input[name="calculation_method"]',
+  'input[name="calculation_method"]'
  );
  const contentDivs = [
   document.getElementById('selected-number-one'),
   document.getElementById('selected-number-two'),
   document.getElementById('selected-number-three'),
- ];
+ ].filter(div => div !== null); // حذف `null` ها از آرایه
 
  function updateVisibleDiv() {
   // همه div ها را پنهان کن
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // div مرتبط با رادیو چک‌شده را نمایش بده
   contentDivs.forEach((div, index) => {
-   if (radioButtons[index].checked) {
+   if (radioButtons[index] && radioButtons[index].checked) {
     div.classList.remove('d-none');
    }
   });
@@ -26,6 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
   radio.addEventListener('change', updateVisibleDiv);
  });
 
- // Update visible div on page load
+ // نمایش div صحیح هنگام بارگذاری صفحه
  updateVisibleDiv();
 });
