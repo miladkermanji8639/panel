@@ -28,10 +28,6 @@ class DoctorWorkSchedule extends Model
         return $this->belongsTo(Doctor::class);
     }
 
-    public function slots()
-    {
-        return $this->hasMany(AppointmentSlot::class, 'work_schedule_id');
-    }
     private function getDayNameInPersian($day)
     {
         $days = [

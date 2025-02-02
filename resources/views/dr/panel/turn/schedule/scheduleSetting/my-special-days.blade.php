@@ -211,34 +211,67 @@
  }
 
  function attachDayClickEvents() {
-  $('.calendar-day').not('.empty').off('click').on('click', function() {
-   const selectedDayElement = $(this);
-   const persianDate = selectedDayElement.data('date');
-   const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
+    $('.calendar-day').not('.empty').off('click').on('click', function () {
+      const selectedDayElement = $(this);
+      const persianDate = selectedDayElement.data('date');
+      const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
+      const dayOfWeek = moment(gregorianDate, 'YYYY-MM-DD').isoWeekday(); // دریافت شماره روز هفته
 
-   // پاک کردن محتوای قبلی مودال
-   $('#dateModal').find('.modal-body').html('<div class="text-center py-3"><span>در حال بارگذاری...</span></div>');
-   $('#dateModal').data('selectedDayElement', selectedDayElement);
-   $('#dateModal').data('selectedDate', gregorianDate);
+      $('#dateModal').data('selectedDate', gregorianDate);
+      $('#dateModal').modal('show');
 
-   $.ajax({
-    url: "{{ route('doctor.get_holiday_status') }}",
-    method: 'POST',
-    data: {
-     date: gregorianDate,
-     _token: '{{ csrf_token() }}'
-    },
-    success: function(response) {
-     updateModalContent(response); // به‌روزرسانی محتوای مودال
-    },
-    error: function() {
-     Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
-    }
-   });
+      // بررسی وضعیت تعطیلات یا نوبت‌های فعال
+      $.ajax({
+        url: "{{ route('doctor.get_holiday_status') }}",
+        method: 'POST',
+        data: {
+          date: gregorianDate,
+          _token: '{{ csrf_token() }}'
+        },
+        success: function (response) {
+          if (response.data.length > 0) {
+            updateModalContent(response);
+          } else {
+            // اگر نوبتی وجود نداشت، برنامه روزانه را از سرور دریافت کن
+            $.ajax({
+              url: "{{ route('doctor.get_default_schedule') }}",
+              method: 'POST',
+              data: {
+                day_of_week: dayOfWeek,
+                _token: '{{ csrf_token() }}'
+              },
+              success: function (scheduleResponse) {
+                if (scheduleResponse.status) {
+                  let workHoursHtml = '';
+                  scheduleResponse.work_hours.forEach(slot => {
+                    workHoursHtml += `<span class="btn btn-light mt-2 me-2">${slot.start} الی ${slot.end}</span>`;
+                  });
 
-   $('#dateModal').modal('show');
-  });
- }
+                  $('#dateModal .modal-body').html(`
+                  <div class="alert alert-info">
+                    شما برای این روز نوبت فعالی ندارید. 
+                    برنامه کاری شما برای این روز:
+                  </div>
+                  <div class="mt-3">${workHoursHtml}</div>
+                `);
+                } else {
+                  $('#dateModal .modal-body').html(`
+                  <div class="alert alert-warning">
+                    شما برای این روز نوبتی ندارید و هیچ برنامه‌ای نیز ثبت نشده است.
+                  </div>
+                `);
+                }
+              }
+            });
+          }
+        },
+        error: function () {
+          Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+        }
+      });
+    });
+  }
+
 
 
  function populateSelectBoxes() {
