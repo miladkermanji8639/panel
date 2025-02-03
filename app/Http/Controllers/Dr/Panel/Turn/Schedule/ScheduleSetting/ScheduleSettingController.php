@@ -744,7 +744,9 @@ class ScheduleSettingController
       $isHoliday = true;
 
       $specialDay = SpecialDailySchedule::where('date',$validated['date'])->first();
-      $specialDay->delete();
+      if ($specialDay) {
+        $specialDay->delete();
+      }
       
 
     }

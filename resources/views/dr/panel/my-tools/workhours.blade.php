@@ -494,8 +494,8 @@
  });
  // تابع ایجاد HTML برای برنامه کاری
  function createCopySlotHtml(slot) {
-  const start_time = slot?.time_slots?.start_time || "08:00";
-  const end_time = slot?.time_slots?.end_time || "12:00";
+  const start_time = slot?.time_slots?.start_time || "";
+  const end_time = slot?.time_slots?.end_time || "";
   const max_appointments = slot?.max_appointments || '';
   const day = slot?.day || "sunday"; // مقدار پیش‌فرض
   const slotId = slot?.id || "";
@@ -776,6 +776,9 @@
     $container.append(newRow);
     initializeTimepicker();
     toastr.success('موفقیت آمیز');
+    $("#morning-start-"+day).val('')
+    $("#morning-end-"+day).val('')
+    $("#morning-patients-"+day).val('')
    },
    error: function(xhr) {
     toastr.error(xhr.responseJSON.message);
@@ -1164,8 +1167,8 @@
       const $container = $(`#morning-${schedule.day}-details`);
       workHours.forEach(function(slot) {
         
-       const startTime = slot.start || '08:00';
-       const endTime = slot.end || '12:00';
+       const startTime = slot.start || '';
+       const endTime = slot.end || '';
        const maxAppointments = slot.max_appointments || '';
        
        
