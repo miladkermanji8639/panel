@@ -36,8 +36,8 @@ class MoshavereSettingController
   /**
    * Show the form for creating a new resource.
    */
- 
- public function workhours()
+
+  public function workhours()
   {
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
     $appointmentConfig = DoctorCounselingConfig::firstOrCreate(
@@ -125,7 +125,7 @@ class MoshavereSettingController
         'status' => true,
         'target_days' => $validated['target_days'],
         'workSchedules' => DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
-          ->whereIn('day', $validated['target_days']) // ارتباط با اسلات‌ها
+          ->whereIn('day', $validated['target_days']) // ارتباط با ساعات کاری‌ها
           ->get()
       ]);
     } catch (\Exception $e) {
@@ -165,7 +165,7 @@ class MoshavereSettingController
       });
       if (!$slotToCopy) {
         return response()->json([
-          'message' => 'اسلات مورد نظر برای کپی یافت نشد.',
+          'message' => 'ساعات کاری مورد نظر برای کپی یافت نشد.',
           'status' => false
         ], 404);
       }
@@ -215,14 +215,14 @@ class MoshavereSettingController
       }
       DB::commit();
       return response()->json([
-        'message' => 'اسلات با موفقیت کپی شد',
+        'message' => 'ساعات کاری با موفقیت کپی شد',
         'status' => true,
         'target_days' => $validated['target_days']
       ]);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json([
-        'message' => 'خطا در کپی اسلات',
+        'message' => 'خطا در کپی ساعات کاری',
         'status' => false
       ], 500);
     }
@@ -294,7 +294,7 @@ class MoshavereSettingController
           ], 400);
         }
       }
-      // اضافه کردن اسلات جدید به `work_hours`
+      // اضافه کردن ساعات کاری جدید به `work_hours`
       $newSlot = [
         'start' => $validated['start_time'],
         'end' => $validated['end_time'],
@@ -408,7 +408,7 @@ class MoshavereSettingController
             $existingSettings = [];
           }
         }
-        // بررسی اینکه آیا تنظیمی برای این اسلات موجود است
+        // بررسی اینکه آیا تنظیمی برای این ساعات کاری موجود است
         foreach ($existingSettings as $setting) {
           if (
             ($validated['start_time'] >= $setting['start_time'] && $validated['start_time'] < $setting['end_time']) ||
@@ -657,18 +657,18 @@ class MoshavereSettingController
     }
   }
   /**
-   * تعیین نوع اسلات بر اساس زمان
+   * تعیین نوع ساعات کاری بر اساس زمان
    */
   private function determineSlotType($startTime)
   {
     try {
       $hour = intval(substr($startTime, 0, 2));
       if ($hour >= 5 && $hour < 12) {
-        return 'morning'; // اسلات صبح
+        return 'morning'; // ساعات کاری صبح
       } elseif ($hour >= 12 && $hour < 17) {
-        return 'afternoon'; // اسلات بعد از ظهر
+        return 'afternoon'; // ساعات کاری بعد از ظهر
       } else {
-        return 'evening'; // اسلات عصر
+        return 'evening'; // ساعات کاری عصر
       }
     } catch (\Exception $e) {
       return 'unknown'; // بازگرداندن مقدار پیش‌فرض در صورت بروز خطا
@@ -687,8 +687,8 @@ class MoshavereSettingController
     ]);
   }
   // متدهای موجود در کنترلر اصلی
- 
- 
+
+
   public function destroy(Request $request, $slotId)
   {
     try {

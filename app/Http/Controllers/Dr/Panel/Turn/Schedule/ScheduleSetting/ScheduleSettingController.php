@@ -12,7 +12,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Dr\DoctorWorkSchedule;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Dr\SpecialDailySchedule;
 use App\Models\Dr\DoctorAppointmentConfig;
+
 class ScheduleSettingController
 {
   use HandlesRateLimiting;
@@ -107,7 +109,7 @@ class ScheduleSettingController
         'status' => true,
         'target_days' => $validated['target_days'],
         'workSchedules' => DoctorWorkSchedule::where('doctor_id', $doctor->id)
-          ->whereIn('day', $validated['target_days']) // ارتباط با اسلات‌ها
+          ->whereIn('day', $validated['target_days']) // ارتباط با ساعات کاری‌ها
           ->get()
       ]);
     } catch (\Exception $e) {
@@ -147,7 +149,7 @@ class ScheduleSettingController
       });
       if (!$slotToCopy) {
         return response()->json([
-          'message' => 'اسلات مورد نظر برای کپی یافت نشد.',
+          'message' => 'ساعات کاری مورد نظر برای کپی یافت نشد.',
           'status' => false
         ], 404);
       }
@@ -197,14 +199,14 @@ class ScheduleSettingController
       }
       DB::commit();
       return response()->json([
-        'message' => 'اسلات با موفقیت کپی شد',
+        'message' => 'ساعات کاری با موفقیت کپی شد',
         'status' => true,
         'target_days' => $validated['target_days']
       ]);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json([
-        'message' => 'خطا در کپی اسلات',
+        'message' => 'خطا در کپی ساعات کاری',
         'status' => false
       ], 500);
     }
@@ -276,7 +278,7 @@ class ScheduleSettingController
           ], 400);
         }
       }
-      // اضافه کردن اسلات جدید به `work_hours`
+      // اضافه کردن ساعات کاری جدید به `work_hours`
       $newSlot = [
         'start' => $validated['start_time'],
         'end' => $validated['end_time'],
@@ -390,7 +392,7 @@ class ScheduleSettingController
             $existingSettings = [];
           }
         }
-        // بررسی اینکه آیا تنظیمی برای این اسلات موجود است
+        // بررسی اینکه آیا تنظیمی برای این ساعات کاری موجود است
         foreach ($existingSettings as $setting) {
           if (
             ($validated['start_time'] >= $setting['start_time'] && $validated['start_time'] < $setting['end_time']) ||
@@ -639,18 +641,18 @@ class ScheduleSettingController
     }
   }
   /**
-   * تعیین نوع اسلات بر اساس زمان
+   * تعیین نوع ساعات کاری بر اساس زمان
    */
   private function determineSlotType($startTime)
   {
     try {
       $hour = intval(substr($startTime, 0, 2));
       if ($hour >= 5 && $hour < 12) {
-        return 'morning'; // اسلات صبح
+        return 'morning'; // ساعات کاری صبح
       } elseif ($hour >= 12 && $hour < 17) {
-        return 'afternoon'; // اسلات بعد از ظهر
+        return 'afternoon'; // ساعات کاری بعد از ظهر
       } else {
-        return 'evening'; // اسلات عصر
+        return 'evening'; // ساعات کاری عصر
       }
     } catch (\Exception $e) {
       return 'unknown'; // بازگرداندن مقدار پیش‌فرض در صورت بروز خطا
@@ -740,6 +742,11 @@ class ScheduleSettingController
       $holidayDates[] = $validated['date'];
       $message = 'این تاریخ تعطیل شد.';
       $isHoliday = true;
+
+      $specialDay = SpecialDailySchedule::where('date',$validated['date'])->first();
+      $specialDay->delete();
+      
+
     }
     // به‌روزرسانی رکورد
     $holidayRecord->update([
@@ -814,6 +821,16 @@ class ScheduleSettingController
           'status' => false,
           'message' => 'نوبت موردنظر برای جابجایی یافت نشد.',
         ], 404);
+      }
+      $selectedDate = Carbon::parse($validated['old_date']); // تاریخ دریافتی در فرمت میلادی
+      $dayOfWeek = strtolower($selectedDate->format('l'));
+      $workHours = DoctorWorkSchedule::where('day',$dayOfWeek)->first();
+      if(!$workHours->workhours){
+        return response()->json([
+          'status' => false,
+          'message' => ' ساعات کاری برای این روز یافت نشد.',
+        ], 400);
+
       }
       // جابجایی به تاریخ جدید
       $appointment->appointment_date = $validated['new_date'];
@@ -927,9 +944,11 @@ class ScheduleSettingController
   }
   public function toggleHoliday(Request $request)
   {
+
     $validated = $request->validate([
       'date' => 'required|date', // تاریخ به فرمت میلادی
     ]);
+
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
     ;
     $holidayRecord = DoctorHoliday::firstOrCreate(
@@ -1023,22 +1042,100 @@ class ScheduleSettingController
   }
   public function getDefaultSchedule(Request $request)
   {
-    $doctorId = Auth::guard('doctor')->id(); // دریافت شناسه پزشک لاگین شده
-    $dayOfWeek = $request->input('day_of_week'); // دریافت شماره روز هفته
-    // بررسی وجود برنامه کاری برای این روز
-    $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctorId)
-      ->where('day', $dayOfWeek) // بررسی روز هفته
-      ->first();
-    if ($workSchedule && !empty($workSchedule->work_hours)) {
+    $doctorId = Auth::guard('doctor')->user()->id;
+    $date = $request->date;
+    $selectedDate = Carbon::parse($request->date); // تاریخ دریافتی در فرمت میلادی
+    $dayOfWeek = strtolower($selectedDate->format('l')); // دریافت نام روز (مثلاً saturday, sunday, ...)
+    // بررسی وجود ساعات کاری برای تاریخ مشخص در جدول ویژه
+    $specialSchedule = SpecialDailySchedule::where('date', $date)->first();
+
+    if ($specialSchedule) {
       return response()->json([
         'status' => true,
-        'work_hours' => json_decode($workSchedule->work_hours, true) // تبدیل JSON به آرایه
-      ]);
-    } else {
-      return response()->json([
-        'status' => false,
-        'message' => 'هیچ برنامه کاری‌ای برای این روز تنظیم نشده است.'
+        'work_hours' => json_decode($specialSchedule->work_hours, true)
       ]);
     }
+    // دریافت ساعات کاری دکتر برای این روز خاص
+    $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctorId)
+      ->where('day', $dayOfWeek)
+      ->first();
+
+    if ($workSchedule) {
+      return response()->json([
+        'status' => true,
+        'work_hours' => json_decode($workSchedule->work_hours, true) ?? []
+      ]);
+    }
+
+    return response()->json([
+      'status' => false,
+      'message' => 'هیچ ساعات کاری برای این روز یافت نشد.'
+    ]);
   }
+  public function getWorkHours(Request $request)
+  {
+    $doctorId = Auth::guard('doctor')->user()->id;
+    $date = $request->input('date');
+
+    // بررسی جدول جدید (special_daily_schedules)
+    $specialSchedule = SpecialDailySchedule::where('doctor_id', $doctorId)
+      ->where('date', $date)
+      ->first();
+
+    if ($specialSchedule) {
+      return response()->json([
+        'status' => true,
+        'source' => 'special_daily_schedules',
+        'work_hours' => $specialSchedule->work_hours
+      ]);
+    }
+
+    // بررسی جدول قدیمی (doctor_work_schedules)
+    $defaultSchedule = DoctorWorkSchedule::where('doctor_id', $doctorId)
+      ->where('day_of_week', date('w', strtotime($date)))
+      ->first();
+
+    if ($defaultSchedule) {
+      return response()->json([
+        'status' => true,
+        'source' => 'doctor_work_schedules',
+        'work_hours' => json_decode($defaultSchedule->work_hours, true)
+      ]);
+    }
+
+    return response()->json(['status' => false, 'message' => 'هیچ ساعت کاری برای این روز ثبت نشده است.']);
+  }
+
+  public function updateWorkSchedule(Request $request)
+  {
+    $request->validate([
+      'date' => 'required|date',
+      'work_hours' => 'required|json'
+    ]);
+
+    $date = $request->date;
+    $workHours = json_decode($request->work_hours, true);
+
+    // بررسی وجود ساعات کاری برای تاریخ مورد نظر در جدول جدید
+    $specialWorkHours = SpecialDailySchedule::where('date', $date)->first();
+
+    if ($specialWorkHours) {
+      // اگر وجود داشت، بروزرسانی شود
+      $specialWorkHours->update(['work_hours' => json_encode($workHours)]);
+    } else {
+      // در غیر این صورت، رکورد جدید اضافه شود
+      SpecialDailySchedule::create([
+        'doctor_id' => auth()->guard('doctor')->user()->id,
+        'date' => $date,
+        'work_hours' => json_encode($workHours)
+      ]);
+    }
+
+    return response()->json([
+      'status' => true,
+      'message' => 'ساعات کاری با موفقیت بروزرسانی شد.'
+    ]);
+  }
+
+
 }

@@ -186,7 +186,7 @@
               <select class="form-control select2"
                       id="start-time"
                       style="width: 100%">
-                <!-- زمان‌های شروع از 6 صبح تا 12 شب با اسلات 30 دقیقه‌ای -->
+                <!-- زمان‌های شروع از 6 صبح تا 12 شب با ساعات کاری 30 دقیقه‌ای -->
                 @for($hour = 6; $hour <= 23; $hour++)
                   @for($minute = 0; $minute < 60; $minute += 5)
                     <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">
@@ -200,7 +200,7 @@
               <select class="form-control select2"
                       id="end-time"
                       style="width: 100%">
-                <!-- زمان‌های پایان از 6:30 صبح تا 12 شب با اسلات 5 دقیقه‌ای -->
+                <!-- زمان‌های پایان از 6:30 صبح تا 12 شب با ساعات کاری 5 دقیقه‌ای -->
                 @for($hour = 6; $hour <= 23; $hour++)
                   @for($minute = 30; $minute < 60; $minute += 5)
                     <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">

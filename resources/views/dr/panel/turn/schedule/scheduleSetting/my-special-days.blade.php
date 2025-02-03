@@ -71,48 +71,13 @@
    </div>
 
    <div class="modal-body">
-
-    {{-- show when nothing nobat for this day --}}
-    <div class="not-appointment d-none">
-     <div class="alert alert-info font-weight-bold font-size-13 px-2 py-3">پزشک گرامی شما برای این روز نوبت فعالی ندارید
-      آیا میخواهید این روز را تعطیل کنید؟؟
-     </div>
-     <div class="w-100 d-flex justify-content-between  gap-4">
-      <div class="w-100">
-       <button type="button" id="confirmHolidayButton" class="btn btn-primary h-50 w-100"
-        data-bs-dismiss="modal">بله</button>
-      </div>
-      <div class="w-100">
-       <button type="button" class="btn btn-danger h-50 w-100 close-modal" data-dismiss="modal"
-        aria-label="Close">خیر</button>
-      </div>
-     </div>
-    </div>
-    {{-- show when nothing nobat for this day --}}
-    {{-- show when having nobat for this day --}}
-    <div class="having-nobat-for-this-day d-none">
-     <div class="alert alert-info font-weight-bold font-size-13 px-2 py-3">پزشک گرامی شما برای این روز نوبت فعال دارید
-      آیا میخواهید این روز را تعطیل کنید؟؟
-      <h6 class="font-weight-bold text-let mt-3">نوبت های فعال</h6>
-     </div>
-     <div class="w-100 d-flex justify-content-center gap-10">
-      <button class="btn btn-danger cancle-btn-appointment h-50 w-100">لغو نوبت ها</button>
-      <button class="btn btn-secondary btn-reschedule h-50 w-100">جابجایی نوبت ها</button>
-     </div>
-     <div class="w-100 d-flex justify-content-between  gap-4 mt-3">
-      <div class="w-100">
-       <button type="button" class="btn btn-primary h-50 w-100" data-bs-dismiss="modal">ذخیره</button>
-      </div>
-     </div>
-    </div>
-    {{-- show when having nobat for this day --}}
+    
    </div>
   </div>
  </div>
 </div>
 <!-- جابجایی نوبت Modal -->
-<div class="modal  fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel"
- aria-hidden="true">
+<div class="modal  fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered modal-lg">
   <div class="modal-content border-radius-8">
    <div class="modal-header">
@@ -209,69 +174,73 @@
   loadAppointmentsCount();
   loadHolidayStyles();
  }
+  function updateWorkhours() {
+    let selectedDate = $("#selectedDate").val();
+    
+    let workHours = [];
 
- function attachDayClickEvents() {
-    $('.calendar-day').not('.empty').off('click').on('click', function () {
-      const selectedDayElement = $(this);
-      const persianDate = selectedDayElement.data('date');
-      const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
-      const dayOfWeek = moment(gregorianDate, 'YYYY-MM-DD').isoWeekday(); // دریافت شماره روز هفته
+    $(".work-hour-slot").each(function () {
+      let start = $(this).find(".work-start-time").val();
+      let end = $(this).find(".work-end-time").val();
+      let maxAppointments = $(this).find(".work-max-appointments").val();
 
-      $('#dateModal').data('selectedDate', gregorianDate);
-      $('#dateModal').modal('show');
-
-      // بررسی وضعیت تعطیلات یا نوبت‌های فعال
-      $.ajax({
-        url: "{{ route('doctor.get_holiday_status') }}",
-        method: 'POST',
-        data: {
-          date: gregorianDate,
-          _token: '{{ csrf_token() }}'
-        },
-        success: function (response) {
-          if (response.data.length > 0) {
-            updateModalContent(response);
-          } else {
-            // اگر نوبتی وجود نداشت، برنامه روزانه را از سرور دریافت کن
-            $.ajax({
-              url: "{{ route('doctor.get_default_schedule') }}",
-              method: 'POST',
-              data: {
-                day_of_week: dayOfWeek,
-                _token: '{{ csrf_token() }}'
-              },
-              success: function (scheduleResponse) {
-                if (scheduleResponse.status) {
-                  let workHoursHtml = '';
-                  scheduleResponse.work_hours.forEach(slot => {
-                    workHoursHtml += `<span class="btn btn-light mt-2 me-2">${slot.start} الی ${slot.end}</span>`;
-                  });
-
-                  $('#dateModal .modal-body').html(`
-                  <div class="alert alert-info">
-                    شما برای این روز نوبت فعالی ندارید. 
-                    برنامه کاری شما برای این روز:
-                  </div>
-                  <div class="mt-3">${workHoursHtml}</div>
-                `);
-                } else {
-                  $('#dateModal .modal-body').html(`
-                  <div class="alert alert-warning">
-                    شما برای این روز نوبتی ندارید و هیچ برنامه‌ای نیز ثبت نشده است.
-                  </div>
-                `);
-                }
-              }
-            });
-          }
-        },
-        error: function () {
-          Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
-        }
+      workHours.push({
+        start,
+        end,
+        max_appointments: maxAppointments
       });
     });
-  }
 
+    $.ajax({
+      url: "{{ route('doctor.update_work_schedule') }}",
+      method: "POST",
+      data: {
+        date: $("#selectedDate").val(),
+        work_hours: JSON.stringify(workHours),
+        _token: $("meta[name='csrf-token']").attr("content")
+      },
+      success: function (response) {
+        if (response.status) {
+          Swal.fire("موفقیت", "ساعات کاری بروزرسانی شد.", "success");
+        } else {
+          Swal.fire("خطا", "بروزرسانی انجام نشد!", "error");
+        }
+      },
+      error: function () {
+        Swal.fire("خطا", "مشکلی در ذخیره تغییرات وجود دارد.", "error");
+      }
+    });
+
+  }
+ function attachDayClickEvents() {
+  $('.calendar-day').not('.empty').off('click').on('click', function() {
+   const selectedDayElement = $(this);
+   const persianDate = selectedDayElement.data('date');
+   const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
+
+   // پاک کردن محتوای قبلی مودال
+   $('#dateModal').find('.modal-body').html('<div class="text-center py-3"><span>در حال بارگذاری...</span></div>');
+   $('#dateModal').data('selectedDayElement', selectedDayElement);
+   $('#dateModal').data('selectedDate', gregorianDate);
+
+   $.ajax({
+    url: "{{ route('doctor.get_holiday_status') }}",
+    method: 'POST',
+    data: {
+     date: gregorianDate,
+     _token: '{{ csrf_token() }}'
+    },
+    success: function(response) {
+     updateModalContent(response); // به‌روزرسانی محتوای مودال
+    },
+    error: function() {
+     Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+    }
+   });
+
+   $('#dateModal').modal('show');
+  });
+ }
 
 
  function populateSelectBoxes() {
@@ -401,7 +370,7 @@
         }
        },
        error: function(xhr) {
-        console.log('Error Response:', xhr.responseJSON); // بررسی پاسخ خطا
+        
 
         let errorMessage = 'مشکلی در ارتباط با سرور رخ داده است.';
         if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message) {
@@ -535,18 +504,15 @@
   }
   // بررسی وجود نوبت
   else if (response.data && response.data.length > 0) {
-   let appointmentsHtml = response.data.map(appointment => `
-            <span class="btn btn-light mt-2 me-2">
-                ${moment(appointment.start_time, 'HH:mm').format('HH:mm')} 
-                الی 
-                ${moment(appointment.end_time, 'HH:mm').format('HH:mm')}
-            </span>
-        `).join('');
    modalBody.html(`
             <div class="alert alert-info">
                 شما برای این روز نوبت فعال دارید.
             </div>
-            <div class="mt-3">${appointmentsHtml}</div>
+           <div id="workHoursContainer">
+            </div>
+            <button id="updateWorkHours" onclick="updateWorkhours()" class="btn btn-primary w-100 h-50 mt-3" style="display: none;">
+              بروزرسانی ساعات کاری
+             </button>
             <div class="d-flex justify-content-between mt-3 gap-4">
                 <button class="btn btn-danger h-50 w-100 close-modal me-2 cancle-btn-appointment">لغو نوبت‌ها</button>
                 <button class="btn btn-secondary w-100 btn-reschedule h-50">جابجایی نوبت‌ها</button>
@@ -559,6 +525,12 @@
             <div class="alert alert-info">
                 شما برای این روز نوبت فعالی ندارید. آیا می‌خواهید این روز را تعطیل کنید؟
             </div>
+               <div id="workHoursContainer">
+
+            </div>
+            <button id="updateWorkHours" onclick="updateWorkhours()" class="btn btn-primary w-100 h-50 mt-3" style="display: none;">
+              بروزرسانی ساعات کاری
+             </button>
             <div class="d-flex justify-content-between mt-3 gap-4">
                 <button id="confirmHolidayButton" class="btn btn-primary h-50 w-100 me-2">بله</button>
                <button class="btn btn-danger h-50 w-100 close-modal" data-bs-dismiss="modal" aria-label="Close">خیر</button>
@@ -590,115 +562,161 @@
    }
   });
  }
-  function findNextAvailableAppointment() {
-    $.ajax({
-      url: "{{ route('doctor.get_next_available_date') }}",
-      method: 'GET',
-      success: function (response) {
-        if (response.status) {
-          const nextAvailableDate = response.date;
 
+ function findNextAvailableAppointment() {
+  $.ajax({
+   url: "{{ route('doctor.get_next_available_date') }}",
+   method: 'GET',
+   success: function(response) {
+    if (response.status) {
+     const nextAvailableDate = response.date;
+
+     Swal.fire({
+      title: 'اولین نوبت خالی',
+      html: `آیا می‌خواهید به تاریخ ${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} منتقل شوید؟`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'بله',
+      cancelButtonText: 'خیر'
+     }).then((result) => {
+      if (result.isConfirmed) {
+       // آپدیت تاریخ اولین نوبت در دیتابیس
+       $.ajax({
+        url: "{{ route('doctor.update_first_available_appointment') }}",
+        method: 'POST',
+        data: {
+         date: nextAvailableDate,
+         _token: '{{ csrf_token() }}'
+        },
+        success: function(updateResponse) {
+         if (updateResponse.status) {
           Swal.fire({
-            title: 'اولین نوبت خالی',
-            html: `آیا می‌خواهید به تاریخ ${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} منتقل شوید؟`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'بله',
-            cancelButtonText: 'خیر'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // آپدیت تاریخ اولین نوبت در دیتابیس
-              $.ajax({
-                url: "{{ route('doctor.update_first_available_appointment') }}",
-                method: 'POST',
-                data: {
-                  date: nextAvailableDate,
-                  _token: '{{ csrf_token() }}'
-                },
-                success: function (updateResponse) {
-                  if (updateResponse.status) {
-                    Swal.fire({
-                      title: 'موفقیت',
-                      text: `نوبت به تاریخ ${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} منتقل شد.`,
-                      icon: 'success'
-                    });
-
-                    // بروزرسانی تقویم
-                    loadAppointmentsCount();
-                    loadHolidayStyles();
-                  } else {
-                    Swal.fire('خطا', updateResponse.message, 'error');
-                  }
-                },
-                error: function () {
-                  Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
-                }
-              });
-            }
+           title: 'موفقیت',
+           text: `نوبت به تاریخ ${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} منتقل شد.`,
+           icon: 'success'
           });
+
+          // بروزرسانی تقویم
+          loadAppointmentsCount();
+          loadHolidayStyles();
+         } else {
+          Swal.fire('خطا', updateResponse.message, 'error');
+         }
+        },
+        error: function() {
+         Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+        }
+       });
+      }
+     });
+    } else {
+     Swal.fire('اطلاع', response.message, 'info');
+    }
+   },
+   error: function() {
+    Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+   }
+  });
+ }
+ $('#goToFirstAvailable').on('click', function() {
+  $.ajax({
+   url: "{{ route('doctor.get_next_available_date') }}",
+   method: 'GET',
+   success: function(response) {
+    if (response.status) {
+     const nextAvailableDate = response.date; // تاریخ اولین نوبت خالی
+     const oldDate = $('#dateModal').data('selectedDate'); // تاریخ قبلی از مودال اولیه
+
+     Swal.fire({
+      title: `اولین نوبت خالی (${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')})`,
+      text: `آیا می‌خواهید نوبت از تاریخ ${moment(oldDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} به تاریخ ${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} منتقل شود؟`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'بله، جابجا کن',
+      cancelButtonText: 'لغو',
+     }).then((result) => {
+      if (result.isConfirmed) {
+       // ارسال درخواست برای جابجایی
+       $.ajax({
+        url: "{{ route('doctor.update_first_available_appointment') }}",
+        method: 'POST',
+        data: {
+         old_date: oldDate,
+         new_date: nextAvailableDate,
+         _token: '{{ csrf_token() }}',
+        },
+        success: function(updateResponse) {
+         if (updateResponse.status) {
+          Swal.fire('موفقیت', updateResponse.message, 'success');
+          // بروزرسانی تقویم
+          loadAppointmentsCount();
+          loadHolidayStyles();
+         } else {
+          Swal.fire('خطا', updateResponse.message, 'error');
+         }
+        },
+        error: function() {
+         Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+        },
+       });
+      }
+     });
+    } else {
+     Swal.fire('اطلاع', response.message, 'info');
+    }
+   },
+   error: function() {
+    Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+   },
+  });
+ });
+
+ // اضافه کردن event listener به دکمه
+ function getWorkHours(selectedDate) {
+    $.ajax({
+      url: "{{ route('doctor.get_default_schedule') }}",
+      method: "GET",
+      data: { date: selectedDate },
+      success: function (response) {
+        $("#workHoursContainer").empty();
+
+        if (response.status && response.work_hours.length > 0) {
+          response.work_hours.forEach((slot, index) => {
+            $("#workHoursContainer").append(`
+                        <h6 class="font-weight-bold">برنامه کاری</h6>
+                        <div class="p-3 border mt-2">
+                          <input type="hidden" id="selectedDate" value="${selectedDate}">
+
+                            <div class="work-hour-slot d-flex justify-content-center gap-4">
+                                <div class="position-relative">
+                                    <label class="label-top-input-special-takhasos">شروع:</label>
+                                    <input type="text" class="form-control h-50 work-start-time" value="${slot.start}" data-index="${index}" />
+                                </div>
+                                <div class="position-relative">
+                                    <label class="label-top-input-special-takhasos">پایان:</label>
+                                    <input type="text" class="form-control h-50 work-end-time" value="${slot.end}" data-index="${index}" />
+                                </div>
+                                <div class="position-relative">
+                                    <label class="label-top-input-special-takhasos">حداکثر نوبت:</label>
+                                    <input type="number" class="form-control h-50 work-max-appointments" value="${slot.max_appointments}" data-index="${index}" />
+                                </div>
+                            </div>
+                        </div>
+                    `);
+          });
+
+          $("#updateWorkHours").show();
         } else {
-          Swal.fire('اطلاع', response.message, 'info');
+          $("#workHoursContainer").append(`<p class="text-center text-danger font-weight-bold">هیچ ساعات کاری برای این روز تعریف نشده است.</p>`);
+          $("#updateWorkHours").hide();
         }
       },
       error: function () {
-        Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+        Swal.fire("خطا", "مشکلی در دریافت ساعات کاری وجود دارد.", "error");
       }
     });
   }
-  $('#goToFirstAvailable').on('click', function () {
-    $.ajax({
-      url: "{{ route('doctor.get_next_available_date') }}",
-      method: 'GET',
-      success: function (response) {
-        if (response.status) {
-          const nextAvailableDate = response.date; // تاریخ اولین نوبت خالی
-          const oldDate = $('#dateModal').data('selectedDate'); // تاریخ قبلی از مودال اولیه
 
-          Swal.fire({
-           title: `اولین نوبت خالی (${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')})`,
-             text: `آیا می‌خواهید نوبت از تاریخ ${moment(oldDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} به تاریخ ${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} منتقل شود؟`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'بله، جابجا کن',
-            cancelButtonText: 'لغو',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // ارسال درخواست برای جابجایی
-              $.ajax({
-                url: "{{ route('doctor.update_first_available_appointment') }}",
-                method: 'POST',
-                data: {
-                  old_date: oldDate,
-                  new_date: nextAvailableDate,
-                  _token: '{{ csrf_token() }}',
-                },
-                success: function (updateResponse) {
-                  if (updateResponse.status) {
-                    Swal.fire('موفقیت', updateResponse.message, 'success');
-                    // بروزرسانی تقویم
-                    loadAppointmentsCount();
-                    loadHolidayStyles();
-                  } else {
-                    Swal.fire('خطا', updateResponse.message, 'error');
-                  }
-                },
-                error: function () {
-                  Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
-                },
-              });
-            }
-          });
-        } else {
-          Swal.fire('اطلاع', response.message, 'info');
-        }
-      },
-      error: function () {
-        Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
-      },
-    });
-  });
-
-  // اضافه کردن event listener به دکمه
 
  $(document).ready(function() {
 
@@ -944,16 +962,9 @@
      else if (response.data.length > 0) {
       $('.having-nobat-for-this-day').removeClass('d-none');
       // نمایش اطلاعات نوبت‌ها
-      let appointmentsHtml = response.data.map(appointment => `
-            <span class="btn btn-light mt-2 me-2">
-              ${moment(appointment.start_time, 'HH:mm').format('HH:mm')} 
-              الی 
-              ${moment(appointment.end_time, 'HH:mm').format('HH:mm')}
-            </span>
-          `).join('');
+  
       $('.having-nobat-for-this-day .alert').html(`
             پزشک گرامی شما برای این روز نوبت فعال دارید.
-            <div class="mt-3">${appointmentsHtml}</div>
             <div class="w-100 d-flex justify-content-between gap-4 mt-3">
               <div class="w-100">
                 <button class="btn btn-danger cancle-btn-appointment h-50 w-100">لغو نوبت ها</button>
@@ -1027,83 +1038,48 @@
    });
    $('#dateModal').modal('show');
   });
-  $('.calendar-day').on('click', function() {
-   const selectedDayElement = $(this);
-   const persianDate = selectedDayElement.data('date');
-   const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
-   $('#dateModal').modal('hide');
-   $('#dateModalLabel').text('');
-   $('.not-appointment').addClass('d-none').find('.alert').html('');
-   $('.having-nobat-for-this-day').addClass('d-none').find('.alert').html('');
-   $('#dateModal').data('selectedDate', gregorianDate).data('selectedDayElement', selectedDayElement);
+
+  // تابع برای بروزرسانی محتوای مودال
+  // فراخوانی هنگام بارگذاری صفحه
+  loadHolidayStyles();
+ });
+ $(document).ready(function() {
+  $(".calendar-day").on("click", function() {
+    let persianDate = $(this).data("date"); // دریافت تاریخ شمسی
+    let gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'); // تبدیل به میلادی
+    $("#selectedDate").val(gregorianDate); // ذخیره تاریخ میلادی در فیلد مخفی
+   $("#selectedDate").val(gregorianDate); // ذخیره تاریخ میلادی در فیلد مخفی
+
+   // بررسی تعطیل بودن روز
    $.ajax({
-    url: "{{ route('doctor.get_holiday_status') }}", // روت سمت سرور
-    method: 'POST',
+    url: "{{ route('doctor.get_holiday_status') }}",
+    method: "POST",
     data: {
      date: gregorianDate,
      _token: '{{ csrf_token() }}'
     },
     success: function(response) {
-     if (response.status) {
-      if (response.is_holiday) {
-       // تغییر متن برای روزهای تعطیل
-       $('.not-appointment').removeClass('d-none');
-       $('.not-appointment .alert').text(
-        'این روز تعطیل است. آیا می‌خواهید از تعطیلی خارج شود؟'
-       );
-       // تغییر محتوای دکمه‌ها
-       $('.not-appointment').html(`
-            <div class="alert alert-info font-weight-bold font-size-13 px-2 py-3">
-              این روز تعطیل است. آیا می‌خواهید از تعطیلی خارج شود؟
-            </div>
-            <div class="w-100 d-flex justify-content-between gap-4">
-              <div class="w-100">
-                <button type="button" id="confirmHolidayButton" class="btn btn-primary h-50 w-100" data-bs-dismiss="modal">بله</button>
-              </div>
-              <div class="w-100">
-                <button type="button" class="btn btn-danger h-50 w-100 close-modal" data-dismiss="modal" aria-label="Close">خیر</button>
-              </div>
-            </div>
-          `);
-      } else if (response.data.length > 0) {
-       // برای روزهای دارای نوبت
-       $('.having-nobat-for-this-day').removeClass('d-none');
-       // نمایش اطلاعات نوبت‌ها
-       let appointmentDetails = response.data.map(appointment =>
-        `<span class="btn btn-light mt-3">
-              ${moment(appointment.start_time, 'HH:mm').format('HH:mm')} 
-              الی 
-              ${moment(appointment.end_time, 'HH:mm').format('HH:mm')}
-            </span>`
-       ).join(' ');
-       $('.having-nobat-for-this-day .alert').html(`
-            پزشک گرامی شما برای این روز نوبت فعال دارید.
-            <h6 class="font-weight-bold text-left mt-3">نوبت های فعال</h6>
-            ${appointmentDetails}
-          `);
-      } else {
-       // روز بدون نوبت
-       $('.not-appointment').removeClass('d-none');
-       $('.not-appointment .alert').text(
-        'پزشک گرامی شما برای این روز نوبت فعالی ندارید. آیا می‌خواهید این روز را تعطیل کنید؟'
-       );
-      }
+     if (response.is_holiday) {
+      // اگر روز تعطیل بود، فقط پیام تعطیلی را نمایش بدهد
+      $(".not-appointment").removeClass("d-none");
+      $(".having-nobat-for-this-day").addClass("d-none");
+      $("#workHoursContainer").empty(); // حذف ساعات کاری
+      $("#updateWorkHours").hide();
+     } else {
+      // اگر روز تعطیل نبود، ساعات کاری را دریافت کند
+      getWorkHours(gregorianDate);
      }
-    },
-    error: function() {
-     Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+
+     $("#dateModal").modal("show"); // باز کردن مودال
     }
    });
-   // تنظیم عنوان مودال
-   $('#dateModalLabel').text(
-    `نوبت‌های ${moment(persianDate, 'jYYYY-jMM-jDD').locale('fa').format('jD jMMMM jYYYY')}`
-   );
-   // نمایش مودال
-   $('#dateModal').modal('show');
   });
-  // تابع برای بروزرسانی محتوای مودال
-  // فراخوانی هنگام بارگذاری صفحه
-  loadHolidayStyles();
+
+ 
+  // ذخیره تغییرات ساعات کاری
+
+    
+
  });
 </script>
 @endsection

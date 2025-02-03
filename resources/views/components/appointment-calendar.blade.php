@@ -77,7 +77,7 @@
             <div class="form-group col-6 col-sm-12 col-md-6">
               <label for="start-time-appointments">زمان شروع</label>
               <select class="form-control select2-appointments" id="start-time-appointments" style="width: 100%">
-                <!-- گزینه‌های زمان شروع از 6 صبح تا 12 شب با اسلات‌های 5 دقیقه‌ای -->
+                <!-- گزینه‌های زمان شروع از 6 صبح تا 12 شب با ساعات کاری‌های 5 دقیقه‌ای -->
                 @for($hour = 6; $hour <= 23; $hour++)
                   @for($minute = 0; $minute < 60; $minute += 5)
                     <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">
@@ -90,7 +90,7 @@
             <div class="form-group col-6 col-sm-12 col-md-6">
               <label for="end-time-appointments">زمان پایان</label>
               <select class="form-control select2-appointments" id="end-time-appointments" style="width: 100%">
-                <!-- گزینه‌های زمان پایان از 6:30 صبح تا 12 شب با اسلات‌های 5 دقیقه‌ای -->
+                <!-- گزینه‌های زمان پایان از 6:30 صبح تا 12 شب با ساعات کاری‌های 5 دقیقه‌ای -->
                 @for($hour = 6; $hour <= 23; $hour++)
                   @for($minute = 30; $minute < 60; $minute += 5)
                     <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">

@@ -41,7 +41,7 @@ class AppointmentSlot extends Model
             $this->attributes['time_slots'] = $value;
         }
     }
-    // متد برای تنظیم اسلات‌های زمانی
+    // متد برای تنظیم ساعات کاری‌های زمانی
     public function setTimeSlots(array $slots)
     {
         $formattedSlots = collect($slots)->map(function ($slot) {
@@ -74,7 +74,7 @@ class AppointmentSlot extends Model
         });
     }
 
-    // متد برای بررسی ظرفیت اسلات
+    // متد برای بررسی ظرفیت ساعات کاری
     public function checkSlotCapacity(string $startTime, string $endTime)
     {
         $slots = json_decode($this->time_slots, true);
@@ -86,7 +86,7 @@ class AppointmentSlot extends Model
         return $matchingSlot ? $matchingSlot['max_per_slot'] : 0;
     }
 
-    // اسکوپ برای جستجوی اسلات‌های در دسترس
+    // اسکوپ برای جستجوی ساعات کاری‌های در دسترس
     public function scopeAvailableSlots($query, $date, $startTime = null, $endTime = null)
     {
         return $query->where('slot_date', $date)
@@ -100,14 +100,14 @@ class AppointmentSlot extends Model
             });
     }
 
-    // متد برای اضافه کردن اسلات جدید
+    // متد برای اضافه کردن ساعات کاری جدید
     public function addTimeSlot(string $start, string $end, int $maxPerSlot = 1)
     {
         $slots = json_decode($this->time_slots, true) ?? [];
 
         // بررسی تداخل زمانی
         if ($this->hasTimeConflict($start, $end)) {
-            throw new \Exception('اسلات زمانی تداخل دارد');
+            throw new \Exception('ساعات کاری زمانی تداخل دارد');
         }
 
         $slots[] = [
@@ -122,7 +122,7 @@ class AppointmentSlot extends Model
         return $this;
     }
 
-    // متد برای حذف اسلات
+    // متد برای حذف ساعات کاری
     public function removeTimeSlot(string $start, string $end)
     {
         $slots = collect(json_decode($this->time_slots, true));
