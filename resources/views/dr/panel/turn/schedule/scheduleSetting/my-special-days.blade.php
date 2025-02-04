@@ -603,7 +603,8 @@
           Swal.fire('خطا', updateResponse.message, 'error');
          }
         },
-        error: function() {
+        error: function(xhr) {
+          
          Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
         }
        });
@@ -651,12 +652,11 @@
           // بروزرسانی تقویم
           loadAppointmentsCount();
           loadHolidayStyles();
-         } else {
-          Swal.fire('خطا', updateResponse.message, 'error');
          }
         },
-        error: function() {
-         Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+        error: function(xhr) {
+
+         Swal.fire('خطا',xhr.responseJSON.message, 'error');
         },
        });
       }

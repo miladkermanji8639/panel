@@ -14,6 +14,8 @@ use App\Models\Dr\DoctorWorkSchedule;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Dr\SpecialDailySchedule;
 use App\Models\Dr\DoctorAppointmentConfig;
+use Modules\SendOtp\App\Http\Services\MessageService;
+use Modules\SendOtp\App\Http\Services\SMS\SmsService;
 
 class ScheduleSettingController
 {
@@ -811,44 +813,74 @@ class ScheduleSettingController
       'old_date' => 'required|date', // تاریخ قبلی نوبت
       'new_date' => 'required|date', // تاریخ جدید نوبت
     ]);
+
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-    ;
+
     try {
-      // پیدا کردن نوبت با تاریخ قبلی
-      $appointment = Appointment::where('doctor_id', $doctorId)
+      // پیدا کردن تمام نوبت‌های آن تاریخ
+      $appointments = Appointment::where('doctor_id', $doctorId)
         ->where('appointment_date', $validated['old_date'])
-        ->first();
-      if (!$appointment) {
+        ->get();
+
+      if ($appointments->isEmpty()) {
         return response()->json([
           'status' => false,
-          'message' => 'نوبت موردنظر برای جابجایی یافت نشد.',
+          'message' => 'هیچ نوبتی برای این تاریخ یافت نشد.',
         ], 404);
       }
-      $selectedDate = Carbon::parse($validated['old_date']); // تاریخ دریافتی در فرمت میلادی
+
+      // بررسی ساعات کاری پزشک برای تاریخ جدید
+      $selectedDate = Carbon::parse($validated['new_date']); // تبدیل تاریخ جدید به میلادی
       $dayOfWeek = strtolower($selectedDate->format('l'));
-      $workHours = DoctorWorkSchedule::where('day',$dayOfWeek)->first();
-      if(!$workHours->workhours){
+      $workHours = DoctorWorkSchedule::where('day', $dayOfWeek)->first();
+      if (!$workHours || !$workHours->work_hours) {
         return response()->json([
           'status' => false,
-          'message' => ' ساعات کاری برای این روز یافت نشد.',
+          'message' => 'ساعات کاری برای این روز یافت نشد.',
         ], 400);
-
       }
-      // جابجایی به تاریخ جدید
-      $appointment->appointment_date = $validated['new_date'];
-      $appointment->save();
+
+      // لیست شماره‌های موبایل کاربران
+      $recipients = [];
+
+      foreach ($appointments as $appointment) {
+        $oldDate = $appointment->appointment_date;
+        $appointment->appointment_date = $validated['new_date'];
+        $appointment->save();
+
+        // اضافه کردن شماره موبایل به لیست دریافت‌کنندگان پیامک
+        if ($appointment->patient && $appointment->patient->mobile) {
+          $recipients[] = $appointment->patient->mobile;
+        }
+      }
+      $oldDateJalali = \Morilog\Jalali\Jalalian::fromDateTime($validated['old_date'])->format('Y/m/d');
+      $newDateJalali = \Morilog\Jalali\Jalalian::fromDateTime($validated['new_date'])->format('Y/m/d');
+      // ارسال پیامک به همه کاربران
+      if (!empty($recipients)) {
+        $messageContent = "کاربر گرامی، نوبت شما از تاریخ {$oldDateJalali} به تاریخ {$newDateJalali} تغییر یافت.";
+
+        foreach ($recipients as $recipient) {
+          $messagesService = new MessageService(
+            SmsService::create($messageContent, $recipient)
+          );
+          $messagesService->send();
+        }
+      }
+
       return response()->json([
         'status' => true,
-        'message' => 'نوبت با موفقیت جابجا شد.',
-        'data' => $appointment,
+        'message' => 'نوبت‌ها با موفقیت جابجا شدند و پیامک ارسال گردید.',
+        'total_recipients' => count($recipients),
       ]);
     } catch (\Exception $e) {
       return response()->json([
         'status' => false,
-        'message' => 'خطا در جابجایی نوبت.',
+        'message' => 'خطا در جابجایی نوبت‌ها.',
+        'error' => $e->getMessage(),
       ], 500);
     }
   }
+
   public function getNextAvailableDate()
   {
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
@@ -873,37 +905,82 @@ class ScheduleSettingController
   public function updateFirstAvailableAppointment(Request $request)
   {
     $validated = $request->validate([
-      'old_date' => 'required|date', // تاریخ جدید که باید جایگزین شود
-      'new_date' => 'required|date' // تاریخ جدید که باید جایگزین شود
+      'old_date' => 'required|date', // تاریخ قبلی نوبت
+      'new_date' => 'required|date'  // تاریخ جدید که باید جایگزین شود
     ]);
+
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-    ;
+
     try {
-      // پیدا کردن اولین نوبت
-      $firstAppointment = Appointment::where('doctor_id', $doctorId)
-        ->orderBy('appointment_date', 'asc')
-        ->first();
-      if (!$firstAppointment) {
+      // پیدا کردن تمام نوبت‌های اولین تاریخ ثبت‌شده
+      $appointments = Appointment::where('doctor_id', $doctorId)
+        ->where('appointment_date', $validated['old_date'])
+        ->get();
+
+      if ($appointments->isEmpty()) {
         return response()->json([
           'status' => false,
           'message' => 'هیچ نوبتی برای بروزرسانی یافت نشد.'
         ], 404);
       }
-      // به‌روزرسانی تاریخ نوبت
-      $firstAppointment->appointment_date = $validated['new_date'];
-      $firstAppointment->save();
+
+      // بررسی ساعات کاری پزشک برای تاریخ جدید
+      $selectedDate = Carbon::parse($validated['new_date']); // تبدیل تاریخ جدید به میلادی
+      $dayOfWeek = strtolower($selectedDate->format('l'));
+      $workHours = DoctorWorkSchedule::where('day', $dayOfWeek)->first();
+
+      if (!$workHours || !$workHours->workhours) {
+        return response()->json([
+          'status' => false,
+          'message' => 'ساعات کاری پزشک برای تاریخ جدید یافت نشد.',
+        ], 400);
+      }
+
+      // لیست شماره‌های موبایل کاربران
+      $recipients = [];
+
+      foreach ($appointments as $appointment) {
+        // ذخیره تاریخ قبلی برای پیامک
+        $oldDate = $appointment->appointment_date;
+
+        // به‌روزرسانی تاریخ نوبت
+        $appointment->appointment_date = $validated['new_date'];
+        $appointment->save();
+
+        // اضافه کردن شماره موبایل به لیست دریافت‌کنندگان پیامک
+        if ($appointment->patient && $appointment->patient->mobile) {
+          $recipients[] = $appointment->patient->mobile;
+        }
+      }
+      $oldDateJalali = \Morilog\Jalali\Jalalian::fromDateTime($validated['old_date'])->format('Y/m/d');
+      $newDateJalali = \Morilog\Jalali\Jalalian::fromDateTime($validated['new_date'])->format('Y/m/d');
+      // ارسال پیامک به همه کاربران
+      if (!empty($recipients)) {
+        $messageContent = "کاربر گرامی، نوبت شما از تاریخ {$oldDateJalali} به تاریخ {$newDateJalali} تغییر یافت.";
+
+        foreach ($recipients as $recipient) {
+          $messagesService = new MessageService(
+            SmsService::create($messageContent, $recipient)
+          );
+          $messagesService->send();
+        }
+      }
+
       return response()->json([
         'status' => true,
-        'message' => 'تاریخ اولین نوبت با موفقیت بروزرسانی شد.',
-        'updated_date' => $firstAppointment->appointment_date
+        'message' => 'نوبت‌ها با موفقیت بروزرسانی شدند و پیامک ارسال گردید.',
+        'total_recipients' => count($recipients),
       ]);
     } catch (\Exception $e) {
       return response()->json([
         'status' => false,
-        'message' => 'خطا در بروزرسانی نوبت.'
+        'message' => 'خطا در بروزرسانی نوبت‌ها.',
+        'error' => $e->getMessage()
       ], 500);
     }
   }
+
+
   public function getAppointmentsByDate(Request $request)
   {
     $date = $request->input('date'); // تاریخ به فرمت میلادی
