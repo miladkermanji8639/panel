@@ -1803,12 +1803,12 @@
     </div>
    </div>
    <div class="w-100 d-flex justify-content-between p-3 gap-4">
-    <button type="submit" class="btn btn-primary h-50 col-8 d-flex justify-content-center align-items-center w-100"
+    <button type="submit" class="btn btn-primary h-50  d-flex justify-content-center align-items-center w-100"
      id="saveSelection">
      <span class="button_text">ذخیره تغیرات</span>
      <div class="loader"></div>
     </button>
-    <button type="button" class="btn btn-danger h-50 w-50 col-4" data-dismiss="modal">لغو</button>
+    <button type="button" class="btn btn-danger h-50 w-50" data-dismiss="modal">لغو</button>
    </div>
   </div>
  </div>
@@ -1825,8 +1825,8 @@
    </div>
    <div class="modal-body">
     <div class="d-flex align-items-center">
-     <div class="d-flex flex-wrap flex-column  align-items-start gap-4">
-      <div class="d-flex align-items-center">
+     <div class="d-flex flex-wrap flex-column  align-items-start gap-4 w-100">
+      <div class="d-flex align-items-center w-100">
        <x-my-check :isChecked="false" id="count-label-modal" day="" />
        <div class="input-group position-relative mx-2">
         <label class="label-top-input-special-takhasos">نوبت ها </label>
@@ -1835,7 +1835,7 @@
         <div class="input-group-append count-span-prepand-style"><span class="input-group-text px-2">نوبت</span></div>
        </div>
       </div>
-      <div class="d-flex align-items-center mt-4">
+      <div class="d-flex align-items-center mt-4 w-100">
        <x-my-check :isChecked="false" id="time-label-modal" day="" />
        <div class="input-group position-relative mx-2">
         <label class="label-top-input-special-takhasos"> هر نوبت </label>

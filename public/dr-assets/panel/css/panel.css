@@ -159,7 +159,22 @@
  top: 0;
  right: 0;
 }
+/* برای Chrome, Safari, Edge جدید */
+::-webkit-scrollbar {
+  display: none;
+}
 
+/* برای Firefox */
+* {
+  scrollbar-width: none;
+}
+th {
+  text-wrap: nowrap !important;
+}
+/* برای IE و Edge قدیمی */
+body {
+  -ms-overflow-style: none;
+}
 @media screen and (max-width: 1059px) {
  .top-details-sicks-cards .rounded-lg {
   border-radius: 12px !important;
@@ -181,6 +196,9 @@
  .top-details-sicks-cards .rounded-lg {
   border-radius: 12px !important;
   width: inherit;
+ }
+ .close span{
+  font-size: 24px !important;
  }
 
  .top-details-sicks-cards {
@@ -521,7 +539,14 @@
   width: 22px;
   height: 22px;
  }
-
+#CalculatorModal .modal-dialog {
+  position: relative;
+  width: auto;
+  pointer-events: none;
+}
+#calculate-modal{
+  width: 100% !important;
+}
  .rounded-lg span {
   font-size: 11px;
  }
@@ -699,7 +724,7 @@ button {
 }
 
 #calculate-modal {
- width: 320px !important;
+ width: 320px;
 }
 
 .timepicker-ui input {
@@ -848,7 +873,7 @@ button {
  position: absolute;
  left: 8px;
  top: 42px;
- z-index: 45;
+ z-index: 201;
 }
 
 

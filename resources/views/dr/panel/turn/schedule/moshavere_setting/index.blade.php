@@ -64,7 +64,7 @@
           <div class="input-group-append"><span class="input-group-text">تومان</span></div>
          </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 therty-min-768">
          <div class="input-group position-relative">
           <label class="label-top-input-special-takhasos">30 دقیقه</label>
           <input type="tel" value="{{  explode(".", $appointmentConfig->price_30min)[0] }}" class="form-control numberkey ltr text-center h-50 border-radius-0"
@@ -83,7 +83,7 @@
           <div class="input-group-append"><span class="input-group-text">تومان</span></div>
          </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 sixty-min-768">
          <div class="input-group position-relative">
           <label class="label-top-input-special-takhasos">60 دقیقه</label>
           <input type="tel" value="{{  explode(".", $appointmentConfig->price_60min)[0] }}" class="form-control numberkey ltr text-center h-50 border-radius-0"

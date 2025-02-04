@@ -9,18 +9,22 @@
  border-radius: 10px;
  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
+
 @media only screen and (max-width: 991px) {
  .workhours-moshavere-wrapper-content {
   width: 97% !important;
  }
 }
 @media only screen and (max-width: 768px) {
- .input-group {
-  margin-top: 15px !important;
- }
+.mx-2{
+ margin-right: 0 !important;
+}
  label {
   font-size: 13px !important;
  }
+.therty-min-768 , .sixty-min-768 {
+ margin-top: 10px !important;
+}
 }
 @media only screen and (max-width: 425px) {
  .input-group {

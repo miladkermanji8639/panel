@@ -25,7 +25,7 @@
       <span class="position-absolute font-size-13 top-21">6</span>
      </div>
     </div>
-    <div class="mx-2 mt-4"><span class="font-weight-bold">ساعت
+    <div class="ml-2 mt-4"><span class="font-weight-bold">ساعت
       کاری</span>
      <p class="">ساعت کاری خود را همیشه بروز نگه
       دارید</p>
@@ -40,7 +40,7 @@
        stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
      </svg>
     </div>
-    <div class="mx-2 mt-4">
+    <div class="ml-2 mt-4">
      <span class="font-weight-bold">
       روزهای تعطیل
      </span>
@@ -56,7 +56,7 @@
        stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
      </svg>
     </div>
-    <div class="mx-2 mt-4">
+    <div class="ml-2 mt-4">
      <span class="font-weight-bold">
       مسدود کردن کاربر
      </span>

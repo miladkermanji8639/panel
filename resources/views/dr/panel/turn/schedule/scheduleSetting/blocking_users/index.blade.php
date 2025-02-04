@@ -14,7 +14,7 @@
  <link type="text/css" href="{{ asset('dr-assets/panel/css/turn/schedule/scheduleSetting/scheduleSetting.css') }}"
   rel="stylesheet" />
  <link type="text/css" href="{{ asset('dr-assets/panel/css/turn/schedule/scheduleSetting/workhours.css') }}">
- <link type="text/css" href="{{ asset('dr-assets/panel/profile/edit-profile.css') }}" rel="stylesheet" />
+ <link type="text/css" href="{{ asset('dr-assets/panel/turn/schedule/schedule-setting/blocking-users/blocking-user.css') }}" rel="stylesheet" />
 
 @endsection
 @section('site-header')
@@ -31,8 +31,8 @@
    </div>
    <div class="card-body">
     <!-- دکمه افزودن کاربر -->
-    <div class="d-flex justify-content-between mb-3">
-     <button class="h-50 btn btn-primary" data-toggle="modal" data-target="#addUserModal">افزودن کاربر مسدود</button>
+    <div class="d-flex justify-content-end mb-3">
+     <button class="h-50 btn btn-primary" data-toggle="modal" data-target="#addUserModal">افزودن</button>
     </div>
 
     <!-- جدول لیست کاربران مسدود -->
@@ -83,7 +83,7 @@
     <h5 class="mb-0">لیست پیام‌های ارسالی</h5>
    </div>
    <div class="card-body">
-    <div>
+    <div class="w-100 d-flex justify-content-end">
      <button class="h-50 btn btn-success" data-toggle="modal" data-target="#sendSmsModal">ارسال پیام</button>
 
     </div>
