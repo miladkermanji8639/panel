@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Dr\Panel\Turn\Schedule\ScheduleSetting;
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Dr\Appointment;
 use App\Models\Dr\DoctorHoliday;
@@ -860,8 +861,10 @@ class ScheduleSettingController
         $messageContent = "کاربر گرامی، نوبت شما از تاریخ {$oldDateJalali} به تاریخ {$newDateJalali} تغییر یافت.";
 
         foreach ($recipients as $recipient) {
+          $userFullName = User::where('mobile',$recipient)->first();
+          $userFullName = $userFullName->first_name . " " . $userFullName->last_name;
           $messagesService = new MessageService(
-            SmsService::create($messageContent, $recipient)
+            SmsService::create(100252, $recipient,[$userFullName,$oldDateJalali,$newDateJalali,'به نوبه'])
           );
           $messagesService->send();
         }
@@ -959,8 +962,10 @@ class ScheduleSettingController
         $messageContent = "کاربر گرامی، نوبت شما از تاریخ {$oldDateJalali} به تاریخ {$newDateJalali} تغییر یافت.";
 
         foreach ($recipients as $recipient) {
+          $userFullName = User::where('mobile', $recipient)->first();
+          $userFullName = $userFullName->first_name . " " . $userFullName->last_name;
           $messagesService = new MessageService(
-            SmsService::create($messageContent, $recipient)
+            SmsService::create(100252, $recipient, [$userFullName, $oldDateJalali, $newDateJalali, 'به نوبه'])
           );
           $messagesService->send();
         }

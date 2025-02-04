@@ -83,10 +83,10 @@
     <h5 class="mb-0">لیست پیام‌های ارسالی</h5>
    </div>
    <div class="card-body">
-    <div class="w-100 d-flex justify-content-end">
+   {{--  <div class="w-100 d-flex justify-content-end">
      <button class="h-50 btn btn-success" data-toggle="modal" data-target="#sendSmsModal">ارسال پیام</button>
 
-    </div>
+    </div> --}}
     <div class="table-responsive mt-3">
      <table id="messagesTable" class="table table-striped table-bordered text-center">
       <thead>

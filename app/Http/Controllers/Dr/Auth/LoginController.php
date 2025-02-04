@@ -114,9 +114,10 @@ class LoginController
 
   private function sendOtp($user)
   {
-    $otpCode = rand(1000, 9999);
-    $token = Str::random(60);
+    $otpCode = rand(1000, 9999); // تولید کد OTP
+    $token = Str::random(60); // تولید توکن
 
+    // ذخیره اطلاعات OTP در دیتابیس
     Otp::create([
       'token' => $token,
       'doctor_id' => $user instanceof Doctor ? $user->id : null,
@@ -126,13 +127,14 @@ class LoginController
       'type' => 0,
     ]);
 
+    // ارسال پیامک
     $messagesService = new MessageService(
-      SmsService::create($otpCode, $user->mobile)
+      SmsService::create(100253, $user->mobile, [$otpCode]) // شناسه الگو به صورت پیش‌فرض 96
     );
     $messagesService->send();
-
-    return response()->json(['token' => $token, 'otp_code' => $otpCode]);
+    return response()->json(['token' => $token, 'otp_code' => $otpCode]); // ارسال توکن و کد OTP در پاسخ
   }
+
 
   public function loginConfirm(OtpDoctorsRequest $request, $token)
   {

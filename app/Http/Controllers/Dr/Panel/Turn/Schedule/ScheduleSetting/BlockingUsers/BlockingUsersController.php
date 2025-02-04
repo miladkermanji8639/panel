@@ -27,7 +27,7 @@ class BlockingUsersController
 
  public function store(Request $request)
  {
-  $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id ;
+  $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id;
 
   try {
    $validated = $request->validate([
@@ -70,7 +70,7 @@ class BlockingUsersController
    $doctorName = $doctorName->first_name . " " . $doctorName->last_name;
    $message = "کاربر گرامی، شما توسط پزشک {$doctorName} مسدود شده‌اید. برای اطلاعات بیشتر با ما تماس بگیرید.";
    $messagesService = new MessageService(
-    SmsService::create($message, $user->mobile)
+    SmsService::create(100254, $user->mobile, [$doctorName])
    );
    $messagesService->send();
    $saveMessage = SmsTemplate::create([
@@ -104,7 +104,7 @@ class BlockingUsersController
    'recipient_type' => 'required|in:all,blocked,specific',
    'specific_recipient' => 'nullable|exists:users,mobile',
   ]);
-  
+
 
   try {
    $recipients = [];
@@ -123,12 +123,12 @@ class BlockingUsersController
     $recipients[] = $validated['specific_recipient'];
    }
    foreach ($recipients as $recipient) {
-    $messagesService = new MessageService(
-     SmsService::create($validated['content'], $recipient)
-    );
-    $messagesService->send();
+    /*  $messagesService = new MessageService(
+      SmsService::create($validated['content'], $recipient)
+     );
+     $messagesService->send(); */
    }
-   $user = User::where('mobile',$validated['specific_recipient'])->first();
+   $user = User::where('mobile', $validated['specific_recipient'])->first();
    SmsTemplate::create([
     'doctor_id' => Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id,
     'user_id' => $user->id,
@@ -175,10 +175,18 @@ class BlockingUsersController
     ? "کاربر گرامی، شما توسط پزشک {$doctorName} مسدود شده‌اید. لطفاً جهت اطلاعات بیشتر با ما تماس بگیرید."
     : "کاربر گرامی، شما توسط پزشک {$doctorName} از حالت مسدودی خارج شدید. اکنون دسترسی شما فعال است.";
 
-   $smsService = new MessageService(
-    SmsService::create($message, $user->mobile)
-   );
-   $smsService->send();
+   if ($request->status == 1) {
+    $smsService = new MessageService(
+     SmsService::create(100254, $user->mobile, [$doctorName])
+    );
+    $smsService->send();
+   } else {
+    $smsService = new MessageService(
+     SmsService::create(100255, $user->mobile, [$doctorName])
+    );
+    $smsService->send();
+   }
+
 
    // ذخیره پیام در جدول SmsTemplate
    SmsTemplate::create([
