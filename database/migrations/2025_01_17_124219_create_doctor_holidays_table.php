@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('doctor_holidays', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('doctor_id'); // ارتباط با جدول پزشکان
-            $table->json('holiday_dates')->default(json_encode([])); // ذخیره تاریخ‌های تعطیلات در قالب JSON
+            $table->json('holiday_dates')->nullable(); // ذخیره تاریخ‌های تعطیلات در قالب JSON
             $table->string('status')->default('active'); // فیلد کمکی برای وضعیت
             $table->timestamps();
 

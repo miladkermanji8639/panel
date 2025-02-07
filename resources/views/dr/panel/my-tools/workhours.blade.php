@@ -15,7 +15,6 @@
   const isChecked = $(this).is(':checked');
   $('#checkboxModal input[type="checkbox"]').not(this).prop('checked', isChecked);
  });
-
  function validateTimeSlot(startTime, endTime) {
   // تبدیل زمان‌ها به دقیقه
   const startMinutes = timeToMinutes(startTime);
@@ -47,12 +46,10 @@
   }
   return true;
  }
-
  function timeToMinutes(time) {
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
  }
-
  function isTimeConflict(newStart, newEnd, existingStart, existingEnd) {
   const newStartMinutes = timeToMinutes(newStart);
   const newEndMinutes = timeToMinutes(newEnd);
@@ -62,7 +59,6 @@
    (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes)
   );
  }
-
  function initializeTimepicker() {
   const DOMElement = $(".timepicker-ui");
   const options = {
@@ -199,15 +195,12 @@
    }
   });
  });
-
  function reloadDayData(day) {
   $.ajax({
    url: "{{ route('dr-get-work-schedule') }}",
    method: 'GET',
    success: function(response) {
-
     const schedule = response.workSchedules.find(schedule => schedule.day === day);
-
     if (schedule) {
      updateDayUI(schedule);
     }
@@ -219,65 +212,71 @@
  }
  // تابع برای به‌روزرسانی رابط کاربری روز مقصد
  function updateDayUI(schedule) {
-
   const day = schedule.day; // روز مقصد
   const $container = $(`#morning-${day}-details`);
   // پاک کردن محتوای قبلی
   $container.empty();
-  // اضافه کردن ردیف جدید
-  const mainRowHtml = `
-        <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4">
+  // استخراج ساعات کاری
+  let workHours = [];
+  workHours = schedule.work_hours ? JSON.parse(schedule.work_hours) : []; // تبدیل JSON به آرایه
+  // اگر ساعات کاری وجود ندارد، المان اصلی به همراه دکمه "افزودن ردیف جدید" نمایش داده شود
+  if (!workHours || workHours.length === 0) {
+   const mainRowHtml = `
+      <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="">
         <div class="d-flex justify-content-start align-items-center gap-4">
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">از</label>
-            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="${schedule.start_time || ''}">
+            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="">
           </div>
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">تا</label>
-            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-end-${day}" value="${schedule.end_time || ''}">
+            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-end-${day}" value="">
           </div>
           <div class="form-group col-sm-3 position-relative">
             <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-            <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" value="${schedule.max_appointments || ''}" readonly>
+            <input type="text" class="form-control h-50 text-center max-appointments bg-white" name="nobat-count" min="0" id="morning-patients-${day}" data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
           </div>
-           <div class="form-group col-sm-1 position-relative">
-            <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="${schedule.start_time}" data-end-time="${schedule.end_time }" data-max-appointments="${schedule.max_appointments}" data-slot-id="${schedule.id}">
-                <img src="${svgUrl}">
+          <div class="form-group col-sm-1 position-relative">
+            <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>
+              <img src="${svgUrl}">
             </button>
           </div>
           <div class="form-group col-sm-2 position-relative">
-            <button class="btn btn-light btn-sm remove-row-btn">
+            <button class="btn btn-light btn-sm remove-row-btn" disabled data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
               <img src="${trashSvg}">
             </button>
           </div>
         </div>
         <div class="d-flex align-items-center">
           <div class="d-flex align-items-center">
-              <button type="button" class="btn text-black  btn-sm btn-outline-primary" data-toggle="modal" data-target="#scheduleModal" data-day="${day}">زمانبندی باز شدن نوبت‌ها</button>
+            <button type="button" class="btn text-black btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" disabled>زمانبندی باز شدن نوبت‌ها</button>
           </div>
         </div>
       </div>
-     <div class="add-new-row mt-3">
+      <div class="add-new-row mt-3">
         <button class="add-row-btn btn btn-sm btn-primary" data-day="${day}">
-          <span>
-            +
-          </span>
+          <span>+</span>
           <span>افزودن ردیف جدید</span>
-          
         </button>
-        
       </div>
     `;
-  $container.append(mainRowHtml);
-  // اضافه کردن برنامه کاری‌های جدید
-  let workHours = [];
-  workHours = schedule.work_hours ? JSON.parse(schedule.work_hours) : []; // تبدیل JSON به آرایه
-  if (workHours && workHours.length > 0) {
-
+   $container.append(mainRowHtml);
+  } else {
+   // اگر ساعات کاری وجود دارد، آنها را به همراه دکمه "افزودن ردیف جدید" اضافه کن
    workHours.forEach(slot => {
-    const slotHtml = createSlotHtml(slot, day);
+    const slotHtml = createSlotHtml(schedule, day);
     $container.append(slotHtml);
    });
+   // افزودن دکمه "افزودن ردیف جدید" به انتهای لیست
+   const addNewRowHtml = `
+      <div class="add-new-row mt-3">
+        <button class="add-row-btn btn btn-sm btn-primary" data-day="${day}">
+          <span>+</span>
+          <span>افزودن ردیف جدید</span>
+        </button>
+      </div>
+    `;
+   $container.append(addNewRowHtml);
   }
   // بازسازی تایم‌پیکرها
   initializeTimepicker();
@@ -502,7 +501,7 @@
         </div>
         <div class="form-group col-sm-3 position-relative">
           <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-          <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" value="" readonly>
+          <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
         </div>
          <div class="form-group col-sm-1 position-relative">
             <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="${start_time}" data-end-time="${end_time}" data-max-appointments="${max_appointments}" data-slot-id="${slotId}">
@@ -516,11 +515,11 @@
         </div>
       </div>
       <div class="d-flex align-items-center">
-        <button type="button" class="btn btn-primary btn-sm h-50" 
+        <button type="button" class="btn btn-outline-primary btn-sm schedule-btn" 
           data-toggle="modal" 
           data-target="#scheduleModal" 
           data-day="${day}" data-start-time="${start_time}" data-end-time="${end_time}" data-max-appointments="${max_appointments}">
-          برنامه باز شدن نوبت‌ها
+          زمانبندی باز شدن نوبت‌ها
         </button>
       </div>
     </div>
@@ -533,74 +532,84 @@
    $('input[type="checkbox"][id$="-copy-modal"]').closest('div').show();
   });
  });
-
  function loadWorkSchedule(response) {
-
   try {
-   // بازسازی المان اصلی برای هر روز
    response.workSchedules.forEach(function(schedule) {
-
     $(`#${schedule.day}`).prop('checked', schedule.is_working);
     if (schedule.is_working) {
      $(`.work-hours-${schedule.day}`).removeClass('d-none');
     } else {
      $(`.work-hours-${schedule.day}`).addClass('d-none');
     }
+    updateDayUI(schedule);
    });
-   // تنظیم مقادیر کانفیگ
-   if (response.appointmentConfig) {
-    $('#appointment-toggle').prop('checked', response.appointmentConfig.auto_scheduling);
-    $('input[name="calendar_days"]').val(response.appointmentConfig.calendar_days || 30);
-    $('#posible-appointments').prop('checked', response.appointmentConfig.online_consultation);
-    $('#posible-appointments-inholiday').prop('checked', response.appointmentConfig.holiday_availability);
-   }
-   // مجدداً راه‌اندازی تایم پیکرها
-  } catch (error) {}
+  } catch (error) {
+   console.error("Error in loadWorkSchedule:", error);
+  }
  }
- // تابع ایجاد ردیف اصلی
-
- // تابع ایجاد ردیف برنامه کاری
  function createSlotHtml(slot, day) {
-  const startTime = slot.start ?? '';
-  const endTime = slot.end ?? '';
-  const maxAppointments = slot.max_appointments || '';
-
-  return `
-    <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="${slot.id}">
-      <div class="d-flex justify-content-start align-items-center gap-4">
-        <div class="form-group position-relative timepicker-ui">
-          <label class="label-top-input-special-takhasos">از</label>
-          <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 start-time bg-white" value="${startTime}" readonly>
-        </div>
-        <div class="form-group position-relative timepicker-ui">
-          <label class="label-top-input-special-takhasos">تا</label>
-          <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 end-time bg-white" value="${endTime}" readonly>
-        </div>
-        <div class="form-group col-sm-3 position-relative">
-          <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-          <input type="text" class="form-control h-50 text-center max-appointments bg-white" value="${maxAppointments}" readonly>
-        </div>
-         <div class="form-group col-sm-1 position-relative">
-             <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="${startTime}" data-end-time="${endTime}" data-max-appointments="${maxAppointments}" data-slot-id="${slot.id}">
-              <img src="${svgUrl}">
-             </button>
-          </div>
-        <div class="form-group col-sm-2 position-relative">
-          <button class="btn btn-light btn-sm remove-row-btn" data-slot-id="${slot.id}" data-start-time="${startTime}" data-end-time="${endTime}" data-max-appointments="${maxAppointments}" data-day="${day}">
-            <img src="${trashSvg}">
-          </button>
-        </div>
-      </div>
-      <div class="d-flex align-items-center">
-        <button type="button" class="btn btn-primary btn-sm h-50" 
-          data-toggle="modal" 
-          data-target="#scheduleModal" 
-          data-day="${day}" data-start-time="${startTime}" data-end-time="${endTime}" data-max-appointments="${maxAppointments}">
-          برنامه باز شدن نوبت‌ها
-        </button>
-      </div>
-    </div>
-  `;
+  let workHours = slot.work_hours ? JSON.parse(slot.work_hours) : [];
+  let slotHtml = "";
+  // پاک کردن محتوای قبلی
+  const $container = $(`#morning-${day}-details`);
+  $container.empty(); // این خط باعث جلوگیری از تکرار ردیف‌ها می‌شود
+  workHours.forEach((timeSlot) => {
+   const startTime = timeSlot.start ?? '';
+   const endTime = timeSlot.end ?? '';
+   const maxAppointments = timeSlot.max_appointments || '';
+   slotHtml += `
+            <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="${slot.id}">
+                <div class="d-flex justify-content-start align-items-center gap-4">
+                    <div class="form-group position-relative timepicker-ui">
+                        <label class="label-top-input-special-takhasos">از</label>
+                        <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 start-time bg-white" value="${startTime}" readonly>
+                    </div>
+                    <div class="form-group position-relative timepicker-ui">
+                        <label class="label-top-input-special-takhasos">تا</label>
+                        <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 end-time bg-white" value="${endTime}" readonly>
+                    </div>
+                    <div class="form-group col-sm-3 position-relative">
+                        <label class="label-top-input-special-takhasos">تعداد نوبت</label>
+                        <input type="text" class="form-control h-50 text-center max-appointments bg-white" value="${maxAppointments}" readonly>
+                    </div>
+                    <div class="form-group col-sm-1 position-relative">
+                        <button class="btn btn-light btn-sm copy-single-slot-btn" 
+                            data-toggle="modal" data-target="#checkboxModal" 
+                            data-day="${day}" 
+                            data-start-time="${startTime}" 
+                            data-end-time="${endTime}" 
+                            data-max-appointments="${maxAppointments}" 
+                            data-slot-id="${slot.id}">
+                            <img src="${svgUrl}">
+                        </button>
+                    </div>
+                    <div class="form-group col-sm-2 position-relative">
+                        <button class="btn btn-light btn-sm remove-row-btn" 
+                            data-slot-id="${slot.id}" 
+                            data-start-time="${startTime}" 
+                            data-end-time="${endTime}" 
+                            data-max-appointments="${maxAppointments}" 
+                            data-day="${day}">
+                            <img src="${trashSvg}">
+                        </button>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-primary btn-sm schedule-btn" 
+                        data-toggle="modal" 
+                        data-target="#scheduleModal" 
+                        data-day="${day}" 
+                        data-start-time="${startTime}" 
+                        data-end-time="${endTime}" 
+                        data-max-appointments="${maxAppointments}">
+                        زمانبندی باز شدن نوبت‌ها
+                    </button>
+                </div>
+            </div>
+        `;
+  });
+  // اضافه کردن HTML به DOM
+  $container.append(slotHtml);
  }
  // استفاده از کش
  $(document).ready(function() {
@@ -645,7 +654,6 @@
    $('#select-all-copy-modal').prop('checked', false);
   });
  });
-
  function setupModalButtons() {
   // لودر برای همه مدال‌ها
   $('[data-modal-submit]').on('click', function() {
@@ -664,14 +672,11 @@
    });
   });
  }
-
-
  // فراخوانی تابع برای تنظیم دکمه‌های مدال
  $(document).ready(setupModalButtons);
-
-
  $(document).on('click', '[data-target="#scheduleModal"]', function() {
   const day = $(this).data('day');
+  loadAllWorkhours()
   const start_time = $(this).data('start-time')
   const end_time = $(this).data('end-time')
   const max_appointments = $(this).data('max-appointments')
@@ -706,16 +711,11 @@
     max_appointments: max_appointments,
    },
    success: function(response) {
-
     // حذف لیست‌های قبلی
     if (response.status && response.settings) {
-
      // تبدیل تنظیمات JSON به آرایه
      const settings = response.settings;
-
      // فیلتر تنظیمات مرتبط با برنامه کاری جاری
-
-
      if (settings.length > 0) {
       let settingsListHtml = '<div class="mt-3 settings-list">';
       const dayMapFa = {
@@ -728,9 +728,7 @@
        'friday': 'جمعه'
       };
       // ساخت HTML برای تنظیمات فیلتر شده
-
       settings.forEach(setting => {
-
        settingsListHtml += `
             <div class="d-flex justify-content-between align-items-center border-bottom p-2 border-radius-4 mb-2 setting-item mt-2 bg-active-slot" data-day="${response.day}" data-selected-day="${setting.selected_day}">
               <span class="font-weight-bold text-success p-2">
@@ -769,7 +767,7 @@
  // تابع تبدیل نام روز به فارسی (اگر قبلاً تعریف نشده باشد)
  function addNewRow(day) {
   const newRow = `
-        <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4">
+        <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="">
             <div class="d-flex justify-content-start align-items-center gap-4">
                 <div class="form-group position-relative timepicker-ui">
                     <label class="label-top-input-special-takhasos">از</label>
@@ -781,7 +779,7 @@
                 </div>
                 <div class="form-group col-sm-3 position-relative">
                     <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-                    <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" value="" readonly>
+                    <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
                 </div>
                  <div class="form-group col-sm-1 position-relative">
             <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
@@ -789,7 +787,7 @@
             </button>
           </div>
                 <div class="form-group col-sm-2 position-relative">
-                    <button class="btn btn-light btn-sm remove-row-btn">
+                    <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
                         <img src="${trashSvg}">
                     </button>
                 </div>
@@ -802,13 +800,10 @@
  $(document).on("click", ".remove-row-btn", function() {
   let $row = $(this).closest(".form-row"); // پیدا کردن ردیف مربوطه
   let $container = $row.closest('[id^="morning-"]'); // پیدا کردن کانتینر روز مربوطه
-
   let slotId = $(this).data('slot-id');
   let day = $(this).data('day');
   let startTime = $(this).data('start-time');
   let endTime = $(this).data('end-time');
-
-
   Swal.fire({
    title: 'آیا مطمئن هستید؟',
    text: "این عمل قابل بازگشت نیست!",
@@ -831,16 +826,15 @@
      },
      success: function(response) {
       let totalRows = $container.find(".form-row").length;
-
+      loadAllWorkhours();
       if (totalRows === 1) {
        // اگر فقط یک ردیف باقی مانده بود، اینپوت‌ها را پاک کن و دکمه‌ها را غیرفعال کن
        $row.find("input").val("");
-       toggleButtons(day, false);
+       checkRowInputs($row, day)
       } else {
        // اگر بیش از یک ردیف بود، ردیف را حذف کن
        $row.remove();
       }
-
       toastr.success('حذف موفقیت‌آمیز');
      },
      error: function(xhr) {
@@ -850,7 +844,6 @@
    }
   });
  });
-
  $(document).ready(function() {
   // تابع ذخیره‌سازی برنامه کاری
   function saveWorkSchedule() {
@@ -961,7 +954,6 @@
   });
   // تابع تبدیل نام روز به فارسی
  });
-
  function showLoading() {
   $('#work-hours').append(`
             <div class="loading-overlay">
@@ -971,7 +963,6 @@
             </div>
         `);
  }
-
  function hideLoading() {
   $('.loading-overlay').remove();
  }
@@ -1004,7 +995,6 @@
    });
   });
  });
-
  $(document).ready(function() {
   // تابع ذخیره‌سازی برنامه کاری
   // تابع جمع‌آوری برنامه کاری‌ها
@@ -1046,7 +1036,6 @@
    });
   });
  });
-
  function getPersianDayName(day) {
   const dayNames = {
    "saturday": "شنبه",
@@ -1059,68 +1048,19 @@
   };
   return dayNames[day] || day;
  }
-
- function toggleButtons(day) {
-  let startTime = $(`#morning-start-${day}`).val();
-  let endTime = $(`#morning-end-${day}`).val();
-  let maxAppointments = $(`#morning-patients-${day}`).val();
-
-  let hasData = startTime && endTime && maxAppointments; // اگر همه مقدار داشته باشند، یعنی نوبت دارد
-
-  let disableStatus = !hasData;
-  $(`#morning-${day}-details .remove-row-btn`).prop("disabled", disableStatus);
-  $(`#morning-${day}-details .copy-single-slot-btn`).prop("disabled", disableStatus);
-  $(`[data-target="#scheduleModal"][data-day="${day}"]`).prop("disabled", disableStatus);
- }
  function checkRowInputs($row, day) {
-    let startTime = $row.find(`#morning-start-${day}`).val().trim();
-    let endTime = $row.find(`#morning-end-${day}`).val().trim();
-    let maxAppointments = $row.find(`#morning-patients-${day}`).val().trim();
-
-    let isValid = startTime.length > 0 && endTime.length > 0 && maxAppointments.length > 0 && !isNaN(maxAppointments) && parseInt(maxAppointments) > 0;
-
-    $row.find(".remove-row-btn, .copy-single-slot-btn, .schedule-btn").prop("disabled", !isValid);
-  }
-
- $(document).ready(function() {
-  let days = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
-
-  function saveToSessionStorage(day) {
-   let startTime = $(`#morning-start-${day}`).val();
-   let endTime = $(`#morning-end-${day}`).val();
-   let maxAppointments = $(`#morning-patients-${day}`).val();
-   let hasData = startTime || endTime || maxAppointments;
-
-   let storedData = JSON.parse(sessionStorage.getItem("workHours")) || {};
-   storedData[day] = {
-    startTime: startTime,
-    endTime: endTime,
-    maxAppointments: maxAppointments,
-    hasData: hasData
-   };
-   sessionStorage.setItem("workHours", JSON.stringify(storedData));
-  }
-
-  function loadFromSessionStorage() {
-   let storedData = JSON.parse(sessionStorage.getItem("workHours")) || {};
-   $.each(days, function(index, day) {
-    if (storedData[day]) {
-     let {
-      startTime,
-      endTime,
-      maxAppointments,
-      hasData
-     } = storedData[day];
-     $(`#morning-start-${day}`).val(startTime);
-     $(`#morning-end-${day}`).val(endTime);
-     $(`#morning-patients-${day}`).val(maxAppointments);
-     toggleButtons(day, hasData);
-    }
-   });
-  }
-
-
-
+  let $startTimeInput = $row.find(`#morning-start-${day}`);
+  let $endTimeInput = $row.find(`#morning-end-${day}`);
+  let $maxAppointmentsInput = $row.find(`#morning-patients-${day}`);
+  // بررسی وجود اینپوت‌ها قبل از دسترسی به مقدارشان
+  let startTime = $startTimeInput.length ? $startTimeInput.val().trim() : '';
+  let endTime = $endTimeInput.length ? $endTimeInput.val().trim() : '';
+  let maxAppointments = $maxAppointmentsInput.length ? $maxAppointmentsInput.val().trim() : '';
+  let isValid = startTime.length > 0 && endTime.length > 0 && maxAppointments.length > 0 &&
+   !isNaN(maxAppointments) && parseInt(maxAppointments) > 0;
+  $row.find(".remove-row-btn, .copy-single-slot-btn, .schedule-btn").prop("disabled", !isValid);
+ }
+ function loadAllWorkhours() {
   $.ajax({
    url: "{{ route('dr-get-work-schedule') }}",
    method: 'GET',
@@ -1135,11 +1075,9 @@
        let endTime = slot.end || "";
        let maxAppointments = slot.max_appointments || "";
        let slotId = schedule.id || "";
-
        $(`#morning-start-${day}`).val(startTime);
        $(`#morning-end-${day}`).val(endTime);
        $(`#morning-patients-${day}`).val(maxAppointments);
-
        $(`#morning-${day}-details .remove-row-btn`).attr({
         "data-slot-id": slotId,
         "data-start-time": startTime,
@@ -1147,123 +1085,204 @@
         "data-max-appointments": maxAppointments,
         "data-day": day
        }).prop("disabled", false);
-
        $(`#morning-${day}-details .copy-single-slot-btn`).attr({
         "data-day": day,
         "data-start-time": startTime,
         "data-end-time": endTime,
         "data-max-appointments": maxAppointments
        }).prop("disabled", false);
-
        $(`[data-target="#scheduleModal"][data-day="${day}"]`).prop("disabled", false);
-
        hasData = true;
       });
      }
-
-     toggleButtons(day, hasData);
-     saveToSessionStorage(day);
     });
-
-    loadFromSessionStorage();
    },
    error: function(xhr) {
     console.error("خطا در دریافت داده‌های ساعات کاری:", xhr.responseText);
    }
   });
-
-  $(document).on('change', 'input[id^="morning-start-"], input[id^="morning-end-"], input[id^="morning-patients-"]',
-   function() {
-    let row = $(this).closest('.form-row');
-    let containerId = row.closest('[id^="morning-"]').attr('id');
-    if (!containerId) return;
-
-    let day = containerId.replace('morning-', '').replace('-details', '');
-
-    // بررسی اینکه آیا همه فیلدها مقدار دارند یا نه
-    let startTime = $(`#morning-start-${day}`).val();
-    let endTime = $(`#morning-end-${day}`).val();
-    let maxAppointments = $(`#morning-patients-${day}`).val();
-
-    if (!startTime || !endTime || !maxAppointments) {
-     toastr.warning('لطفاً همه فیلدها را پر کنید.');
-     return;
+ }
+ function timeToMinutes(time) {
+  let [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+ }
+ $(document).ready(function() {
+  loadAllWorkhours();
+  $(document).on("click", ".timepicker-ui-ok-btn", function() {
+   let $timepicker = $(this).closest(".timepicker-ui-modal");
+   let hour = $timepicker.find(".timepicker-ui-hour").val();
+   let minute = $timepicker.find(".timepicker-ui-minutes").val();
+   if (hour && minute) {
+    let selectedTime = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`;
+    let $targetInput = $(".timepicker-ui-input.active");
+    if ($targetInput.length) {
+     let row = $targetInput.closest(".form-row"); // ردیف مربوطه
+     let currentDay = row.find(".max-appointments").data("day");
+     let existingSlots = $(`#morning-${currentDay}-details .form-row`);
+     let selectedMinutes = timeToMinutes(selectedTime);
+     let isInvalid = false;
+     let isStartTime = $targetInput.hasClass("start-time");
+     let isEndTime = $targetInput.hasClass("end-time");
+     existingSlots.each(function() {
+      let existingStart = $(this).find('.start-time').val() || null;
+      let existingEnd = $(this).find('.end-time').val() || null;
+      if ($(this).is(row)) return; // نادیده گرفتن ردیف جاری
+      let startMinutes = existingStart ? timeToMinutes(existingStart) : null;
+      let endMinutes = existingEnd ? timeToMinutes(existingEnd) : null;
+      // بررسی تداخل و مقدار تکراری
+      if (
+       (isStartTime && selectedMinutes === startMinutes) ||
+       (isEndTime && selectedMinutes === endMinutes) ||
+       (selectedMinutes !== null && startMinutes !== null && endMinutes !== null &&
+        (selectedMinutes === startMinutes || (selectedMinutes > startMinutes && selectedMinutes < endMinutes)))
+      ) {
+       isInvalid = true;
+       return false; // خروج از حلقه
+      }
+     });
+     if (isInvalid) {
+      toastr.error("⛔ این زمان قبلاً انتخاب شده یا داخل یک بازه دیگر قرار دارد.");
+      $targetInput.val("").trigger("change"); // فقط مقدار این فیلد پاک شود
+     } else {
+      $targetInput.val(selectedTime).trigger("change");
+      // بررسی اینکه این فیلد "زمان شروع" است یا "زمان پایان"
+      if (isStartTime) {
+       row.find(".max-appointments").attr("data-start-time", selectedTime);
+      } else if (isEndTime) {
+       let startTime = row.find(".start-time").val();
+       let endTime = selectedTime;
+       if (startTime && timeToMinutes(endTime) <= timeToMinutes(startTime)) {
+        toastr.error("⛔ زمان پایان باید بعد از زمان شروع باشد.");
+        $targetInput.val("").trigger("change"); // مقدار این فیلد پاک شود
+        return;
+       }
+       row.find(".max-appointments").attr("data-end-time", selectedTime);
+      }
+     }
     }
-
-    // ذخیره اطلاعات و بررسی دکمه‌ها
-    $.ajax({
-     url: "{{ route('save-time-slot') }}",
-     method: 'POST',
-     data: {
-      day: day,
-      start_time: startTime,
-      end_time: endTime,
-      max_appointments: maxAppointments,
-      _token: '{{ csrf_token() }}'
-     },
-     success: function(response) {
-      toastr.success('ساعات کاری ذخیره شد.');
-      toggleButtons(day); // بررسی مجدد وضعیت دکمه‌ها
-     },
-     error: function(xhr) {
-      toastr.error(xhr.responseJSON?.message || 'خطا در ذخیره اطلاعات.');
+   }
+   // بستن تایم پیکر
+   $timepicker.removeClass("show");
+  });
+  // تابع تبدیل زمان به دقیقه برای مقایسه
+  function timeToMinutes(time) {
+   if (!time || typeof time !== "string") return null;
+   let [hours, minutes] = time.split(':').map(Number);
+   return (isNaN(hours) || isNaN(minutes)) ? null : hours * 60 + minutes;
+  }
+  // تنظیم کلاس 'active' روی اینپوتی که تایم پیکر برای آن باز شده
+  $(document).on("click", ".timepicker-ui-input", function() {
+   $(".timepicker-ui-input").removeClass("active");
+   $(this).addClass("active");
+  });
+  $(document).on('change blur', 'input[id^="morning-start-"], input[id^="morning-end-"]', function() {
+   let row = $(this).closest('.form-row');
+   let container = row.closest('[id^="morning-"]');
+   if (!container.length) return;
+   let containerId = container.attr('id');
+   let day = containerId.replace('morning-', '').replace('-details', '');
+   let startTime = row.find(`#morning-start-${day}`).val().trim();
+   let endTime = row.find(`#morning-end-${day}`).val().trim();
+   let existingSlots = $(`#morning-${day}-details .form-row`);
+   // بررسی مقدار تکراری برای `startTime`
+   if ($(this).attr('id').includes('start')) {
+    let isDuplicateStart = false;
+    existingSlots.each(function() {
+     let existingStart = $(this).find('.start-time').val();
+     if (existingStart && existingStart === startTime && this !== row[0]) {
+      isDuplicateStart = true;
+      return false; // خروج از حلقه
      }
     });
-   });
-
-
+    if (isDuplicateStart) {
+     row.find(`#morning-start-${day}`).val("").trigger("change");
+     toastr.error("این زمان شروع قبلاً انتخاب شده است.");
+     return;
+    }
+   }
+   // بررسی مقدار تکراری برای `endTime`
+   if ($(this).attr('id').includes('end')) {
+    let isDuplicateEnd = false;
+    existingSlots.each(function() {
+     let existingEnd = $(this).find('.end-time').val();
+     if (existingEnd && existingEnd === endTime && this !== row[0]) {
+      isDuplicateEnd = true;
+      return false; // خروج از حلقه
+     }
+    });
+    if (isDuplicateEnd) {
+     row.find(`#morning-end-${day}`).val("").trigger("change");
+     toastr.error("این زمان پایان قبلاً انتخاب شده است.");
+     return;
+    }
+   }
+   // بررسی اینکه `endTime` بعد از `startTime` باشد
+   if (startTime && endTime && startTime >= endTime) {
+    row.find(`#morning-end-${day}`).val("").trigger("change");
+    toastr.error("زمان پایان باید بعد از زمان شروع باشد.");
+   }
+   // مقداردهی صحیح `data-*` برای مدیریت تعداد نوبت‌ها
+   let patientsInput = row.find(`#morning-patients-${day}`);
+   patientsInput.data('start-time', startTime);
+   patientsInput.data('end-time', endTime);
+   patientsInput.attr('data-start-time', startTime);
+   patientsInput.attr('data-end-time', endTime);
+  });
+  // ذخیره مقدار هنگام تغییر تعداد نوبت‌ها
   $(document).on("click", ".add-row-btn", function () {
      let day = $(this).data("day");
      let $container = $(`#morning-${day}-details`);
-     let $addButton = $container.find(".add-new-row"); // دکمه "افزودن ردیف جدید"
+     let $addButton = $container.find(".add-new-row");
+     let hasEmptyRow = false; // مقداردهی اولیه برای جلوگیری از خطا
 
-     // بررسی اینکه آیا ردیف ناقصی وجود دارد
-     let hasEmptyRow = false;
+     // بررسی اینکه آیا ردیف‌های قبلی مقدار دارند یا نه
      $container.find(".form-row").each(function () {
-       let startTime = $(this).find(`#morning-start-${day}`).val() || "";
-       let endTime = $(this).find(`#morning-end-${day}`).val() || "";
-       let maxAppointments = $(this).find(`#morning-patients-${day}`).val() || "";
+       let $row = $(this);
+       let startTime = $row.find("input.start-time").val()?.trim() || "";
+       let endTime = $row.find("input.end-time").val()?.trim() || "";
+       let maxAppointments = $row.find("input.max-appointments").val()?.trim() || "";
+       let slotId = $row.find('.remove-row-btn').data('slot-id') ?? '';
 
-       // بررسی دقیق مقداردهی فیلدها
-       if (startTime.trim() === "" || endTime.trim() === "" || maxAppointments.trim() === "" || isNaN(maxAppointments) || parseInt(maxAppointments) <= 0) {
+       // اگر همه‌ی فیلدها خالی باشند، مشکلی نیست ولی اگر نیمی پر و نیمی خالی باشند، ارور بدهد
+       if ((startTime === "" || endTime === "" || maxAppointments === "") && slotId === "") {
          hasEmptyRow = true;
          return false; // خروج از حلقه
        }
      });
 
      if (hasEmptyRow) {
-       toastr.error("لطفاً ابتدا ردیف قبلی را تکمیل کنید.");
+       toastr.error("⚠ لطفاً ابتدا ردیف قبلی را تکمیل کنید.");
        return; // متوقف کردن افزودن ردیف جدید
      }
 
      let newRow = $(`
-        <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4">
+        <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="">
             <div class="d-flex justify-content-start align-items-center gap-4">
                 <div class="form-group position-relative timepicker-ui">
                     <label class="label-top-input-special-takhasos">از</label>
-                    <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-start-${day}" value="">
+                    <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 start-time bg-white" value="">
                 </div>
                 <div class="form-group position-relative timepicker-ui">
                     <label class="label-top-input-special-takhasos">تا</label>
-                    <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-end-${day}" value="">
+                    <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 end-time bg-white" value="">
                 </div>
                 <div class="form-group col-sm-3 position-relative">
                     <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-                    <input type="text" class="form-control h-50 text-center max-appointments bg-white" id="morning-patients-${day}" value="" readonly>
+                    <input type="text" class="form-control h-50 text-center max-appointments bg-white" data-day="${day}" value="" data-toggle="modal" data-target="#CalculatorModal" readonly>
                 </div>
                 <div class="form-group col-sm-1 position-relative">
-                    <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" disabled>
+                    <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}">
                         <img src="${svgUrl}">
                     </button>
                 </div>
                 <div class="form-group col-sm-2 position-relative">
-                    <button class="btn btn-light btn-sm remove-row-btn" disabled>
+                    <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}">
                         <img src="${trashSvg}">
                     </button>
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <button type="button" class="btn text-black btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" disabled>زمانبندی باز شدن نوبت‌ها</button>
+                <button type="button" class="btn text-black btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}">زمانبندی باز شدن نوبت‌ها</button>
             </div>
         </div>
     `);
@@ -1271,27 +1290,13 @@
      // اضافه کردن قبل از دکمه "افزودن ردیف جدید"
      newRow.insertBefore($addButton);
 
-     // اضافه کردن رویداد برای فعال شدن دکمه‌ها وقتی مقدار داده شد
-     newRow.find("input").on("input", function () {
-       checkRowInputs(newRow, day);
-     });
-
-     // بررسی وضعیت دکمه‌ها برای این ردیف جدید
-     checkRowInputs(newRow, day);
+     // تنظیم تایم‌پیکر روی ورودی‌های جدید
+     initializeTimepicker();
+     loadAllWorkhours()
+     checkRowInputs(newRow,day)
    });
 
-   // تابع بررسی مقداردهی ورودی‌ها و فعال‌سازی دکمه‌ها
-  
-
-
-  // **✅ بررسی هنگام تیک زدن یک روز**
-
-
  });
-
-
-
-
  //appointments code
  $(document).ready(function() {
   const days = [
@@ -1308,17 +1313,16 @@
           <div class="d-flex mt-2 justify-content-start my-copy-item">
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
               ${days
-                .map((otherDay) => {
-                  if (otherDay !== day) {
-                    return `<a class="dropdown-item" href="#" data-day="${otherDay}">${otherDay === "saturday" ? "شنبه" : otherDay === "sunday" ? "یکشنبه" : otherDay === "monday" ? "دوشنبه" : otherDay === "tuesday" ? "سه‌شنبه" : otherDay === "wednesday" ? "چهارشنبه" : otherDay === "thursday" ? "پنج‌شنبه" : "جمعه"}</a>`;
-                  }
-                })
-                .join("")}
+          .map((otherDay) => {
+            if (otherDay !== day) {
+              return `<a class="dropdown-item" href="#" data-day="${otherDay}">${otherDay === "saturday" ? "شنبه" : otherDay === "sunday" ? "یکشنبه" : otherDay === "monday" ? "دوشنبه" : otherDay === "tuesday" ? "سه‌شنبه" : otherDay === "wednesday" ? "چهارشنبه" : otherDay === "thursday" ? "پنج‌شنبه" : "جمعه"}</a>`;
+            }
+          })
+          .join("")}
             </div>
           </div>
           <div id="morning-${day}-details" class="mt-4">
-           
-            <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4">
+            <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="">
         <div class="d-flex justify-content-start align-items-center gap-4">
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">از</label>
@@ -1330,7 +1334,7 @@
           </div>
           <div class="form-group col-sm-3 position-relative">
             <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-           <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" value="" readonly>
+           <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
           </div>
            <div class="form-group col-sm-1 position-relative">
             <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
@@ -1338,14 +1342,14 @@
             </button>
           </div>
           <div class="form-group col-sm-2 position-relative">
-            <button class="btn btn-light btn-sm remove-row-btn">
+            <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
               <img src="${trashSvg}">
             </button>
           </div>
         </div>
         <div class="d-flex align-items-center">
           <div class="d-flex align-items-center">
-              <button type="button" class="btn text-black  btn-sm btn-outline-primary" data-toggle="modal" data-target="#scheduleModal" data-day="${day}">زمانبندی باز شدن نوبت‌ها</button>
+              <button type="button" class="btn text-black  btn-sm btn-outline-primary" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">زمانبندی باز شدن نوبت‌ها</button>
           </div>
         </div>
       </div>
@@ -1355,21 +1359,18 @@
             +
           </span>
           <span>افزودن ردیف جدید</span>
-          
         </button>
-        
       </div>
           </div>
         </div>
       </div>
-      
     `;
   });
   $("#work-hours").html(workHoursHtml);
   // Function to add a new row
   function addNewRow(day) {
    const newRow = `
-      <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4">
+      <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="">
         <div class="d-flex justify-content-start align-items-center gap-4">
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">از</label>
@@ -1381,7 +1382,7 @@
           </div>
           <div class="form-group col-sm-3 position-relative">
             <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-           <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" value="" readonly>
+           <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
           </div>
            <div class="form-group col-sm-1 position-relative">
             <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
@@ -1389,14 +1390,14 @@
             </button>
           </div>
           <div class="form-group col-sm-2 position-relative">
-            <button class="btn btn-light btn-sm remove-row-btn">
+            <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
               <img src="${trashSvg}">
             </button>
           </div>
         </div>
         <div class="d-flex align-items-center">
           <div class="d-flex align-items-center">
-              <button type="button" class="btn text-black  btn-sm btn-outline-primary" data-toggle="modal" data-target="#scheduleModal" data-day="${day}">زمانبندی باز شدن نوبت‌ها</button>
+              <button type="button" class="btn text-black  btn-sm btn-outline-primary" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">زمانبندی باز شدن نوبت‌ها</button>
           </div>
         </div>
       </div>
@@ -1406,9 +1407,7 @@
             +
           </span>
           <span>افزودن ردیف جدید</span>
-          
         </button>
-        
       </div>
     `;
    const $container = $(`#morning-${day}-details`);
@@ -1432,18 +1431,14 @@
    var isChecked = $(this).is(":checked");
    $('input[type="checkbox"]').not(this).prop("checked", isChecked);
   });
-  // Save selection
   // Event listeners for adding and removing rows
   $.each(days, function(index, day) {
    $("#" + day).on("change", function() {
     let day = $(this).attr("id");
     if ($(this).is(":checked")) {
      $(".work-hours-" + day).removeClass("d-none");
-
      // بررسی اینکه آیا روز موردنظر نوبت دارد یا نه
-     setTimeout(() => {
-      toggleButtons(day);
-     }, 500); // کمی تاخیر برای اطمینان از لود شدن داده‌ها
+     setTimeout(() => {}, 500); // کمی تاخیر برای اطمینان از لود شدن داده‌ها
     } else {
      $(".work-hours-" + day).addClass("d-none");
     }
@@ -1514,15 +1509,39 @@
    }
   });
  }
+ function loadPreviousAppointmentSettings(day) {
+  const start_time = $('[data-target="#scheduleModal"]').data('start-time')
+  const end_time = $('[data-target="#scheduleModal"]').data('end-time')
+  const max_appointments = $('[data-target="#scheduleModal"]').data('max-appointments')
+  checkAllDaysSettings(day, start_time, end_time, max_appointments);
+  $.ajax({
+   url: "{{ route('get-appointment-settings') }}",
+   method: 'GET',
+   data: {
+    day: day,
+    start_time: start_time,
+    end_time: end_time,
+    max_appointments: max_appointments,
+   },
+   success: function(response) {
+    if (response.status && response.settings) {
+     $('#schedule-start').val(response.settings.start_time);
+     $('#schedule-end').val(response.settings.end_time);
+    }
+   }
+  });
+ }
  // Function to calculate and update input values
  $(document).ready(function() {
   let morningStart, morningEnd; // متغیر برای ذخیره زمان شروع و پایان
   let totalMinutes; // متغیر برای ذخیره تعداد دقایق
   $(document).on("click", "[data-target='#CalculatorModal']", function() {
    const day = $(this).data("day");
-   morningStart = $("#morning-start-" + day).val();
-   morningEnd = $("#morning-end-" + day).val();
-   $("#saveSelectionCalculator").data("day", day);
+   let currentRow = $(this).closest(".form-row"); // دریافت ردیف جاری
+   // دریافت مقدار `data-start-time` و `data-end-time` از اینپوت `max-appointments` در همان ردیف
+   morningStart = currentRow.find(".max-appointments").data("start-time");
+   morningEnd = currentRow.find(".max-appointments").data("end-time");
+   $("#CalculatorModal").data("currentRow", currentRow);
    // محاسبه تعداد دقایق
    if (morningStart && morningEnd) {
     const startTimeParts = morningStart.split(":");
@@ -1532,9 +1551,8 @@
     const endTimeHours = parseInt(endTimeParts[0]);
     const endTimeMinutes = parseInt(endTimeParts[1]);
     totalMinutes = (endTimeHours * 60 + endTimeMinutes) - (startTimeHours * 60 + startTimeMinutes);
-    // مقداردهی اولیه به ورودی‌های مودال
    } else {
-    totalMinutes = 0; // در صورت خالی بودن، تعداد دقایق را صفر قرار می‌دهیم
+    totalMinutes = 0; // در صورت خالی بودن مقدار، تعداد دقایق را صفر قرار می‌دهیم
    }
   });
   // Event listener برای ورودی تعداد
@@ -1577,17 +1595,54 @@
    }
   });
   $(document).on("click", "#saveSelectionCalculator", function() {
-   const timePerAppointmentInput = $("input[name='time-count']").val();
-   const countInput = $("input[name='appointment-count']").val();
-   // دریافت روز خاصی که در آن هستیم
-   const day = $(this).data("day"); // این را اضافه کنید تا روز خاص را بگیرید
-   // انتخاب ورودی تعداد نوبت مربوط به آن روز خاص
-   const countNobat = $("#morning-patients-" + day); // این را تغییر دهید
-   if (timePerAppointmentInput && !isNaN(timePerAppointmentInput) && timePerAppointmentInput > 0) {
-    const newCount = totalMinutes / timePerAppointmentInput; // محاسبه تعداد نوبت‌ها
-    countNobat.val(Math.round(newCount)); // قرار دادن مقدار در ورودی
+   let currentRow = $("#CalculatorModal").data("currentRow"); // دریافت ردیف جاری
+   let newValue = $("input[name='appointment-count']").val(); // مقدار جدید تعداد نوبت‌ها
+   if (!newValue || isNaN(newValue) || parseInt(newValue) <= 0) {
+    toastr.warning('⚠ لطفاً مقدار معتبر وارد کنید.');
+    return;
    }
-   $("#CalculatorModal").modal("hide"); // بستن مدال
+   if (!currentRow || !currentRow.length) {
+    toastr.error("❌ خطا در ثبت مقدار، لطفاً دوباره امتحان کنید.");
+    return;
+   }
+   // دریافت مقدار start_time و end_time از data attributes
+   let startTime = currentRow.find(".max-appointments").attr("data-start-time") || null;
+   let endTime = currentRow.find(".max-appointments").attr("data-end-time") || null;
+   if (!startTime || !endTime) {
+    toastr.error("❌ زمان شروع و پایان مشخص نشده است.");
+    return;
+   }
+   currentRow.find(".max-appointments").val(newValue).trigger("change");
+   const day = currentRow.find(".max-appointments").data('day');
+   if (!day) {
+    toastr.error("❌ روز انتخاب نشده است.");
+    return;
+   }
+   // ارسال داده‌ها به سرور
+   $.ajax({
+    url: "{{ route('save-time-slot') }}",
+    method: "POST",
+    data: {
+     day: day,
+     start_time: startTime,
+     end_time: endTime,
+     max_appointments: parseInt(newValue),
+     _token: $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function(response) {
+     if (response.status) {
+      toastr.success('✅ ساعت کاری با موفقیت اضافه شد');
+      setTimeout(() => {
+       loadAllWorkhours();
+      }, 200);
+     }
+    },
+    error: function(xhr) {
+     toastr.error(xhr.responseJSON?.message || '❌ خطا در ذخیره اطلاعات.');
+    }
+   });
+   // بستن مدال
+   $("#CalculatorModal").modal("hide");
    $("#CalculatorModal").removeClass("show");
    $(".modal-backdrop").remove();
   });
@@ -1672,7 +1727,6 @@
     `;
    $('#scheduleModal .modal-body').append(settingsHtml);
   }
-
   $(document).on('click', '.delete-schedule-setting', function() {
    const $settingItem = $(this).closest('.setting-item');
    const day = $("#saveSchedule").data('day');
@@ -1724,29 +1778,6 @@
     }
    });
   });
-
-  function loadPreviousAppointmentSettings(day) {
-   const start_time = $('[data-target="#scheduleModal"]').data('start-time')
-   const end_time = $('[data-target="#scheduleModal"]').data('end-time')
-   const max_appointments = $('[data-target="#scheduleModal"]').data('max-appointments')
-   checkAllDaysSettings(day, start_time, end_time, max_appointments);
-   $.ajax({
-    url: "{{ route('get-appointment-settings') }}",
-    method: 'GET',
-    data: {
-     day: day,
-     start_time: start_time,
-     end_time: end_time,
-     max_appointments: max_appointments,
-    },
-    success: function(response) {
-     if (response.status && response.settings) {
-      $('#schedule-start').val(response.settings.start_time);
-      $('#schedule-end').val(response.settings.end_time);
-     }
-    }
-   });
-  }
   $(document).ready(function() {
    // بررسی تنظیمات در زمان تغییر مقادیر
    $('#schedule-start, #schedule-end').on('change', function() {
@@ -1761,35 +1792,18 @@
    const day = $trigger.data('day');
    loadPreviousAppointmentSettings(day);
   });
-
  });
-
-
-
  $(document).ready(function() {
-  $(document).ready(function() {
-   $(".timepicker-ui-input").on("change", function() {
-    $(this).trigger("change"); // اجرای دستی change
-   });
+  $(".timepicker-ui-input").on("change", function() {
+   $(this).trigger("change"); // اجرای دستی change
   });
   $(".timepicker-ui-input").on("change", function() {
    let newTime = $(this).val();
    // اگر مقدار تغییر کند، مقدار ورودی را به‌روز کنیم و change را اجرا کنیم
    $(this).val(newTime).trigger("change");
   });
-  $(document).on("click", "#saveSelectionCalculator", function() {
-   let day = $(this).data("day");
-   let countNobat = $("#morning-patients-" + day);
-
-   let newValue = $("input[name='appointment-count']").val();
-
-   countNobat.val(newValue).trigger("change"); // مقداردهی و اجرای دستی change
-  });
-
-
  });
 </script>
-
 <div class="modal fade" id="scheduleModal" tabindex="-1" data-selected-day="" role="dialog"
  aria-labelledby="scheduleModalLabel" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered my-modal-lg" role="document">
@@ -1901,17 +1915,18 @@
        <x-my-check :isChecked="false" id="count-label-modal" day="" />
        <div class="input-group position-relative mx-2">
         <label class="label-top-input-special-takhasos">نوبت ها </label>
-        <input type="text" value="{{ old('appointment-count') }}"
-         class="form-control   text-center h-50 border-radius-0" name="appointment-count">
-        <div class="input-group-append count-span-prepand-style"><span class="input-group-text px-2">نوبت</span></div>
+        <input type="text" value="" class="form-control   text-center h-50 border-radius-0"
+         name="appointment-count">
+        <div class="input-group-append count-span-prepand-style"><span class="input-group-text px-2">نوبت</span>
+        </div>
        </div>
       </div>
       <div class="d-flex align-items-center mt-4 w-100">
        <x-my-check :isChecked="false" id="time-label-modal" day="" />
        <div class="input-group position-relative mx-2">
         <label class="label-top-input-special-takhasos"> هر نوبت </label>
-        <input type="text" value="{{ old('time-count') }}"
-         class="form-control   text-center h-50 border-radius-0" name="time-count">
+        <input type="text" value="" class="form-control   text-center h-50 border-radius-0"
+         name="time-count">
         <div class="input-group-append"><span class="input-group-text px-2">دقیقه</span></div>
        </div>
       </div>

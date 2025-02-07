@@ -243,6 +243,7 @@ class ScheduleSettingController
   }
   public function saveTimeSlot(Request $request)
   {
+    Log::info($request);
     $validated = $request->validate([
       'day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
       'start_time' => 'required|date_format:H:i',
@@ -260,24 +261,34 @@ class ScheduleSettingController
 
       $existingWorkHours = json_decode($workSchedule->work_hours, true) ?? [];
 
-      // بررسی تداخل زمانی
       foreach ($existingWorkHours as $hour) {
         $existingStart = Carbon::createFromFormat('H:i', $hour['start']);
         $existingEnd = Carbon::createFromFormat('H:i', $hour['end']);
         $newStart = Carbon::createFromFormat('H:i', $validated['start_time']);
         $newEnd = Carbon::createFromFormat('H:i', $validated['end_time']);
 
+        if ($newStart->equalTo($existingStart) && $newEnd->equalTo($existingEnd)) {
+          return response()->json([
+            'message' => 'این بازه زمانی از قبل ثبت شده است.',
+            'status' => false,
+          ], 400);
+        }
+
         if (
-          ($newStart >= $existingStart && $newStart < $existingEnd) ||
-          ($newEnd > $existingStart && $newEnd <= $existingEnd) ||
-          ($newStart <= $existingStart && $newEnd >= $existingEnd)
+          $newStart->between($existingStart, $existingEnd, false) ||
+          $newEnd->between($existingStart, $existingEnd, false) ||
+          ($newStart->lte($existingStart) && $newEnd->gte($existingEnd))
         ) {
           return response()->json([
             'message' => 'این بازه زمانی با بازه‌های موجود تداخل دارد.',
-            'status' => false
+            'status' => false,
           ], 400);
         }
       }
+
+
+
+
 
       // اضافه کردن ساعت جدید به JSON
       $newSlot = [
