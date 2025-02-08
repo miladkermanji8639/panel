@@ -302,9 +302,10 @@ class ScheduleSettingController
       $workSchedule->update(['work_hours' => json_encode($existingWorkHours)]);
 
       return response()->json([
-        'message' => 'نوبت با موفقیت ذخیره شد',
+        'message' => 'ساعت کاری با موفقیت ذخیره شد',
         'status' => true,
-        'work_hours' => $existingWorkHours
+        'work_hours' => $existingWorkHours,
+        'workSchedule' => $workSchedule
       ]);
     } catch (\Exception $e) {
       return response()->json([
@@ -1155,20 +1156,26 @@ class ScheduleSettingController
       $workHours = json_decode($workSchedule->work_hours, true);
 
       if (!is_array($workHours)) {
-        Log::error('work_hours مقدار نامعتبر دارد:', ['work_hours' => $workSchedule->work_hours]);
+        Log::error('❌ مقدار `work_hours` نامعتبر است:', ['work_hours' => $workSchedule->work_hours]);
         return response()->json([
           'message' => 'خطا در پردازش ساعات کاری',
           'status' => false
         ], 500);
       }
 
-      // دریافت و حذف بازه زمانی مشخص از `work_hours`
+      // 🟢 لاگ مقدار اولیه قبل از حذف
+      Log::info('🔍 مقدار اولیه `work_hours`:', ['work_hours' => $workHours]);
+
+      // فیلتر بازه زمانی مشخص از `work_hours`
       $filteredWorkHours = array_filter($workHours, function ($slot) use ($validated) {
         return !(
-          $slot['start'] === $validated['start_time'] &&
-          $slot['end'] === $validated['end_time']
+          trim((string) $slot['start']) === trim((string) $validated['start_time']) &&
+          trim((string) $slot['end']) === trim((string) $validated['end_time'])
         );
       });
+
+      // 🟢 لاگ مقدار بعد از حذف بازه
+      Log::info('📌 مقدار `work_hours` بعد از حذف:', ['filtered_work_hours' => $filteredWorkHours]);
 
       // بررسی اینکه آیا تغییری رخ داده است
       if (count($filteredWorkHours) === count($workHours)) {
@@ -1182,7 +1189,7 @@ class ScheduleSettingController
       $workSchedule->work_hours = empty($filteredWorkHours) ? null : json_encode(array_values($filteredWorkHours));
 
       if (!$workSchedule->save()) {
-        Log::error('خطا در ذخیره‌سازی تغییرات در پایگاه داده');
+        Log::error('❌ خطا در ذخیره تغییرات در پایگاه داده');
         return response()->json([
           'message' => 'خطا در ذخیره تغییرات',
           'status' => false
@@ -1190,17 +1197,20 @@ class ScheduleSettingController
       }
 
       return response()->json([
-        'message' => 'بازه زمانی با موفقیت حذف شد',
+        'message' => '✅ بازه زمانی با موفقیت حذف شد',
         'status' => true
       ]);
     } catch (\Exception $e) {
-      Log::error('خطای حذف بازه زمانی:', ['error' => $e->getMessage()]);
+      Log::error('❌ خطای حذف بازه زمانی:', ['error' => $e->getMessage()]);
       return response()->json([
         'message' => 'خطا در حذف بازه زمانی',
         'status' => false
       ], 500);
     }
   }
+
+
+
 
   public function getDefaultSchedule(Request $request)
   {

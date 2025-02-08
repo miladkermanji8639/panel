@@ -15,6 +15,7 @@
   const isChecked = $(this).is(':checked');
   $('#checkboxModal input[type="checkbox"]').not(this).prop('checked', isChecked);
  });
+
  function validateTimeSlot(startTime, endTime) {
   // تبدیل زمان‌ها به دقیقه
   const startMinutes = timeToMinutes(startTime);
@@ -46,10 +47,12 @@
   }
   return true;
  }
+
  function timeToMinutes(time) {
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
  }
+
  function isTimeConflict(newStart, newEnd, existingStart, existingEnd) {
   const newStartMinutes = timeToMinutes(newStart);
   const newEndMinutes = timeToMinutes(newEnd);
@@ -59,6 +62,7 @@
    (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes)
   );
  }
+
  function initializeTimepicker() {
   const DOMElement = $(".timepicker-ui");
   const options = {
@@ -195,6 +199,7 @@
    }
   });
  });
+
  function reloadDayData(day) {
   $.ajax({
    url: "{{ route('dr-get-work-schedule') }}",
@@ -226,11 +231,11 @@
         <div class="d-flex justify-content-start align-items-center gap-4">
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">از</label>
-            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="">
+            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-start-${day}" value="">
           </div>
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">تا</label>
-            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-end-${day}" value="">
+            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-end-${day}" value="">
           </div>
           <div class="form-group col-sm-3 position-relative">
             <label class="label-top-input-special-takhasos">تعداد نوبت</label>
@@ -493,15 +498,15 @@
       <div class="d-flex justify-content-start align-items-center gap-4">
         <div class="form-group position-relative timepicker-ui">
           <label class="label-top-input-special-takhasos">از</label>
-          <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 start-time bg-white" value="${start_time}" readonly>
+          <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 start-time bg-white" value="${start_time}" readonly ${start_time ? 'disabled' : ''}>
         </div>
         <div class="form-group position-relative timepicker-ui">
           <label class="label-top-input-special-takhasos">تا</label>
-          <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 end-time bg-white" value="${end_time}" readonly>
+          <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 end-time bg-white" value="${end_time}" readonly ${end_time ? 'disabled' : ''}>
         </div>
         <div class="form-group col-sm-3 position-relative">
           <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-          <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
+          <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly ${slot ? 'disabled' : ''}>
         </div>
          <div class="form-group col-sm-1 position-relative">
             <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="${start_time}" data-end-time="${end_time}" data-max-appointments="${max_appointments}" data-slot-id="${slotId}">
@@ -532,6 +537,7 @@
    $('input[type="checkbox"][id$="-copy-modal"]').closest('div').show();
   });
  });
+
  function loadWorkSchedule(response) {
   try {
    response.workSchedules.forEach(function(schedule) {
@@ -547,6 +553,7 @@
    console.error("Error in loadWorkSchedule:", error);
   }
  }
+
  function createSlotHtml(slot, day) {
   let workHours = slot.work_hours ? JSON.parse(slot.work_hours) : [];
   let slotHtml = "";
@@ -562,15 +569,15 @@
                 <div class="d-flex justify-content-start align-items-center gap-4">
                     <div class="form-group position-relative timepicker-ui">
                         <label class="label-top-input-special-takhasos">از</label>
-                        <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 start-time bg-white" value="${startTime}" readonly>
+                        <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 start-time bg-white" value="${startTime}" readonly ${startTime ? 'disabled' : ''}>
                     </div>
                     <div class="form-group position-relative timepicker-ui">
                         <label class="label-top-input-special-takhasos">تا</label>
-                        <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 end-time bg-white" value="${endTime}" readonly>
+                        <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 end-time bg-white" value="${endTime}" readonly ${endTime? 'disabled' : ''}>
                     </div>
                     <div class="form-group col-sm-3 position-relative">
                         <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-                        <input type="text" class="form-control h-50 text-center max-appointments bg-white" value="${maxAppointments}" readonly>
+                        <input type="text" name="nobat-count" id="morning-patients-${day}" class="form-control h-50 text-center max-appointments bg-white" value="${maxAppointments}" data-toggle="modal" data-target="#CalculatorModal" data-start-time="" data-end-time=""readonly ${maxAppointments ? 'disabled' : ''}>
                     </div>
                     <div class="form-group col-sm-1 position-relative">
                         <button class="btn btn-light btn-sm copy-single-slot-btn" 
@@ -654,6 +661,7 @@
    $('#select-all-copy-modal').prop('checked', false);
   });
  });
+
  function setupModalButtons() {
   // لودر برای همه مدال‌ها
   $('[data-modal-submit]').on('click', function() {
@@ -771,11 +779,11 @@
             <div class="d-flex justify-content-start align-items-center gap-4">
                 <div class="form-group position-relative timepicker-ui">
                     <label class="label-top-input-special-takhasos">از</label>
-                    <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="">
+                    <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-start-${day}" value="">
                 </div>
                 <div class="form-group position-relative timepicker-ui">
                     <label class="label-top-input-special-takhasos">تا</label>
-                    <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-end-${day}" value="">
+                    <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-end-${day}" value="">
                 </div>
                 <div class="form-group col-sm-3 position-relative">
                     <label class="label-top-input-special-takhasos">تعداد نوبت</label>
@@ -804,6 +812,7 @@
   let day = $(this).data('day');
   let startTime = $(this).data('start-time');
   let endTime = $(this).data('end-time');
+
   Swal.fire({
    title: 'آیا مطمئن هستید؟',
    text: "این عمل قابل بازگشت نیست!",
@@ -826,16 +835,26 @@
      },
      success: function(response) {
       let totalRows = $container.find(".form-row").length;
-      loadAllWorkhours();
+
       if (totalRows === 1) {
-       // اگر فقط یک ردیف باقی مانده بود، اینپوت‌ها را پاک کن و دکمه‌ها را غیرفعال کن
-       $row.find("input").val("");
-       checkRowInputs($row, day)
+       // ✅ اگر فقط یک ردیف باقی مانده بود:
+       $row.find("input").val("").prop("disabled", false);
+       $row.find(".remove-row-btn, .copy-single-slot-btn, .schedule-btn").prop("disabled", true);
+       $row.attr("data-slot-id", ""); // پاک کردن slot-id
+
+       // ✅ مقداردهی مجدد `data-day` برای جلوگیری از خطا
+       let maxAppointmentsInput = $row.find(".max-appointments");
+       maxAppointmentsInput.attr("data-day", day).data("day", day);
       } else {
-       // اگر بیش از یک ردیف بود، ردیف را حذف کن
+       // ✅ اگر بیش از یک ردیف بود، فقط ردیف را حذف کن
        $row.remove();
       }
+
       toastr.success('حذف موفقیت‌آمیز');
+
+      // ✅ دوباره بارگذاری ساعات کاری و مقداردهی `data-day`
+      loadAllWorkhours();
+      initializeTimepicker();
      },
      error: function(xhr) {
       toastr.error('خطا در حذف');
@@ -844,6 +863,7 @@
    }
   });
  });
+
  $(document).ready(function() {
   // تابع ذخیره‌سازی برنامه کاری
   function saveWorkSchedule() {
@@ -954,6 +974,7 @@
   });
   // تابع تبدیل نام روز به فارسی
  });
+
  function showLoading() {
   $('#work-hours').append(`
             <div class="loading-overlay">
@@ -963,6 +984,7 @@
             </div>
         `);
  }
+
  function hideLoading() {
   $('.loading-overlay').remove();
  }
@@ -1036,6 +1058,7 @@
    });
   });
  });
+
  function getPersianDayName(day) {
   const dayNames = {
    "saturday": "شنبه",
@@ -1048,6 +1071,7 @@
   };
   return dayNames[day] || day;
  }
+
  function checkRowInputs($row, day) {
   let $startTimeInput = $row.find(`#morning-start-${day}`);
   let $endTimeInput = $row.find(`#morning-end-${day}`);
@@ -1060,6 +1084,7 @@
    !isNaN(maxAppointments) && parseInt(maxAppointments) > 0;
   $row.find(".remove-row-btn, .copy-single-slot-btn, .schedule-btn").prop("disabled", !isValid);
  }
+
  function loadAllWorkhours() {
   $.ajax({
    url: "{{ route('dr-get-work-schedule') }}",
@@ -1075,9 +1100,16 @@
        let endTime = slot.end || "";
        let maxAppointments = slot.max_appointments || "";
        let slotId = schedule.id || "";
-       $(`#morning-start-${day}`).val(startTime);
-       $(`#morning-end-${day}`).val(endTime);
-       $(`#morning-patients-${day}`).val(maxAppointments);
+       if (startTime) {
+        $(`#morning-start-${day}`).val(startTime).prop("disabled", true);
+       }
+       if (endTime) {
+        $(`#morning-end-${day}`).val(endTime).prop("disabled", true);
+       }
+       if (maxAppointments) {
+        $(`#morning-patients-${day}`).val(maxAppointments).prop("disabled", true);
+       }
+
        $(`#morning-${day}-details .remove-row-btn`).attr({
         "data-slot-id": slotId,
         "data-start-time": startTime,
@@ -1102,6 +1134,7 @@
    }
   });
  }
+
  function timeToMinutes(time) {
   let [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
@@ -1112,58 +1145,55 @@
    let $timepicker = $(this).closest(".timepicker-ui-modal");
    let hour = $timepicker.find(".timepicker-ui-hour").val();
    let minute = $timepicker.find(".timepicker-ui-minutes").val();
-   if (hour && minute) {
+
+   if (hour !== "" && minute !== "") {
     let selectedTime = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`;
     let $targetInput = $(".timepicker-ui-input.active");
+
     if ($targetInput.length) {
-     let row = $targetInput.closest(".form-row"); // ردیف مربوطه
-     let currentDay = row.find(".max-appointments").data("day");
-     let existingSlots = $(`#morning-${currentDay}-details .form-row`);
-     let selectedMinutes = timeToMinutes(selectedTime);
-     let isInvalid = false;
-     let isStartTime = $targetInput.hasClass("start-time");
-     let isEndTime = $targetInput.hasClass("end-time");
-     existingSlots.each(function() {
-      let existingStart = $(this).find('.start-time').val() || null;
-      let existingEnd = $(this).find('.end-time').val() || null;
-      if ($(this).is(row)) return; // نادیده گرفتن ردیف جاری
-      let startMinutes = existingStart ? timeToMinutes(existingStart) : null;
-      let endMinutes = existingEnd ? timeToMinutes(existingEnd) : null;
-      // بررسی تداخل و مقدار تکراری
-      if (
-       (isStartTime && selectedMinutes === startMinutes) ||
-       (isEndTime && selectedMinutes === endMinutes) ||
-       (selectedMinutes !== null && startMinutes !== null && endMinutes !== null &&
-        (selectedMinutes === startMinutes || (selectedMinutes > startMinutes && selectedMinutes < endMinutes)))
-      ) {
-       isInvalid = true;
-       return false; // خروج از حلقه
-      }
-     });
-     if (isInvalid) {
-      toastr.error("⛔ این زمان قبلاً انتخاب شده یا داخل یک بازه دیگر قرار دارد.");
-      $targetInput.val("").trigger("change"); // فقط مقدار این فیلد پاک شود
-     } else {
-      $targetInput.val(selectedTime).trigger("change");
-      // بررسی اینکه این فیلد "زمان شروع" است یا "زمان پایان"
-      if (isStartTime) {
-       row.find(".max-appointments").attr("data-start-time", selectedTime);
-      } else if (isEndTime) {
-       let startTime = row.find(".start-time").val();
-       let endTime = selectedTime;
-       if (startTime && timeToMinutes(endTime) <= timeToMinutes(startTime)) {
-        toastr.error("⛔ زمان پایان باید بعد از زمان شروع باشد.");
-        $targetInput.val("").trigger("change"); // مقدار این فیلد پاک شود
-        return;
-       }
-       row.find(".max-appointments").attr("data-end-time", selectedTime);
-      }
+     let row = $targetInput.closest(".form-row");
+     let maxAppointmentsInput = row.find(".max-appointments");
+
+     // مقداردهی به `start-time` یا `end-time`
+     let inputId = $targetInput.attr("id") || "";
+
+     if (inputId.includes("start")) {
+      maxAppointmentsInput.attr("data-start-time", selectedTime).data("start-time", selectedTime);
+     } else if (inputId.includes("end")) {
+      maxAppointmentsInput.attr("data-end-time", selectedTime).data("end-time", selectedTime);
      }
+
+     // مقداردهی به `value` اینپوت برای بررسی تغییرات
+     $targetInput.val(selectedTime).attr("value", selectedTime);
+
+     // مقداردهی `data-day` از `maxAppointmentsInput`
+     let day = maxAppointmentsInput.data("day");
+     $targetInput.attr("data-day", day);
+
+     // بروزرسانی مقدار در DOM
+     $targetInput.trigger("change");
+     maxAppointmentsInput.trigger("change");
     }
    }
-   // بستن تایم پیکر
+
+   // بستن تایم‌پیکر
    $timepicker.removeClass("show");
   });
+  $(document).on("change", ".timepicker-ui-input", function() {
+   let row = $(this).closest(".form-row");
+   let maxAppointmentsInput = row.find(".max-appointments");
+   let day = maxAppointmentsInput.data("day");
+
+   let startTime = row.find(".start-time").val();
+   let endTime = row.find(".end-time").val();
+
+   maxAppointmentsInput.attr("data-start-time", startTime).data("start-time", startTime);
+   maxAppointmentsInput.attr("data-end-time", endTime).data("end-time", endTime);
+
+   maxAppointmentsInput.trigger("change");
+  });
+
+
   // تابع تبدیل زمان به دقیقه برای مقایسه
   function timeToMinutes(time) {
    if (!time || typeof time !== "string") return null;
@@ -1175,87 +1205,31 @@
    $(".timepicker-ui-input").removeClass("active");
    $(this).addClass("active");
   });
-  $(document).on('change blur', 'input[id^="morning-start-"], input[id^="morning-end-"]', function() {
-   let row = $(this).closest('.form-row');
-   let container = row.closest('[id^="morning-"]');
-   if (!container.length) return;
-   let containerId = container.attr('id');
-   let day = containerId.replace('morning-', '').replace('-details', '');
-   let startTime = row.find(`#morning-start-${day}`).val().trim();
-   let endTime = row.find(`#morning-end-${day}`).val().trim();
-   let existingSlots = $(`#morning-${day}-details .form-row`);
-   // بررسی مقدار تکراری برای `startTime`
-   if ($(this).attr('id').includes('start')) {
-    let isDuplicateStart = false;
-    existingSlots.each(function() {
-     let existingStart = $(this).find('.start-time').val();
-     if (existingStart && existingStart === startTime && this !== row[0]) {
-      isDuplicateStart = true;
-      return false; // خروج از حلقه
-     }
-    });
-    if (isDuplicateStart) {
-     row.find(`#morning-start-${day}`).val("").trigger("change");
-     toastr.error("این زمان شروع قبلاً انتخاب شده است.");
-     return;
-    }
-   }
-   // بررسی مقدار تکراری برای `endTime`
-   if ($(this).attr('id').includes('end')) {
-    let isDuplicateEnd = false;
-    existingSlots.each(function() {
-     let existingEnd = $(this).find('.end-time').val();
-     if (existingEnd && existingEnd === endTime && this !== row[0]) {
-      isDuplicateEnd = true;
-      return false; // خروج از حلقه
-     }
-    });
-    if (isDuplicateEnd) {
-     row.find(`#morning-end-${day}`).val("").trigger("change");
-     toastr.error("این زمان پایان قبلاً انتخاب شده است.");
-     return;
-    }
-   }
-   // بررسی اینکه `endTime` بعد از `startTime` باشد
-   if (startTime && endTime && startTime >= endTime) {
-    row.find(`#morning-end-${day}`).val("").trigger("change");
-    toastr.error("زمان پایان باید بعد از زمان شروع باشد.");
-   }
-   // مقداردهی صحیح `data-*` برای مدیریت تعداد نوبت‌ها
-   let patientsInput = row.find(`#morning-patients-${day}`);
-   patientsInput.data('start-time', startTime);
-   patientsInput.data('end-time', endTime);
-   patientsInput.attr('data-start-time', startTime);
-   patientsInput.attr('data-end-time', endTime);
-  });
+
   // ذخیره مقدار هنگام تغییر تعداد نوبت‌ها
-  $(document).on("click", ".add-row-btn", function () {
-     let day = $(this).data("day");
-     let $container = $(`#morning-${day}-details`);
-     let $addButton = $container.find(".add-new-row");
-     let hasEmptyRow = false; // مقداردهی اولیه برای جلوگیری از خطا
-
-     // بررسی اینکه آیا ردیف‌های قبلی مقدار دارند یا نه
-     $container.find(".form-row").each(function () {
-       let $row = $(this);
-       let startTime = $row.find("input.start-time").val()?.trim() || "";
-       let endTime = $row.find("input.end-time").val()?.trim() || "";
-       let maxAppointments = $row.find("input.max-appointments").val()?.trim() || "";
-       let slotId = $row.find('.remove-row-btn').data('slot-id') ?? '';
-
-       // اگر همه‌ی فیلدها خالی باشند، مشکلی نیست ولی اگر نیمی پر و نیمی خالی باشند، ارور بدهد
-       if ((startTime === "" || endTime === "" || maxAppointments === "") && slotId === "") {
-         hasEmptyRow = true;
-         return false; // خروج از حلقه
-       }
-     });
-
-     if (hasEmptyRow) {
-       toastr.error("⚠ لطفاً ابتدا ردیف قبلی را تکمیل کنید.");
-       return; // متوقف کردن افزودن ردیف جدید
-     }
-
-     let newRow = $(`
+  $(document).on("click", ".add-row-btn", function() {
+   let day = $(this).data("day");
+   let $container = $(`#morning-${day}-details`);
+   let $addButton = $container.find(".add-new-row");
+   let hasIncompleteRow = false;
+   // بررسی اینکه آیا ردیف‌های قبلی مقدار دارند یا نه
+   $container.find(".form-row").each(function() {
+    let $row = $(this);
+    let startTime = $row.find("input.start-time").val()?.trim() || "";
+    let endTime = $row.find("input.end-time").val()?.trim() || "";
+    let maxAppointments = $row.find("input.max-appointments").val()?.trim() || "";
+    let slotId = $row.attr('data-slot-id') || '';
+    // بررسی تکمیل بودن مقادیر برای جلوگیری از اضافه کردن ردیف جدید
+    if (slotId === "") {
+     hasIncompleteRow = true;
+     return false; // خروج از حلقه
+    }
+   });
+   if (hasIncompleteRow) {
+    toastr.error("⚠ لطفاً ابتدا ردیف قبلی را تکمیل کنید.");
+    return; // متوقف کردن افزودن ردیف جدید
+   }
+   let newRow = $(`
         <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="">
             <div class="d-flex justify-content-start align-items-center gap-4">
                 <div class="form-group position-relative timepicker-ui">
@@ -1268,7 +1242,7 @@
                 </div>
                 <div class="form-group col-sm-3 position-relative">
                     <label class="label-top-input-special-takhasos">تعداد نوبت</label>
-                    <input type="text" class="form-control h-50 text-center max-appointments bg-white" data-day="${day}" value="" data-toggle="modal" data-target="#CalculatorModal" readonly>
+                    <input type="text" class="form-control h-50 text-center max-appointments bg-white" data-day="${day}" name="nobat-count" id="morning-patients-${day}" data-start-time="" data-end-time="" value="" data-toggle="modal" data-target="#CalculatorModal" readonly>
                 </div>
                 <div class="form-group col-sm-1 position-relative">
                     <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}">
@@ -1286,16 +1260,12 @@
             </div>
         </div>
     `);
-
-     // اضافه کردن قبل از دکمه "افزودن ردیف جدید"
-     newRow.insertBefore($addButton);
-
-     // تنظیم تایم‌پیکر روی ورودی‌های جدید
-     initializeTimepicker();
-     loadAllWorkhours()
-     checkRowInputs(newRow,day)
-   });
-
+   // اضافه کردن قبل از دکمه "افزودن ردیف جدید"
+   newRow.insertBefore($addButton);
+   // تنظیم تایم‌پیکر روی ورودی‌های جدید
+   initializeTimepicker();
+   checkRowInputs(newRow, day);
+  });
  });
  //appointments code
  $(document).ready(function() {
@@ -1326,11 +1296,11 @@
         <div class="d-flex justify-content-start align-items-center gap-4">
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">از</label>
-            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="">
+            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-start-${day}" value="">
           </div>
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">تا</label>
-            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-end-${day}" value="">
+            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-end-${day}" value="">
           </div>
           <div class="form-group col-sm-3 position-relative">
             <label class="label-top-input-special-takhasos">تعداد نوبت</label>
@@ -1374,11 +1344,11 @@
         <div class="d-flex justify-content-start align-items-center gap-4">
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">از</label>
-            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-start-${day}" value="">
+            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-start-${day}" value="">
           </div>
           <div class="form-group position-relative timepicker-ui">
             <label class="label-top-input-special-takhasos">تا</label>
-            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13" id="morning-end-${day}" value="">
+            <input type="text" class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 bg-white" id="morning-end-${day}" value="">
           </div>
           <div class="form-group col-sm-3 position-relative">
             <label class="label-top-input-special-takhasos">تعداد نوبت</label>
@@ -1509,6 +1479,7 @@
    }
   });
  }
+
  function loadPreviousAppointmentSettings(day) {
   const start_time = $('[data-target="#scheduleModal"]').data('start-time')
   const end_time = $('[data-target="#scheduleModal"]').data('end-time')
@@ -1595,29 +1566,32 @@
    }
   });
   $(document).on("click", "#saveSelectionCalculator", function() {
+   if ($(this).data("clicked")) return; // ✅ جلوگیری از اجرای مکرر
+   $(this).data("clicked", true);
+
    let currentRow = $("#CalculatorModal").data("currentRow"); // دریافت ردیف جاری
    let newValue = $("input[name='appointment-count']").val(); // مقدار جدید تعداد نوبت‌ها
+
    if (!newValue || isNaN(newValue) || parseInt(newValue) <= 0) {
+    $(this).data("clicked", false); // بازنشانی مقدار
     toastr.warning('⚠ لطفاً مقدار معتبر وارد کنید.');
     return;
    }
+
    if (!currentRow || !currentRow.length) {
     toastr.error("❌ خطا در ثبت مقدار، لطفاً دوباره امتحان کنید.");
     return;
    }
-   // دریافت مقدار start_time و end_time از data attributes
+
    let startTime = currentRow.find(".max-appointments").attr("data-start-time") || null;
    let endTime = currentRow.find(".max-appointments").attr("data-end-time") || null;
+   let day = currentRow.find(".max-appointments").data('day');
+
    if (!startTime || !endTime) {
     toastr.error("❌ زمان شروع و پایان مشخص نشده است.");
     return;
    }
-   currentRow.find(".max-appointments").val(newValue).trigger("change");
-   const day = currentRow.find(".max-appointments").data('day');
-   if (!day) {
-    toastr.error("❌ روز انتخاب نشده است.");
-    return;
-   }
+
    // ارسال داده‌ها به سرور
    $.ajax({
     url: "{{ route('save-time-slot') }}",
@@ -1632,20 +1606,45 @@
     success: function(response) {
      if (response.status) {
       toastr.success('✅ ساعت کاری با موفقیت اضافه شد');
-      setTimeout(() => {
-       loadAllWorkhours();
-      }, 200);
+
+      // ✅ مقدار جدید را داخل input تعداد نوبت قرار بده
+      currentRow.find(".max-appointments")
+       .val(newValue)
+       .attr("data-max-appointments", newValue)
+       .prop("disabled", true) // بعد از ثبت موفق، غیر‌فعال شود
+       .trigger("change");
+
+      // ✅ غیرفعال‌سازی فقط اینپوت‌های زمان، دکمه‌ها فعال می‌مانند!
+      currentRow.find(".start-time").val(startTime).prop("disabled", true);
+      currentRow.find(".end-time").val(endTime).prop("disabled", true);
+      currentRow.find(".max-appointments").val(newValue).prop("disabled", true);
+      loadAllWorkhours()
+      // ✅ ذخیره slot_id در ردیف جاری
+      if (response.workSchedule.id) {
+       currentRow.attr("data-slot-id", response.workSchedule.id);
+       currentRow.find('.remove-row-btn').attr("data-slot-id", response.workSchedule.id);
+       currentRow.find('.copy-single-slot-btn').attr("data-slot-id", response.workSchedule.id);
+       currentRow.find('.schedule-btn').attr("data-slot-id", response.workSchedule.id);
+      }
+
+      // ❌ هیچ تغییری روی دکمه‌های حذف، کپی و زمان‌بندی اعمال نمی‌شود.
      }
     },
+
     error: function(xhr) {
      toastr.error(xhr.responseJSON?.message || '❌ خطا در ذخیره اطلاعات.');
+    },
+    complete: function() {
+     $("#saveSelectionCalculator").data("clicked", false); // ✅ بازنشانی مقدار
     }
    });
+
    // بستن مدال
    $("#CalculatorModal").modal("hide");
    $("#CalculatorModal").removeClass("show");
    $(".modal-backdrop").remove();
   });
+
   $(document).on('click', '#saveSchedule', function() {
    const $button = $(this);
    const $loader = $button.find('.loader');
@@ -1791,16 +1790,6 @@
    const $trigger = $(event.relatedTarget);
    const day = $trigger.data('day');
    loadPreviousAppointmentSettings(day);
-  });
- });
- $(document).ready(function() {
-  $(".timepicker-ui-input").on("change", function() {
-   $(this).trigger("change"); // اجرای دستی change
-  });
-  $(".timepicker-ui-input").on("change", function() {
-   let newTime = $(this).val();
-   // اگر مقدار تغییر کند، مقدار ورودی را به‌روز کنیم و change را اجرا کنیم
-   $(this).val(newTime).trigger("change");
   });
  });
 </script>
