@@ -460,8 +460,11 @@ class ScheduleSettingController
             ], 400);
           }
         }
+        $workhours_identifier = $request['workhours_identifier'];
+
         // افزودن تنظیم جدید به آرایه تنظیمات موجود
         $newSetting = [
+          'id' => $workhours_identifier,
           'start_time' => $validated['start_time'],
           'end_time' => $validated['end_time'],
           'max_appointments' => $validated['max_appointments'],
@@ -512,16 +515,30 @@ class ScheduleSettingController
   public function getAppointmentSettings(Request $request)
   {
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
+    // دریافت `id` از درخواست
+    $id = $request->id;
+
+    // بازیابی تنظیمات نوبت‌دهی برای پزشک
     $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctor->id)
       ->where('day', $request->day)
       ->first();
+
     if ($workSchedule && $workSchedule->appointment_settings) {
+      $settings = json_decode($workSchedule->appointment_settings, true);
+
+      // فیلتر تنظیمات بر اساس `id`
+      $filteredSettings = array_filter($settings, function ($setting) use ($id) {
+        return $setting['id'] == $id;
+      });
+
       return response()->json([
-        'settings' => json_decode($workSchedule->appointment_settings, true),
-        'day' => $workSchedule->day, // افزودن day به پاسخ
+        'settings' => array_values($filteredSettings), // بازگرداندن تنظیمات فیلتر شده
+        'day' => $workSchedule->day,
         'status' => true,
       ]);
     }
+
     return response()->json([
       'message' => 'تنظیماتی یافت نشد',
       'status' => false,

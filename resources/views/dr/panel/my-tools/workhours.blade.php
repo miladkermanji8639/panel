@@ -315,6 +315,7 @@
      // حذف تمام ردیف‌های قبلی به جز اولین
      $container.find('.form-row:not(:first)').remove();
      daySchedule.slots.forEach(function(slot) {
+      
       const slotHtml = createSlotHtml(slot, day);
       $container.append(slotHtml);
      });
@@ -541,6 +542,7 @@
  function loadWorkSchedule(response) {
   try {
    response.workSchedules.forEach(function(schedule) {
+    
     $(`#${schedule.day}`).prop('checked', schedule.is_working);
     if (schedule.is_working) {
      $(`.work-hours-${schedule.day}`).removeClass('d-none');
@@ -564,6 +566,8 @@
    const startTime = timeSlot.start ?? '';
    const endTime = timeSlot.end ?? '';
    const maxAppointments = timeSlot.max_appointments || '';
+  
+   
    slotHtml += `
             <div class="mt-3 form-row d-flex justify-content-between w-100 p-3 bg-active-slot border-radius-4" data-slot-id="${slot.id}">
                 <div class="d-flex justify-content-start align-items-center gap-4">
@@ -683,14 +687,15 @@
  // فراخوانی تابع برای تنظیم دکمه‌های مدال
  $(document).ready(setupModalButtons);
  $(document).on('click', '[data-target="#scheduleModal"]', function() {
+  $("#saveSchedule").removeData('workhours');
   const day = $(this).data('day');
-  loadAllWorkhours()
   const start_time = $(this).data('start-time')
   const end_time = $(this).data('end-time')
   const max_appointments = $(this).data('max-appointments')
+
   $('#scheduleModal').data('currentDay', day); // ذخیره روز جاری در مدال
   $("#saveSchedule").attr('data-day', day);
-  checkAllDaysSettings(day, start_time, end_time, max_appointments);
+  $("#saveSchedule").attr('data-workhours', `${day}-${start_time}-${end_time}-${max_appointments}`);
   const persianDay = getPersianDayName(day);
   const modal = $('#scheduleModal');
   // افزودن اتریبیوت data-max-appointments و مقداردهی
@@ -709,6 +714,7 @@
   $('input[type="checkbox"][id$="-copy-modal"]').prop('checked', false);
   // چک کردن روز جاری
   $(`#${day}-copy-modal`).prop('checked', true);
+  const currentWorkHours = $("#saveSchedule").data('workhours')
   $.ajax({
    url: "{{ route('get-appointment-settings') }}",
    method: 'GET',
@@ -717,8 +723,12 @@
     start_time: start_time,
     end_time: end_time,
     max_appointments: max_appointments,
+    currentWorkHours: currentWorkHours,
    },
    success: function(response) {
+    console.log(response);
+    
+    
     // حذف لیست‌های قبلی
     if (response.status && response.settings) {
      // تبدیل تنظیمات JSON به آرایه
@@ -770,7 +780,6 @@
    $(this).addClass('active-hover');
    // بررسی تنظیمات برای روز انتخاب‌شده
   });
-  checkAllDaysSettings(day, start_time, end_time, max_appointments);
  });
  // تابع تبدیل نام روز به فارسی (اگر قبلاً تعریف نشده باشد)
  function addNewRow(day) {
@@ -837,23 +846,22 @@
       let totalRows = $container.find(".form-row").length;
 
       if (totalRows === 1) {
-       // ✅ اگر فقط یک ردیف باقی مانده بود:
+       //  اگر فقط یک ردیف باقی مانده بود:
        $row.find("input").val("").prop("disabled", false);
        $row.find(".remove-row-btn, .copy-single-slot-btn, .schedule-btn").prop("disabled", true);
        $row.attr("data-slot-id", ""); // پاک کردن slot-id
 
-       // ✅ مقداردهی مجدد `data-day` برای جلوگیری از خطا
+       //  مقداردهی مجدد `data-day` برای جلوگیری از خطا
        let maxAppointmentsInput = $row.find(".max-appointments");
        maxAppointmentsInput.attr("data-day", day).data("day", day);
       } else {
-       // ✅ اگر بیش از یک ردیف بود، فقط ردیف را حذف کن
+       //  اگر بیش از یک ردیف بود، فقط ردیف را حذف کن
        $row.remove();
       }
 
       toastr.success('حذف موفقیت‌آمیز');
 
-      // ✅ دوباره بارگذاری ساعات کاری و مقداردهی `data-day`
-      loadAllWorkhours();
+      //  دوباره بارگذاری ساعات کاری و مقداردهی `data-day`
       initializeTimepicker();
      },
      error: function(xhr) {
@@ -1091,6 +1099,7 @@
    method: 'GET',
    success: function(response) {
     $.each(response.workSchedules, function(index, schedule) {
+      
      let day = schedule.day;
      let hasData = false;
      if (schedule.work_hours) {
@@ -1140,7 +1149,6 @@
   return hours * 60 + minutes;
  }
  $(document).ready(function() {
-  loadAllWorkhours();
   $(document).on("click", ".timepicker-ui-ok-btn", function() {
    let $timepicker = $(this).closest(".timepicker-ui-modal");
    let hour = $timepicker.find(".timepicker-ui-hour").val();
@@ -1256,7 +1264,7 @@
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <button type="button" class="btn text-black btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}">زمانبندی باز شدن نوبت‌ها</button>
+                <button type="button" class="btn text-black btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-start-time="" data-end-time="" data-max-appointments="" data-target="#scheduleModal" data-day="${day}">زمانبندی باز شدن نوبت‌ها</button>
             </div>
         </div>
     `);
@@ -1319,7 +1327,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="d-flex align-items-center">
-              <button type="button" class="btn text-black  btn-sm btn-outline-primary" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">زمانبندی باز شدن نوبت‌ها</button>
+              <button type="button" class="btn text-black  btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">زمانبندی باز شدن نوبت‌ها</button>
           </div>
         </div>
       </div>
@@ -1367,7 +1375,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="d-flex align-items-center">
-              <button type="button" class="btn text-black  btn-sm btn-outline-primary" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">زمانبندی باز شدن نوبت‌ها</button>
+              <button type="button" class="btn text-black  btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">زمانبندی باز شدن نوبت‌ها</button>
           </div>
         </div>
       </div>
@@ -1417,6 +1425,7 @@
  });
  // در زمان انتخاب روز در مدال
  function checkAllDaysSettings(day, startTime, endTime, maxAppointments) {
+
   $.ajax({
    url: "{{ route('get-all-days-settings') }}",
    method: 'GET',
@@ -1427,6 +1436,7 @@
     max_appointments: maxAppointments
    },
    success: function(response) {
+    
     if (response.status && response.settings) {
      let settingsListHtml = '<div class="mt-3 settings-list">';
      // اضافه کردن کلاس اکتیو به روزهایی که تنظیم دارند
@@ -1480,28 +1490,7 @@
   });
  }
 
- function loadPreviousAppointmentSettings(day) {
-  const start_time = $('[data-target="#scheduleModal"]').data('start-time')
-  const end_time = $('[data-target="#scheduleModal"]').data('end-time')
-  const max_appointments = $('[data-target="#scheduleModal"]').data('max-appointments')
-  checkAllDaysSettings(day, start_time, end_time, max_appointments);
-  $.ajax({
-   url: "{{ route('get-appointment-settings') }}",
-   method: 'GET',
-   data: {
-    day: day,
-    start_time: start_time,
-    end_time: end_time,
-    max_appointments: max_appointments,
-   },
-   success: function(response) {
-    if (response.status && response.settings) {
-     $('#schedule-start').val(response.settings.start_time);
-     $('#schedule-end').val(response.settings.end_time);
-    }
-   }
-  });
- }
+ 
  // Function to calculate and update input values
  $(document).ready(function() {
   let morningStart, morningEnd; // متغیر برای ذخیره زمان شروع و پایان
@@ -1566,7 +1555,7 @@
    }
   });
   $(document).on("click", "#saveSelectionCalculator", function() {
-   if ($(this).data("clicked")) return; // ✅ جلوگیری از اجرای مکرر
+   if ($(this).data("clicked")) return; //  جلوگیری از اجرای مکرر
    $(this).data("clicked", true);
 
    let currentRow = $("#CalculatorModal").data("currentRow"); // دریافت ردیف جاری
@@ -1579,7 +1568,7 @@
    }
 
    if (!currentRow || !currentRow.length) {
-    toastr.error("❌ خطا در ثبت مقدار، لطفاً دوباره امتحان کنید.");
+    toastr.error("خطا در ثبت مقدار، لطفاً دوباره امتحان کنید.");
     return;
    }
 
@@ -1588,7 +1577,7 @@
    let day = currentRow.find(".max-appointments").data('day');
 
    if (!startTime || !endTime) {
-    toastr.error("❌ زمان شروع و پایان مشخص نشده است.");
+    toastr.error("زمان شروع و پایان مشخص نشده است.");
     return;
    }
 
@@ -1603,39 +1592,59 @@
      max_appointments: parseInt(newValue),
      _token: $('meta[name="csrf-token"]').attr('content')
     },
-    success: function(response) {
-     if (response.status) {
-      toastr.success('✅ ساعت کاری با موفقیت اضافه شد');
+   success: function (response) {
+       if (response.status) {
+         toastr.success('✅ ساعت کاری با موفقیت اضافه شد');
+         currentRow.find(".remove-row-btn, .copy-single-slot-btn, .schedule-btn").prop("disabled", false);
 
-      // ✅ مقدار جدید را داخل input تعداد نوبت قرار بده
-      currentRow.find(".max-appointments")
-       .val(newValue)
-       .attr("data-max-appointments", newValue)
-       .prop("disabled", true) // بعد از ثبت موفق، غیر‌فعال شود
-       .trigger("change");
+         // مقدار جدید را داخل input تعداد نوبت قرار بده
+         currentRow.find(".max-appointments")
+           .val(newValue)
+           .attr("data-max-appointments", newValue)
+           .prop("disabled", true) // بعد از ثبت موفق، غیر‌فعال شود
+           .trigger("change");
 
-      // ✅ غیرفعال‌سازی فقط اینپوت‌های زمان، دکمه‌ها فعال می‌مانند!
-      currentRow.find(".start-time").val(startTime).prop("disabled", true);
-      currentRow.find(".end-time").val(endTime).prop("disabled", true);
-      currentRow.find(".max-appointments").val(newValue).prop("disabled", true);
-      loadAllWorkhours()
-      // ✅ ذخیره slot_id در ردیف جاری
-      if (response.workSchedule.id) {
-       currentRow.attr("data-slot-id", response.workSchedule.id);
-       currentRow.find('.remove-row-btn').attr("data-slot-id", response.workSchedule.id);
-       currentRow.find('.copy-single-slot-btn').attr("data-slot-id", response.workSchedule.id);
-       currentRow.find('.schedule-btn').attr("data-slot-id", response.workSchedule.id);
-      }
+         // غیرفعال‌سازی فقط اینپوت‌های زمان، دکمه‌ها فعال می‌مانند!
+         currentRow.find(".start-time").val(startTime).prop("disabled", true);
+         currentRow.find(".end-time").val(endTime).prop("disabled", true);
+         currentRow.find(".max-appointments").val(newValue).prop("disabled", true);
 
-      // ❌ هیچ تغییری روی دکمه‌های حذف، کپی و زمان‌بندی اعمال نمی‌شود.
-     }
-    },
+         // خواندن مقدار `work_hours` از `response.workSchedule`
+         let workHours = response.workSchedule.work_hours ? JSON.parse(response.workSchedule.work_hours) : [];
+         let lastWorkHour = workHours.length ? workHours[workHours.length - 1] : null;
+         
+         // مقداردهی با استفاده از شرط یک‌خطی (ternary operator)
+         let finalStartTime = startTime || (lastWorkHour ? lastWorkHour.start : "");
+         let finalEndTime = endTime || (lastWorkHour ? lastWorkHour.end : "");
+         let finalMaxAppointments = newValue || (lastWorkHour ? lastWorkHour.max_appointments : "");
+        
+         // ذخیره `slot_id` در ردیف جاری
+         if (response.workSchedule.id) {
+           currentRow.attr("data-slot-id", response.workSchedule.id);
+           currentRow.find('.schedule-btn').attr({
+             "data-start-time": finalStartTime,
+             "data-end-time": finalEndTime,
+             "data-max-appointments": parseInt(finalMaxAppointments),
+             "data-slot-id": response.workSchedule.id
+           });
+            currentRow.find('.remove-row-btn').attr({
+             "data-start-time": finalStartTime,
+             "data-end-time": finalEndTime,
+             "data-max-appointments": parseInt(finalMaxAppointments),
+             "data-slot-id": response.workSchedule.id
+           });
+           currentRow.find('.remove-row-btn').attr("data-slot-id", response.workSchedule.id);
+           currentRow.find('.copy-single-slot-btn').attr("data-slot-id", response.workSchedule.id);
+         }
+       }
+     },
+
 
     error: function(xhr) {
-     toastr.error(xhr.responseJSON?.message || '❌ خطا در ذخیره اطلاعات.');
+     toastr.error(xhr.responseJSON?.message || 'خطا در ذخیره اطلاعات.');
     },
     complete: function() {
-     $("#saveSelectionCalculator").data("clicked", false); // ✅ بازنشانی مقدار
+     $("#saveSelectionCalculator").data("clicked", false); //  بازنشانی مقدار
     }
    });
 
@@ -1680,6 +1689,8 @@
     $buttonText.show();
     return;
    }
+   const workhours_identifier = $(this).data('workhours')
+   
    $.ajax({
     url: "{{ route('save-appointment-settings') }}",
     method: 'POST',
@@ -1687,6 +1698,7 @@
      start_time: scheduleStart,
      end_time: scheduleEnd,
      selected_days: dayEn,
+     workhours_identifier: workhours_identifier,
      day: $('#scheduleModal').data('day'),
      max_appointments: max_appointments,
      _token: '{{ csrf_token() }}'
@@ -1785,12 +1797,7 @@
      .addClass('btn-primary');
    });
   });
-  // فراخوانی در زمان باز شدن مدال
-  $(document).on('show.bs.modal', '#scheduleModal', function(event) {
-   const $trigger = $(event.relatedTarget);
-   const day = $trigger.data('day');
-   loadPreviousAppointmentSettings(day);
-  });
+
  });
 </script>
 <div class="modal fade" id="scheduleModal" tabindex="-1" data-selected-day="" role="dialog"
