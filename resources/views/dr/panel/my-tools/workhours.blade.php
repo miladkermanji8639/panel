@@ -247,7 +247,7 @@
             </button>
           </div>
           <div class="form-group col-sm-2 position-relative">
-            <button class="btn btn-light btn-sm remove-row-btn" disabled data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
+            <button class="btn btn-light btn-sm remove-row-btn" disabled data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>
               <img src="${trashSvg}">
             </button>
           </div>
@@ -539,22 +539,63 @@
   });
  });
 
- function loadWorkSchedule(response) {
-  try {
-   response.workSchedules.forEach(function(schedule) {
-    
-    $(`#${schedule.day}`).prop('checked', schedule.is_working);
-    if (schedule.is_working) {
-     $(`.work-hours-${schedule.day}`).removeClass('d-none');
-    } else {
-     $(`.work-hours-${schedule.day}`).addClass('d-none');
+  function loadWorkSchedule(response) {
+    try {
+
+      // بررسی اینکه workSchedules وجود دارد و آرایه است
+      if (!response.workSchedules || !Array.isArray(response.workSchedules)) {
+        return; // از ادامه‌ی اجرا جلوگیری می‌شود
+      }
+
+      response.workSchedules.forEach(function (schedule) {
+        $(`#${schedule.day}`).prop('checked', schedule.is_working);
+        if (schedule.is_working) {
+          $(`.work-hours-${schedule.day}`).removeClass('d-none');
+        } else {
+          $(`.work-hours-${schedule.day}`).addClass('d-none');
+        }
+
+        // تبدیل work_hours از JSON به آرایه
+        let workHours = schedule.work_hours ? JSON.parse(schedule.work_hours) : [];
+
+        // پاک کردن اطلاعات قبلی برای جلوگیری از تکرار
+        $(`.work-hours-container-${schedule.day}`).empty();
+
+        // اضافه کردن بازه‌های زمانی به UI
+        workHours.forEach((slot) => {
+          let slotHtml = `
+          <div class="form-row mt-2">
+            <div class="col-4">
+              <input type="text" class="form-control start-time" value="${slot.start}" disabled>
+            </div>
+            <div class="col-4">
+              <input type="text" class="form-control end-time" value="${slot.end}" disabled>
+            </div>
+            <div class="col-3">
+              <input type="number" class="form-control max-appointments" value="${slot.max_appointments}" disabled>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-danger remove-row-btn" 
+                      data-slot-id="${schedule.id}" 
+                      data-day="${schedule.day}" 
+                      data-start-time="${slot.start}" 
+                      data-end-time="${slot.end}">
+                🗑
+              </button>
+            </div>
+          </div>`;
+
+          // اضافه کردن ردیف به کانتینر مربوط به روز
+          $(`.work-hours-container-${schedule.day}`).append(slotHtml);
+        });
+
+        updateDayUI(schedule);
+      });
+    } catch (error) {
+      console.error("Error in loadWorkSchedule:", error);
     }
-    updateDayUI(schedule);
-   });
-  } catch (error) {
-   console.error("Error in loadWorkSchedule:", error);
   }
- }
+
 
  function createSlotHtml(slot, day) {
   let workHours = slot.work_hours ? JSON.parse(slot.work_hours) : [];
@@ -716,64 +757,53 @@
   $(`#${day}-copy-modal`).prop('checked', true);
   const currentWorkHours = $("#saveSchedule").data('workhours')
   $.ajax({
-   url: "{{ route('get-appointment-settings') }}",
-   method: 'GET',
-   data: {
-    day: day,
-    start_time: start_time,
-    end_time: end_time,
-    max_appointments: max_appointments,
-    currentWorkHours: currentWorkHours,
-   },
-   success: function(response) {
-    console.log(response);
-    
-    
-    // حذف لیست‌های قبلی
-    if (response.status && response.settings) {
-     // تبدیل تنظیمات JSON به آرایه
-     const settings = response.settings;
-     // فیلتر تنظیمات مرتبط با برنامه کاری جاری
-     if (settings.length > 0) {
-      let settingsListHtml = '<div class="mt-3 settings-list">';
-      const dayMapFa = {
-       'saturday': 'شنبه',
-       'sunday': 'یکشنبه',
-       'monday': 'دوشنبه',
-       'tuesday': 'سه‌شنبه',
-       'wednesday': 'چهارشنبه',
-       'thursday': 'پنج‌شنبه',
-       'friday': 'جمعه'
-      };
-      // ساخت HTML برای تنظیمات فیلتر شده
-      settings.forEach(setting => {
-       settingsListHtml += `
-            <div class="d-flex justify-content-between align-items-center border-bottom p-2 border-radius-4 mb-2 setting-item mt-2 bg-active-slot" data-day="${response.day}" data-selected-day="${setting.selected_day}">
-              <span class="font-weight-bold text-success p-2">
-                 باز شدن نوبت‌ها از ${setting.start_time} تا ${setting.end_time} روز ${dayMapFa[setting.selected_day]}
-              </span>
-              <button class="btn btn-sm btn-light delete-schedule-setting" 
-                      data-day="${response.day}" 
-                      data-start-time="${setting.start_time}" 
-                      data-end-time="${setting.end_time}" data-day="${day}" data-selected-day="${setting.selected_day}">
-                <img src="${trashSvg}">
-              </button>
-            </div>`;
-      });
-      settingsListHtml += '</div>';
-      $('#scheduleModal .modal-body').append(settingsListHtml);
-     } else {
-      // اگر تنظیمات مرتبط پیدا نشد
-      $('#scheduleModal .modal-body').append(
-       '<div class="mt-3 font-weight-bold settings-list text-danger text-center not-appointment-found">هیچ برنامه ای یافت نشد.</div>'
-      );
+     url: "{{ route('get-appointment-settings') }}",
+     method: 'GET',
+     data: {
+       id: `${day}-${start_time}-${end_time}-${max_appointments}`, // ساخت id از داده‌های انتخابی
+       day: day,
+       start_time: start_time,
+       end_time: end_time,
+       max_appointments: max_appointments
+     },
+     success: function (response) {
+
+       if (response.status && response.settings.length > 0) {
+         let settingsListHtml = '<div class="mt-3 settings-list">';
+         const dayMapFa = {
+           'saturday': 'شنبه', 'sunday': 'یکشنبه', 'monday': 'دوشنبه',
+           'tuesday': 'سه‌شنبه', 'wednesday': 'چهارشنبه', 'thursday': 'پنج‌شنبه', 'friday': 'جمعه'
+         };
+
+         response.settings.forEach(setting => {
+           settingsListHtml += `
+                    <div class="d-flex justify-content-between align-items-center border-bottom p-2 border-radius-4 mb-2 setting-item mt-2 bg-active-slot" data-day="${response.day}" data-selected-day="${setting.selected_day}">
+                        <span class="font-weight-bold text-success p-2">
+                            باز شدن نوبت‌ها از ${setting.start_time} تا ${setting.end_time} روز ${dayMapFa[setting.selected_day]}
+                        </span>
+                        <button class="btn btn-sm btn-light delete-schedule-setting"
+                                data-day="${response.day}" 
+                                data-start-time="${setting.start_time}" 
+                                data-end-time="${setting.end_time}" 
+                                data-selected-day="${setting.selected_day}">
+                            <img src="${trashSvg}">
+                        </button>
+                    </div>`;
+         });
+
+         settingsListHtml += '</div>';
+         $('#scheduleModal .modal-body').append(settingsListHtml);
+       } else {
+         $('#scheduleModal .modal-body').append(
+           '<div class="mt-3 font-weight-bold settings-list text-danger text-center not-appointment-found">هیچ برنامه‌ای یافت نشد.</div>'
+         );
+       }
+     },
+     error: function (xhr) {
+       console.error('خطا در دریافت تنظیمات:', xhr);
      }
-    }
-   },
-   error: function(xhr) {
-    console.error('خطا در دریافت تنظیمات:', xhr);
-   }
-  });
+   });
+
   $(document).on('click', '.badge-time-styles-day', function() {
    $('.badge-time-styles-day').removeClass('active-hover');
    const dayEn = $(this).data('day');
@@ -799,7 +829,7 @@
                     <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
                 </div>
                  <div class="form-group col-sm-1 position-relative">
-            <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
+            <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>
                 <img src="${svgUrl}">
             </button>
           </div>
@@ -874,44 +904,52 @@
 
  $(document).ready(function() {
   // تابع ذخیره‌سازی برنامه کاری
-  function saveWorkSchedule() {
-   const data = {
-    auto_scheduling: $('#appointment-toggle').is(':checked'),
-    calendar_days: parseInt($('input[name="calendar_days"]').val()) || 30,
-    online_consultation: $('#posible-appointments').is(':checked'),
-    holiday_availability: $('#posible-appointments-inholiday').is(':checked'),
-    days: {}
-   };
-   // جمع‌آوری اطلاعات برای هر روز
-   const days = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
-   days.forEach(day => {
-    if ($(`#${day}`).is(':checked')) {
-     const workHours = collectSlots(day);
-     data.days[day] = {
-      is_working: true,
-      work_hours: workHours.length > 0 ? JSON.stringify(workHours) : nullh
+ function saveWorkSchedule() {
+     const data = {
+       auto_scheduling: $('#appointment-toggle').is(':checked'),
+       calendar_days: parseInt($('input[name="calendar_days"]').val()) || 30,
+       online_consultation: $('#posible-appointments').is(':checked'),
+       holiday_availability: $('#posible-appointments-inholiday').is(':checked'),
+       days: {}
      };
-    }
-   });
-   $.ajax({
-    url: "{{ route('dr-save-work-schedule') }}",
-    method: 'POST',
-    data: JSON.stringify(data),
-    contentType: 'application/json',
-    headers: {
-     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    },
-    success: function(response) {
-     toastr.success('تنظیمات ساعات کاری با موفقیت ذخیره شد.');
-     response.workSchedules.forEach(schedule => {
-      updateDayUI(schedule);
+
+     // جمع‌آوری اطلاعات برای هر روز
+     const days = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
+     days.forEach(day => {
+       if ($(`#${day}`).is(':checked')) {
+         const workHours = collectSlots(day);
+         data.days[day] = {
+           is_working: true,
+           work_hours: workHours.length > 0 ? JSON.stringify(workHours) : null
+         };
+       }
      });
-    },
-    error: function(xhr) {
-     toastr.error(xhr.responseJSON?.message || 'خطا در ذخیره‌سازی ساعات کاری.');
-    }
-   });
-  }
+
+     $.ajax({
+       url: "{{ route('dr-save-work-schedule') }}",
+       method: 'POST',
+       data: JSON.stringify(data),
+       contentType: 'application/json',
+       headers: {
+         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+       },
+       success: function (response) {
+         toastr.success('تنظیمات ساعات کاری با موفقیت ذخیره شد.');
+
+         // بررسی وجود `workSchedules` قبل از پردازش
+         if (response.workSchedules && Array.isArray(response.workSchedules)) {
+           response.workSchedules.forEach(schedule => {
+             updateDayUI(schedule);
+           });
+         } else {
+         }
+       },
+       error: function (xhr) {
+         toastr.error(xhr.responseJSON?.message || 'خطا در ذخیره‌سازی ساعات کاری.');
+       }
+     });
+   }
+
   // تابع جمع‌آوری برنامه کاری‌ها
   function collectSlots(day) {
    const slots = [];
@@ -1234,7 +1272,7 @@
     }
    });
    if (hasIncompleteRow) {
-    toastr.error("⚠ لطفاً ابتدا ردیف قبلی را تکمیل کنید.");
+    toastr.error(" لطفاً ابتدا ردیف قبلی را تکمیل کنید.");
     return; // متوقف کردن افزودن ردیف جدید
    }
    let newRow = $(`
@@ -1253,12 +1291,12 @@
                     <input type="text" class="form-control h-50 text-center max-appointments bg-white" data-day="${day}" name="nobat-count" id="morning-patients-${day}" data-start-time="" data-end-time="" value="" data-toggle="modal" data-target="#CalculatorModal" readonly>
                 </div>
                 <div class="form-group col-sm-1 position-relative">
-                    <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}">
+                    <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" disabled>
                         <img src="${svgUrl}">
                     </button>
                 </div>
                 <div class="form-group col-sm-2 position-relative">
-                    <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}">
+                    <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}" disabled>
                         <img src="${trashSvg}">
                     </button>
                 </div>
@@ -1315,19 +1353,19 @@
            <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
           </div>
            <div class="form-group col-sm-1 position-relative">
-            <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
+            <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>
                 <img src="${svgUrl}">
             </button>
           </div>
           <div class="form-group col-sm-2 position-relative">
-            <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
+            <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>
               <img src="${trashSvg}">
             </button>
           </div>
         </div>
         <div class="d-flex align-items-center">
           <div class="d-flex align-items-center">
-              <button type="button" class="btn text-black  btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">زمانبندی باز شدن نوبت‌ها</button>
+              <button type="button" class="btn text-black  btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>زمانبندی باز شدن نوبت‌ها</button>
           </div>
         </div>
       </div>
@@ -1363,19 +1401,19 @@
            <input type="text" class="form-control h-50 text-center max-appointments bg-white"  name="nobat-count" min="0" id="morning-patients-${day}"  data-toggle="modal" data-target="#CalculatorModal" data-day="${day}" data-start-time="" data-end-time="" value="" readonly>
           </div>
            <div class="form-group col-sm-1 position-relative">
-            <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
+            <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>
                 <img src="${svgUrl}">
             </button>
           </div>
           <div class="form-group col-sm-2 position-relative">
-            <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">
+            <button class="btn btn-light btn-sm remove-row-btn" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>
               <img src="${trashSvg}">
             </button>
           </div>
         </div>
         <div class="d-flex align-items-center">
           <div class="d-flex align-items-center">
-              <button type="button" class="btn text-black  btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="">زمانبندی باز شدن نوبت‌ها</button>
+              <button type="button" class="btn text-black  btn-sm btn-outline-primary schedule-btn" data-toggle="modal" data-target="#scheduleModal" data-day="${day}" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" disabled>زمانبندی باز شدن نوبت‌ها</button>
           </div>
         </div>
       </div>
@@ -1563,7 +1601,7 @@
 
    if (!newValue || isNaN(newValue) || parseInt(newValue) <= 0) {
     $(this).data("clicked", false); // بازنشانی مقدار
-    toastr.warning('⚠ لطفاً مقدار معتبر وارد کنید.');
+    toastr.warning(' لطفاً مقدار معتبر وارد کنید.');
     return;
    }
 

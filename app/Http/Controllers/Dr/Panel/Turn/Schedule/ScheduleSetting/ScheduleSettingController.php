@@ -523,7 +523,6 @@ class ScheduleSettingController
     $workSchedule = DoctorWorkSchedule::where('doctor_id', $doctor->id)
       ->where('day', $request->day)
       ->first();
-
     if ($workSchedule && $workSchedule->appointment_settings) {
       $settings = json_decode($workSchedule->appointment_settings, true);
 

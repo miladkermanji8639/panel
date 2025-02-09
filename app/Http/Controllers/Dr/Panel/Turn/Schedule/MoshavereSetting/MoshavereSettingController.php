@@ -256,59 +256,69 @@ class MoshavereSettingController
   }
   public function saveTimeSlot(Request $request)
   {
+    Log::info($request);
     $validated = $request->validate([
       'day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
       'start_time' => 'required|date_format:H:i',
       'end_time' => 'required|date_format:H:i|after:start_time',
       'max_appointments' => 'required|integer|min:1'
     ]);
+
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
     try {
-      // پیدا کردن رکورد ساعات کاری پزشک در روز مورد نظر
       $workSchedule = DoctorCounselingWorkSchedule::firstOrCreate(
-        [
-          'doctor_id' => $doctor->id,
-          'day' => $validated['day'],
-        ],
-        [
-          'is_working' => true,
-          'work_hours' => json_encode([]),
-        ]
+        ['doctor_id' => $doctor->id, 'day' => $validated['day']],
+        ['is_working' => true, 'work_hours' => json_encode([])]
       );
-      // دریافت `work_hours` فعلی
+
       $existingWorkHours = json_decode($workSchedule->work_hours, true) ?? [];
-      // بررسی تداخل زمانی با ساعات موجود
+
       foreach ($existingWorkHours as $hour) {
         $existingStart = Carbon::createFromFormat('H:i', $hour['start']);
         $existingEnd = Carbon::createFromFormat('H:i', $hour['end']);
         $newStart = Carbon::createFromFormat('H:i', $validated['start_time']);
         $newEnd = Carbon::createFromFormat('H:i', $validated['end_time']);
+
+        if ($newStart->equalTo($existingStart) && $newEnd->equalTo($existingEnd)) {
+          return response()->json([
+            'message' => 'این بازه زمانی از قبل ثبت شده است.',
+            'status' => false,
+          ], 400);
+        }
+
         if (
-          ($newStart >= $existingStart && $newStart < $existingEnd) ||
-          ($newEnd > $existingStart && $newEnd <= $existingEnd) ||
-          ($newStart <= $existingStart && $newEnd >= $existingEnd)
+          $newStart->between($existingStart, $existingEnd, false) ||
+          $newEnd->between($existingStart, $existingEnd, false) ||
+          ($newStart->lte($existingStart) && $newEnd->gte($existingEnd))
         ) {
           return response()->json([
             'message' => 'این بازه زمانی با بازه‌های موجود تداخل دارد.',
-            'status' => false
+            'status' => false,
           ], 400);
         }
       }
-      // اضافه کردن ساعات کاری جدید به `work_hours`
+
+
+
+
+
+      // اضافه کردن ساعت جدید به JSON
       $newSlot = [
         'start' => $validated['start_time'],
         'end' => $validated['end_time'],
-        'max_appointments' => $validated['max_appointments'],
+        'max_appointments' => $validated['max_appointments']
       ];
       $existingWorkHours[] = $newSlot;
-      // ذخیره تغییرات
-      $workSchedule->update([
-        'work_hours' => json_encode($existingWorkHours),
-      ]);
+
+      // بروزرسانی `work_hours`
+      $workSchedule->update(['work_hours' => json_encode($existingWorkHours)]);
+
       return response()->json([
-        'message' => 'نوبت با موفقیت ذخیره شد',
+        'message' => 'ساعت کاری با موفقیت ذخیره شد',
         'status' => true,
-        'work_hours' => $existingWorkHours
+        'work_hours' => $existingWorkHours,
+        'workSchedule' => $workSchedule
       ]);
     } catch (\Exception $e) {
       return response()->json([
@@ -421,8 +431,11 @@ class MoshavereSettingController
             ], 400);
           }
         }
+        $workhours_identifier = $request['workhours_identifier'];
+
         // افزودن تنظیم جدید به آرایه تنظیمات موجود
         $newSetting = [
+          'id' => $workhours_identifier,
           'start_time' => $validated['start_time'],
           'end_time' => $validated['end_time'],
           'max_appointments' => $validated['max_appointments'],
@@ -473,16 +486,29 @@ class MoshavereSettingController
   public function getAppointmentSettings(Request $request)
   {
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
+    // دریافت `id` از درخواست
+    $id = $request->id;
+
+    // بازیابی تنظیمات نوبت‌دهی برای پزشک
     $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
       ->where('day', $request->day)
       ->first();
     if ($workSchedule && $workSchedule->appointment_settings) {
+      $settings = json_decode($workSchedule->appointment_settings, true);
+
+      // فیلتر تنظیمات بر اساس `id`
+      $filteredSettings = array_filter($settings, function ($setting) use ($id) {
+        return $setting['id'] == $id;
+      });
+
       return response()->json([
-        'settings' => json_decode($workSchedule->appointment_settings, true),
-        'day' => $workSchedule->day, // افزودن day به پاسخ
+        'settings' => array_values($filteredSettings), // بازگرداندن تنظیمات فیلتر شده
+        'day' => $workSchedule->day,
         'status' => true,
       ]);
     }
+
     return response()->json([
       'message' => 'تنظیماتی یافت نشد',
       'status' => false,
@@ -495,52 +521,64 @@ class MoshavereSettingController
       'calendar_days' => 'nullable|integer|min:1|max:365',
       'online_consultation' => 'boolean',
       'holiday_availability' => 'boolean',
+      'appointment_duration' => 'nullable|integer|min:5|max:120',
       'days' => 'array',
+      'price_15min' => 'nullable|integer|min:0',
+      'price_30min' => 'nullable|integer|min:0',
+      'price_45min' => 'nullable|integer|min:0',
+      'price_60min' => 'nullable|integer|min:0',
     ]);
     DB::beginTransaction();
     try {
-      $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+      $doctor = Auth::guard('doctor')->user();
       // حذف تنظیمات قبلی
       DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)->delete();
-      // ذخیره تنظیمات کلی نوبت‌دهی
-      $appointmentConfig = DoctorCounselingConfig::updateOrCreate(
+      // ذخیره تنظیمات کلی
+      $counselingConfig = DoctorCounselingConfig::updateOrCreate(
         ['doctor_id' => $doctor->id],
         [
           'auto_scheduling' => $validatedData['auto_scheduling'] ?? false,
-          'calendar_days' => $validatedData['calendar_days'] ?? null,
+          'calendar_days' => $request->input('calendar_days'),
           'online_consultation' => $validatedData['online_consultation'] ?? false,
           'holiday_availability' => $validatedData['holiday_availability'] ?? false,
+          'appointment_duration' => $validatedData['appointment_duration'] ?? 15,
+          'price_15min' => $validatedData['price_15min'],
+          'price_30min' => $validatedData['price_30min'],
+          'price_45min' => $validatedData['price_45min'],
+          'price_60min' => $validatedData['price_60min'],
         ]
       );
-      // ذخیره ساعات کاری پزشک در `work_hours`
+      // ذخیره برنامه کاری روزها
       foreach ($validatedData['days'] as $day => $dayConfig) {
-        $workHours = isset($dayConfig['slots']) ? array_map(function ($slot) {
-          return [
-            'start' => $slot['start_time'],
-            'end' => $slot['end_time'],
-            'max_appointments' => $slot['max_appointments'] ?? 1
-          ];
-        }, $dayConfig['slots']) : [];
-        DoctorCounselingWorkSchedule::create([
+        $workSchedule = DoctorCounselingWorkSchedule::create([
           'doctor_id' => $doctor->id,
           'day' => $day,
           'is_working' => $dayConfig['is_working'] ?? false,
-          'work_hours' => !empty($workHours) ? json_encode($workHours) : null,
+          'work_hours' => $dayConfig['work_hours'] ?? null,
+          'appointment_settings' => json_encode($dayConfig['appointment_settings'] ?? []),
         ]);
+      
       }
       DB::commit();
       return response()->json([
-        'message' => 'تنظیمات ساعات کاری با موفقیت ذخیره شد.',
+        'message' => 'تنظیمات با موفقیت ذخیره شد.',
         'status' => true,
         'data' => [
-          'calendar_days' => $appointmentConfig->calendar_days
-        ]
+          'calendar_days' => $counselingConfig->calendar_days,
+          'price_15min' => $counselingConfig->price_15min,
+          'price_30min' => $counselingConfig->price_30min,
+          'price_45min' => $counselingConfig->price_45min,
+          'price_60min' => $counselingConfig->price_60min,
+        ],
       ]);
     } catch (\Exception $e) {
       DB::rollBack();
+      Log::error('خطا در ذخیره‌سازی تنظیمات: ' . $e->getMessage(), [
+        'trace' => $e->getTraceAsString(),
+      ]);
       return response()->json([
-        'message' => 'خطا در ذخیره‌سازی تنظیمات ساعات کاری.',
-        'status' => false
+        'message' => 'خطا در ذخیره‌سازی تنظیمات.',
+        'status' => false,
       ], 500);
     }
   }
@@ -689,49 +727,80 @@ class MoshavereSettingController
   // متدهای موجود در کنترلر اصلی
 
 
-  public function destroy(Request $request, $slotId)
+  public function destroy(Request $request)
   {
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+
       // اعتبارسنجی داده‌های ورودی
       $validated = $request->validate([
         'day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i'
       ]);
+
       // دریافت رکورد ساعات کاری برای پزشک و روز مورد نظر
       $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
         ->where('day', $validated['day'])
         ->first();
+
       if (!$workSchedule) {
         return response()->json([
           'message' => 'ساعات کاری یافت نشد',
           'status' => false
         ], 404);
       }
-      // دریافت و حذف بازه زمانی مشخص از `work_hours`
-      $workHours = json_decode($workSchedule->work_hours, true) ?? [];
+
+      // بررسی مقدار `work_hours` قبل از حذف
+      $workHours = json_decode($workSchedule->work_hours, true);
+
+      if (!is_array($workHours)) {
+        Log::error('❌ مقدار `work_hours` نامعتبر است:', ['work_hours' => $workSchedule->work_hours]);
+        return response()->json([
+          'message' => 'خطا در پردازش ساعات کاری',
+          'status' => false
+        ], 500);
+      }
+
+      // 🟢 لاگ مقدار اولیه قبل از حذف
+      Log::info('🔍 مقدار اولیه `work_hours`:', ['work_hours' => $workHours]);
+
+      // فیلتر بازه زمانی مشخص از `work_hours`
       $filteredWorkHours = array_filter($workHours, function ($slot) use ($validated) {
         return !(
-          $slot['start'] === $validated['start_time'] &&
-          $slot['end'] === $validated['end_time']
+          trim((string) $slot['start']) === trim((string) $validated['start_time']) &&
+          trim((string) $slot['end']) === trim((string) $validated['end_time'])
         );
       });
-      // بررسی اینکه آیا تغییر در داده‌ها رخ داده است
+
+      // 🟢 لاگ مقدار بعد از حذف بازه
+      Log::info('📌 مقدار `work_hours` بعد از حذف:', ['filtered_work_hours' => $filteredWorkHours]);
+
+      // بررسی اینکه آیا تغییری رخ داده است
       if (count($filteredWorkHours) === count($workHours)) {
         return response()->json([
           'message' => 'بازه زمانی یافت نشد یا قبلاً حذف شده است',
           'status' => false
         ], 404);
       }
+
       // ذخیره تغییرات در `doctor_work_schedules`
-      $workSchedule->work_hours = json_encode(array_values($filteredWorkHours));
-      $workSchedule->save();
+      $workSchedule->work_hours = empty($filteredWorkHours) ? null : json_encode(array_values($filteredWorkHours));
+
+      if (!$workSchedule->save()) {
+        Log::error('❌ خطا در ذخیره تغییرات در پایگاه داده');
+        return response()->json([
+          'message' => 'خطا در ذخیره تغییرات',
+          'status' => false
+        ], 500);
+      }
+
       return response()->json([
-        'message' => 'بازه زمانی با موفقیت حذف شد',
+        'message' => '✅ بازه زمانی با موفقیت حذف شد',
         'status' => true
       ]);
     } catch (\Exception $e) {
+      Log::error('❌ خطای حذف بازه زمانی:', ['error' => $e->getMessage()]);
       return response()->json([
         'message' => 'خطا در حذف بازه زمانی',
         'status' => false

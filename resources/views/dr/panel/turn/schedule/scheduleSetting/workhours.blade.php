@@ -28,7 +28,7 @@
      <div>
       <div class="input-group position-relative mx-2">
        <label class="label-top-input-special-takhasos"> تعداد روز های باز تقویم </label>
-       <input type="number" value="" class="form-control text-center h-50 border-radius-0"
+       <input type="number" value="{{ $appointmentConfig->calendar_days ?? '' }}" class="form-control text-center h-50 border-radius-0"
         name="calendar_days" placeholder="تعداد روز مورد نظر خود را وارد کنید">
        <div class="input-group-append count-span-prepand-style"><span class="input-group-text px-2">روز</span></div>
       </div>
@@ -49,11 +49,11 @@
      </div>
     </div>
     <div class="mt-5">
-     <x-my-check :isChecked="true" id="posible-appointments"
+     <x-my-check :isChecked="$appointmentConfig->online_consultation" id="posible-appointments"
       day="امکان دریافت مشاوره آنلاین توسط کاربران وجود داشته باشد؟" />
     </div>
     <div class="mt-3">
-     <x-my-check :isChecked="false" id="posible-appointments-inholiday" day="باز بودن مطب در تعطیلات رسمی" />
+     <x-my-check :isChecked="$appointmentConfig->holiday_availability" id="posible-appointments-inholiday" day="باز بودن مطب در تعطیلات رسمی" />
     </div>
    </div>
    <div class="d-flex w-100 justify-content-end mt-3">

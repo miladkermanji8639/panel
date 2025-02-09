@@ -110,11 +110,11 @@
       </div>
      </div>
      <div class="mt-5">
-      <x-my-check :isChecked="true" id="posible-appointments"
+      <x-my-check :isChecked="$appointmentConfig->online_consultation" id="posible-appointments"
        day="امکان دریافت مشاوره آنلاین توسط کاربران وجود داشته باشد؟" />
      </div>
      <div class="mt-3">
-      <x-my-check :isChecked="false" id="posible-appointments-inholiday" day="مشاوره آنلاین تعطیلات رسمی" />
+      <x-my-check :isChecked="$appointmentConfig->holiday_availability" id="posible-appointments-inholiday" day="مشاوره آنلاین تعطیلات رسمی" />
      </div>
     </div>
     <div class="d-flex w-100 justify-content-end mt-3">
