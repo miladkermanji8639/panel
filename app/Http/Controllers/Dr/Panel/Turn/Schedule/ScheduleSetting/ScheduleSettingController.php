@@ -686,9 +686,9 @@ class ScheduleSettingController
       // فیلتر تنظیمات برای حذف آیتم موردنظر
       $updatedSettings = array_filter($settings, function ($setting) use ($validated) {
         return !(
-          trim($setting['start_time']) === trim($validated['start_time']) &&  // ✅ استفاده از نام درست فیلد
-          trim($setting['end_time']) === trim($validated['end_time']) &&      // ✅ استفاده از نام درست فیلد
-          trim($setting['selected_day']) === trim($validated['selected_day']) // ✅ حذف بر اساس `selected_day`
+          trim($setting['start_time']) === trim($validated['start_time']) &&  //  استفاده از نام درست فیلد
+          trim($setting['end_time']) === trim($validated['end_time']) &&      //  استفاده از نام درست فیلد
+          trim($setting['selected_day']) === trim($validated['selected_day']) //  حذف بر اساس `selected_day`
         );
       });
       // بررسی اینکه آیا هیچ تنظیمی حذف شده است یا نه
@@ -814,11 +814,11 @@ class ScheduleSettingController
       $message = 'این تاریخ تعطیل شد.';
       $isHoliday = true;
 
-      $specialDay = SpecialDailySchedule::where('date',$validated['date'])->first();
+      $specialDay = SpecialDailySchedule::where('date', $validated['date'])->first();
       if ($specialDay) {
         $specialDay->delete();
       }
-      
+
 
     }
     // به‌روزرسانی رکورد
@@ -929,10 +929,10 @@ class ScheduleSettingController
         $messageContent = "کاربر گرامی، نوبت شما از تاریخ {$oldDateJalali} به تاریخ {$newDateJalali} تغییر یافت.";
 
         foreach ($recipients as $recipient) {
-          $userFullName = User::where('mobile',$recipient)->first();
+          $userFullName = User::where('mobile', $recipient)->first();
           $userFullName = $userFullName->first_name . " " . $userFullName->last_name;
           $messagesService = new MessageService(
-            SmsService::create(100252, $recipient,[$userFullName,$oldDateJalali,$newDateJalali,'به نوبه'])
+            SmsService::create(100252, $recipient, [$userFullName, $oldDateJalali, $newDateJalali, 'به نوبه'])
           );
           $messagesService->send();
         }
@@ -1213,7 +1213,7 @@ class ScheduleSettingController
       }
 
       return response()->json([
-        'message' => '✅ بازه زمانی با موفقیت حذف شد',
+        'message' => ' بازه زمانی با موفقیت حذف شد',
         'status' => true
       ]);
     } catch (\Exception $e) {

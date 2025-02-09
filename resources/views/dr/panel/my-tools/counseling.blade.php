@@ -1327,7 +1327,7 @@
                     <input type="text" class="form-control h-50 text-center max-appointments bg-white" data-day="${day}" name="nobat-count" id="morning-patients-${day}" data-start-time="" data-end-time="" value="" data-toggle="modal" data-target="#CalculatorModal" readonly>
                 </div>
                 <div class="form-group col-sm-1 position-relative">
-                    <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-day="${day}" disabled>
+                    <button class="btn btn-light btn-sm copy-single-slot-btn" data-toggle="modal" data-target="#checkboxModal" data-start-time="" data-end-time="" data-max-appointments="" data-slot-id="" data-day="${day}" disabled>
                         <img src="${svgUrl}">
                     </button>
                 </div>
@@ -1629,14 +1629,12 @@
    }
   });
   $(document).on("click", "#saveSelectionCalculator", function() {
-   if ($(this).data("clicked")) return; //  جلوگیری از اجرای مکرر
-   $(this).data("clicked", true);
-
+   
+   
    let currentRow = $("#CalculatorModal").data("currentRow"); // دریافت ردیف جاری
    let newValue = $("input[name='appointment-count']").val(); // مقدار جدید تعداد نوبت‌ها
 
    if (!newValue || isNaN(newValue) || parseInt(newValue) <= 0) {
-    $(this).data("clicked", false); // بازنشانی مقدار
     toastr.warning(' لطفاً مقدار معتبر وارد کنید.');
     return;
    }
@@ -1668,7 +1666,7 @@
     },
    success: function (response) {
        if (response.status) {
-         toastr.success('✅ ساعت کاری با موفقیت اضافه شد');
+         toastr.success(' ساعت کاری با موفقیت اضافه شد');
          currentRow.find(".remove-row-btn, .copy-single-slot-btn, .schedule-btn").prop("disabled", false);
 
          // مقدار جدید را داخل input تعداد نوبت قرار بده
@@ -1694,8 +1692,13 @@
         
          // ذخیره `slot_id` در ردیف جاری
          if (response.workSchedule.id) {
-           currentRow.attr("data-slot-id", response.workSchedule.id);
            currentRow.find('.schedule-btn').attr({
+             "data-start-time": finalStartTime,
+             "data-end-time": finalEndTime,
+             "data-max-appointments": parseInt(finalMaxAppointments),
+             "data-slot-id": response.workSchedule.id
+           }); 
+           currentRow.find('.copy-single-slot-btn').attr({
              "data-start-time": finalStartTime,
              "data-end-time": finalEndTime,
              "data-max-appointments": parseInt(finalMaxAppointments),
@@ -1707,8 +1710,6 @@
              "data-max-appointments": parseInt(finalMaxAppointments),
              "data-slot-id": response.workSchedule.id
            });
-           currentRow.find('.remove-row-btn').attr("data-slot-id", response.workSchedule.id);
-           currentRow.find('.copy-single-slot-btn').attr("data-slot-id", response.workSchedule.id);
          }
        }
      },

@@ -35,9 +35,4 @@ class DoctorCounselingWorkSchedule extends Model
     {
         return $this->belongsTo(Clinic::class);
     }
-
-    public function slots()
-    {
-        return $this->hasMany(DoctorCounselingSlot::class, 'work_schedule_id');
-    }
 }

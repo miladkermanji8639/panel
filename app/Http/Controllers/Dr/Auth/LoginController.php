@@ -223,7 +223,7 @@ class LoginController
       ]);
     }
 
-    // ✅ ورود نهایی بدون احراز هویت دو عاملی
+    //  ورود نهایی بدون احراز هویت دو عاملی
     if ($user instanceof Doctor) {
       Auth::guard('doctor')->login($user);
     } elseif ($user instanceof Secretary) {

@@ -269,10 +269,14 @@ class MoshavereSettingController
     try {
       $workSchedule = DoctorCounselingWorkSchedule::firstOrCreate(
         ['doctor_id' => $doctor->id, 'day' => $validated['day']],
-        ['is_working' => true, 'work_hours' => json_encode([])]
+        ['is_working' => true, 'work_hours' => "[]"] // مقداردهی با رشته‌ی `[]`
       );
 
-      $existingWorkHours = json_decode($workSchedule->work_hours, true) ?? [];
+      // 🛠 اصلاح مشکل json_decode
+      $existingWorkHours = is_string($workSchedule->work_hours) && !empty($workSchedule->work_hours)
+        ? json_decode($workSchedule->work_hours, true)
+        : [];
+
 
       foreach ($existingWorkHours as $hour) {
         $existingStart = Carbon::createFromFormat('H:i', $hour['start']);
@@ -299,10 +303,6 @@ class MoshavereSettingController
         }
       }
 
-
-
-
-
       // اضافه کردن ساعت جدید به JSON
       $newSlot = [
         'start' => $validated['start_time'],
@@ -327,6 +327,7 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   public function updateWorkDayStatus(Request $request)
   {
     $validated = $request->validate([
@@ -557,7 +558,7 @@ class MoshavereSettingController
           'work_hours' => $dayConfig['work_hours'] ?? null,
           'appointment_settings' => json_encode($dayConfig['appointment_settings'] ?? []),
         ]);
-      
+
       }
       DB::commit();
       return response()->json([
@@ -669,9 +670,9 @@ class MoshavereSettingController
       // فیلتر تنظیمات برای حذف آیتم موردنظر
       $updatedSettings = array_filter($settings, function ($setting) use ($validated) {
         return !(
-          trim($setting['start_time']) === trim($validated['start_time']) &&  // ✅ استفاده از نام درست فیلد
-          trim($setting['end_time']) === trim($validated['end_time']) &&      // ✅ استفاده از نام درست فیلد
-          trim($setting['selected_day']) === trim($validated['selected_day']) // ✅ حذف بر اساس `selected_day`
+          trim($setting['start_time']) === trim($validated['start_time']) &&  //  استفاده از نام درست فیلد
+          trim($setting['end_time']) === trim($validated['end_time']) &&      //  استفاده از نام درست فیلد
+          trim($setting['selected_day']) === trim($validated['selected_day']) //  حذف بر اساس `selected_day`
         );
       });
       // بررسی اینکه آیا هیچ تنظیمی حذف شده است یا نه
@@ -796,7 +797,7 @@ class MoshavereSettingController
       }
 
       return response()->json([
-        'message' => '✅ بازه زمانی با موفقیت حذف شد',
+        'message' => ' بازه زمانی با موفقیت حذف شد',
         'status' => true
       ]);
     } catch (\Exception $e) {

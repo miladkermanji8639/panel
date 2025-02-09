@@ -114,7 +114,7 @@
       const appointmentInput = document.getElementById('appointment_duration');
       const saveButton = document.getElementById('saveButton');
 
-      // ✅ انتخاب و حذف انتخاب زمان
+      //  انتخاب و حذف انتخاب زمان
       badgeElements.forEach(element => {
         element.addEventListener('click', function () {
           const selectedDuration = this.textContent.trim().replace(' دقیقه', '');
@@ -133,7 +133,7 @@
         });
       });
 
-      // ✅ ثبت فرم و بررسی خطا در انتخاب نوبت
+      //  ثبت فرم و بررسی خطا در انتخاب نوبت
       document.getElementById('workingHoursForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 

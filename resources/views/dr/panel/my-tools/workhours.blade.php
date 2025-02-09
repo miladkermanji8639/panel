@@ -1632,7 +1632,7 @@
     },
    success: function (response) {
        if (response.status) {
-         toastr.success('✅ ساعت کاری با موفقیت اضافه شد');
+         toastr.success(' ساعت کاری با موفقیت اضافه شد');
          currentRow.find(".remove-row-btn, .copy-single-slot-btn, .schedule-btn").prop("disabled", false);
 
          // مقدار جدید را داخل input تعداد نوبت قرار بده
@@ -1660,6 +1660,12 @@
          if (response.workSchedule.id) {
            currentRow.attr("data-slot-id", response.workSchedule.id);
            currentRow.find('.schedule-btn').attr({
+             "data-start-time": finalStartTime,
+             "data-end-time": finalEndTime,
+             "data-max-appointments": parseInt(finalMaxAppointments),
+             "data-slot-id": response.workSchedule.id
+           });
+             currentRow.find('.copy-single-slot-btn').attr({
              "data-start-time": finalStartTime,
              "data-end-time": finalEndTime,
              "data-max-appointments": parseInt(finalMaxAppointments),

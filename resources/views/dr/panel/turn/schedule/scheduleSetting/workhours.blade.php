@@ -26,16 +26,16 @@
    <div>
     <div>
      <div>
-      <div class="input-group position-relative mx-2">
+      <div class="input-group position-relative">
        <label class="label-top-input-special-takhasos"> تعداد روز های باز تقویم </label>
        <input type="number" value="{{ $appointmentConfig->calendar_days ?? '' }}" class="form-control text-center h-50 border-radius-0"
         name="calendar_days" placeholder="تعداد روز مورد نظر خود را وارد کنید">
        <div class="input-group-append count-span-prepand-style"><span class="input-group-text px-2">روز</span></div>
       </div>
      </div>
-     <div class="mt-2">
+     <div class="mt-4">
       <label class="text-dark font-weight-bold">روزهای کاری</label>
-      <div class="d-flex flex-wrap justify-content-start mt-3 gap-40">
+      <div class="d-flex flex-wrap justify-content-start mt-3 gap-40 bg-light p-3 border-radius-4">
        <x-my-check :isChecked="false" id="saturday" day="شنبه" />
        <x-my-check :isChecked="false" id="sunday" day="یکشنبه" />
        <x-my-check :isChecked="false" id="monday" day="دوشنبه" />
