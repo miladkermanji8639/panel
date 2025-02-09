@@ -19,7 +19,7 @@ class PaymentService
    */
   public function pay($amount, $callbackUrl = null, $meta = [])
   {
-   
+
 
     $gateway = config('payment.default_gateway');
 

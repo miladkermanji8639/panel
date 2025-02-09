@@ -15,7 +15,7 @@ use App\Http\Controllers\Dr\Panel\Profile\DrUpgradeProfileController;
 |
 */
 
-Route::middleware(['web', 'doctor'])->prefix('payment')->group(function () {
+Route::middleware(['web', 'doctor'])->prefix('dr/panel/payment')->group(function () {
     Route::post('/pay', [DrUpgradeProfileController::class, 'payForUpgrade'])->name('doctor.upgrade.pay');
     Route::get('/callback', [DrUpgradeProfileController::class, 'paymentCallback'])->name('doctor.upgrade.callback');
 });

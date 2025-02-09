@@ -4,7 +4,7 @@
   "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
   "This file is @generated automatically"
  ],
- "content-hash": "ef04613d75e72d1ba93f15da22e8fe86",
+ "content-hash": "1b4fe0e01a708f7c41e2435d755eb081",
  "packages": [
   {
    "name": "bacon/bacon-qr-code",
@@ -255,6 +255,145 @@
     }
    ],
    "time": "2024-02-09T16:56:22+00:00"
+  },
+  {
+   "name": "chillerlan/php-cache",
+   "version": "5.1.0",
+   "source": {
+    "type": "git",
+    "url": "https://github.com/chillerlan/php-cache.git",
+    "reference": "35f1596660c49078edb01ddc8fedd259239ed3a6"
+   },
+   "dist": {
+    "type": "zip",
+    "url": "https://api.github.com/repos/chillerlan/php-cache/zipball/35f1596660c49078edb01ddc8fedd259239ed3a6",
+    "reference": "35f1596660c49078edb01ddc8fedd259239ed3a6",
+    "shasum": ""
+   },
+   "require": {
+    "chillerlan/php-settings-container": "^3.1",
+    "php": "^8.1",
+    "psr/log": "^1.1 || ^2.0 || ^3.0",
+    "psr/simple-cache": "^2.0 || ^3.0"
+   },
+   "provide": {
+    "psr/simple-cache-implementation": "2.0 || 3.0"
+   },
+   "require-dev": {
+    "phan/phan": "^5.4",
+    "phpmd/phpmd": "^2.15",
+    "phpunit/phpunit": "^10.5",
+    "squizlabs/php_codesniffer": "^3.9"
+   },
+   "type": "library",
+   "autoload": {
+    "psr-4": {
+     "chillerlan\\SimpleCache\\": "src"
+    }
+   },
+   "notification-url": "https://packagist.org/downloads/",
+   "license": [
+    "MIT"
+   ],
+   "authors": [
+    {
+     "name": "Smiley",
+     "email": "smiley@chillerlan.net",
+     "homepage": "https://github.com/codemasher"
+    },
+    {
+     "name": "Contributors",
+     "homepage": "https://github.com/chillerlan/php-cache/graphs/contributors"
+    }
+   ],
+   "description": "A psr/simple-cache implementation. PHP 8.1+",
+   "homepage": "https://github.com/chillerlan/php-cache",
+   "keywords": [
+    "cache",
+    "php8",
+    "psr-16"
+   ],
+   "support": {
+    "issues": "https://github.com/chillerlan/php-cache/issues",
+    "source": "https://github.com/chillerlan/php-cache"
+   },
+   "funding": [
+    {
+     "url": "https://www.paypal.com/donate?hosted_button_id=WLYUNAT9ZTJZ4",
+     "type": "custom"
+    },
+    {
+     "url": "https://ko-fi.com/codemasher",
+     "type": "ko_fi"
+    }
+   ],
+   "time": "2024-02-25T16:01:12+00:00"
+  },
+  {
+   "name": "chillerlan/php-settings-container",
+   "version": "3.2.1",
+   "source": {
+    "type": "git",
+    "url": "https://github.com/chillerlan/php-settings-container.git",
+    "reference": "95ed3e9676a1d47cab2e3174d19b43f5dbf52681"
+   },
+   "dist": {
+    "type": "zip",
+    "url": "https://api.github.com/repos/chillerlan/php-settings-container/zipball/95ed3e9676a1d47cab2e3174d19b43f5dbf52681",
+    "reference": "95ed3e9676a1d47cab2e3174d19b43f5dbf52681",
+    "shasum": ""
+   },
+   "require": {
+    "ext-json": "*",
+    "php": "^8.1"
+   },
+   "require-dev": {
+    "phpmd/phpmd": "^2.15",
+    "phpstan/phpstan": "^1.11",
+    "phpstan/phpstan-deprecation-rules": "^1.2",
+    "phpunit/phpunit": "^10.5",
+    "squizlabs/php_codesniffer": "^3.10"
+   },
+   "type": "library",
+   "autoload": {
+    "psr-4": {
+     "chillerlan\\Settings\\": "src"
+    }
+   },
+   "notification-url": "https://packagist.org/downloads/",
+   "license": [
+    "MIT"
+   ],
+   "authors": [
+    {
+     "name": "Smiley",
+     "email": "smiley@chillerlan.net",
+     "homepage": "https://github.com/codemasher"
+    }
+   ],
+   "description": "A container class for immutable settings objects. Not a DI container.",
+   "homepage": "https://github.com/chillerlan/php-settings-container",
+   "keywords": [
+    "Settings",
+    "configuration",
+    "container",
+    "helper"
+   ],
+   "support": {
+    "issues": "https://github.com/chillerlan/php-settings-container/issues",
+    "source": "https://github.com/chillerlan/php-settings-container"
+   },
+   "funding": [
+    {
+     "url": "https://www.paypal.com/donate?hosted_button_id=WLYUNAT9ZTJZ4",
+     "type": "custom"
+    },
+    {
+     "url": "https://ko-fi.com/codemasher",
+     "type": "ko_fi"
+    }
+   ],
+   "time": "2024-07-16T11:13:48+00:00"
   },
   {
    "name": "cocur/slugify",
@@ -764,16 +903,16 @@
   },
   {
    "name": "egulias/email-validator",
-   "version": "4.0.2",
+   "version": "4.0.3",
    "source": {
     "type": "git",
     "url": "https://github.com/egulias/EmailValidator.git",
-    "reference": "ebaaf5be6c0286928352e054f2d5125608e5405e"
+    "reference": "b115554301161fa21467629f1e1391c1936de517"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/ebaaf5be6c0286928352e054f2d5125608e5405e",
-    "reference": "ebaaf5be6c0286928352e054f2d5125608e5405e",
+    "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/b115554301161fa21467629f1e1391c1936de517",
+    "reference": "b115554301161fa21467629f1e1391c1936de517",
     "shasum": ""
    },
    "require": {
@@ -819,7 +958,7 @@
    ],
    "support": {
     "issues": "https://github.com/egulias/EmailValidator/issues",
-    "source": "https://github.com/egulias/EmailValidator/tree/4.0.2"
+    "source": "https://github.com/egulias/EmailValidator/tree/4.0.3"
    },
    "funding": [
     {
@@ -827,7 +966,7 @@
      "type": "github"
     }
    ],
-   "time": "2023-10-06T06:47:41+00:00"
+   "time": "2024-12-27T00:36:43+00:00"
   },
   {
    "name": "fruitcake/php-cors",
@@ -1289,16 +1428,16 @@
   },
   {
    "name": "guzzlehttp/uri-template",
-   "version": "v1.0.3",
+   "version": "v1.0.4",
    "source": {
     "type": "git",
     "url": "https://github.com/guzzle/uri-template.git",
-    "reference": "ecea8feef63bd4fef1f037ecb288386999ecc11c"
+    "reference": "30e286560c137526eccd4ce21b2de477ab0676d2"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/guzzle/uri-template/zipball/ecea8feef63bd4fef1f037ecb288386999ecc11c",
-    "reference": "ecea8feef63bd4fef1f037ecb288386999ecc11c",
+    "url": "https://api.github.com/repos/guzzle/uri-template/zipball/30e286560c137526eccd4ce21b2de477ab0676d2",
+    "reference": "30e286560c137526eccd4ce21b2de477ab0676d2",
     "shasum": ""
    },
    "require": {
@@ -1355,7 +1494,7 @@
    ],
    "support": {
     "issues": "https://github.com/guzzle/uri-template/issues",
-    "source": "https://github.com/guzzle/uri-template/tree/v1.0.3"
+    "source": "https://github.com/guzzle/uri-template/tree/v1.0.4"
    },
    "funding": [
     {
@@ -1371,7 +1510,7 @@
      "type": "tidelift"
     }
    ],
-   "time": "2023-12-03T19:50:20+00:00"
+   "time": "2025-02-03T10:55:03+00:00"
   },
   {
    "name": "hekmatinasser/jalali",
@@ -1623,16 +1762,16 @@
   },
   {
    "name": "laravel/framework",
-   "version": "v11.35.1",
+   "version": "v11.41.3",
    "source": {
     "type": "git",
     "url": "https://github.com/laravel/framework.git",
-    "reference": "dcfa130ede1a6fa4343dc113410963e791ad34fb"
+    "reference": "3ef433d5865f30a19b6b1be247586068399b59cc"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/laravel/framework/zipball/dcfa130ede1a6fa4343dc113410963e791ad34fb",
-    "reference": "dcfa130ede1a6fa4343dc113410963e791ad34fb",
+    "url": "https://api.github.com/repos/laravel/framework/zipball/3ef433d5865f30a19b6b1be247586068399b59cc",
+    "reference": "3ef433d5865f30a19b6b1be247586068399b59cc",
     "shasum": ""
    },
    "require": {
@@ -1653,12 +1792,12 @@
     "guzzlehttp/uri-template": "^1.0",
     "laravel/prompts": "^0.1.18|^0.2.0|^0.3.0",
     "laravel/serializable-closure": "^1.3|^2.0",
-    "league/commonmark": "^2.2.1",
+    "league/commonmark": "^2.6",
     "league/flysystem": "^3.25.1",
     "league/flysystem-local": "^3.25.1",
     "league/uri": "^7.5.1",
     "monolog/monolog": "^3.0",
-    "nesbot/carbon": "^2.72.2|^3.4",
+    "nesbot/carbon": "^2.72.6|^3.8.4",
     "nunomaduro/termwind": "^2.0",
     "php": "^8.2",
     "psr/container": "^1.1.1|^2.0.1",
@@ -1668,7 +1807,7 @@
     "symfony/console": "^7.0.3",
     "symfony/error-handler": "^7.0.3",
     "symfony/finder": "^7.0.3",
-    "symfony/http-foundation": "^7.0.3",
+    "symfony/http-foundation": "^7.2.0",
     "symfony/http-kernel": "^7.0.3",
     "symfony/mailer": "^7.0.3",
     "symfony/mime": "^7.0.3",
@@ -1682,7 +1821,6 @@
     "voku/portable-ascii": "^2.0.2"
    },
    "conflict": {
-    "mockery/mockery": "1.6.8",
     "tightenco/collect": "<5.5.33"
    },
    "provide": {
@@ -1734,6 +1872,7 @@
     "fakerphp/faker": "^1.24",
     "guzzlehttp/promises": "^2.0.3",
     "guzzlehttp/psr7": "^2.4",
+    "laravel/pint": "^1.18",
     "league/flysystem-aws-s3-v3": "^3.25.1",
     "league/flysystem-ftp": "^3.25.1",
     "league/flysystem-path-prefixing": "^3.25.1",
@@ -1834,7 +1973,7 @@
     "issues": "https://github.com/laravel/framework/issues",
     "source": "https://github.com/laravel/framework"
    },
-   "time": "2024-12-12T18:25:58+00:00"
+   "time": "2025-01-30T13:25:22+00:00"
   },
   {
    "name": "laravel/jetstream",
@@ -1905,16 +2044,16 @@
   },
   {
    "name": "laravel/prompts",
-   "version": "v0.3.2",
+   "version": "v0.3.4",
    "source": {
     "type": "git",
     "url": "https://github.com/laravel/prompts.git",
-    "reference": "0e0535747c6b8d6d10adca8b68293cf4517abb0f"
+    "reference": "abeaa2ba4294247d5409490d1ca1bc6248087011"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/laravel/prompts/zipball/0e0535747c6b8d6d10adca8b68293cf4517abb0f",
-    "reference": "0e0535747c6b8d6d10adca8b68293cf4517abb0f",
+    "url": "https://api.github.com/repos/laravel/prompts/zipball/abeaa2ba4294247d5409490d1ca1bc6248087011",
+    "reference": "abeaa2ba4294247d5409490d1ca1bc6248087011",
     "shasum": ""
    },
    "require": {
@@ -1928,7 +2067,7 @@
     "laravel/framework": ">=10.17.0 <10.25.0"
    },
    "require-dev": {
-    "illuminate/collections": "^10.0|^11.0",
+    "illuminate/collections": "^10.0|^11.0|^12.0",
     "mockery/mockery": "^1.5",
     "pestphp/pest": "^2.3|^3.4",
     "phpstan/phpstan": "^1.11",
@@ -1958,9 +2097,9 @@
    "description": "Add beautiful and user-friendly forms to your command-line applications.",
    "support": {
     "issues": "https://github.com/laravel/prompts/issues",
-    "source": "https://github.com/laravel/prompts/tree/v0.3.2"
+    "source": "https://github.com/laravel/prompts/tree/v0.3.4"
    },
-   "time": "2024-11-12T14:59:47+00:00"
+   "time": "2025-01-24T15:41:01+00:00"
   },
   {
    "name": "laravel/sanctum",
@@ -2028,25 +2167,25 @@
   },
   {
    "name": "laravel/serializable-closure",
-   "version": "v2.0.0",
+   "version": "v2.0.2",
    "source": {
     "type": "git",
     "url": "https://github.com/laravel/serializable-closure.git",
-    "reference": "0d8d3d8086984996df86596a86dea60398093a81"
+    "reference": "2e1a362527783bcab6c316aad51bf36c5513ae44"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/0d8d3d8086984996df86596a86dea60398093a81",
-    "reference": "0d8d3d8086984996df86596a86dea60398093a81",
+    "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/2e1a362527783bcab6c316aad51bf36c5513ae44",
+    "reference": "2e1a362527783bcab6c316aad51bf36c5513ae44",
     "shasum": ""
    },
    "require": {
     "php": "^8.1"
    },
    "require-dev": {
-    "illuminate/support": "^10.0|^11.0",
+    "illuminate/support": "^10.0|^11.0|^12.0",
     "nesbot/carbon": "^2.67|^3.0",
-    "pestphp/pest": "^2.36",
+    "pestphp/pest": "^2.36|^3.0",
     "phpstan/phpstan": "^2.0",
     "symfony/var-dumper": "^6.2.0|^7.0.0"
    },
@@ -2085,7 +2224,7 @@
     "issues": "https://github.com/laravel/serializable-closure/issues",
     "source": "https://github.com/laravel/serializable-closure"
    },
-   "time": "2024-11-19T01:38:44+00:00"
+   "time": "2025-01-24T15:42:37+00:00"
   },
   {
    "name": "laravel/tinker",
@@ -2155,16 +2294,16 @@
   },
   {
    "name": "league/commonmark",
-   "version": "2.6.0",
+   "version": "2.6.1",
    "source": {
     "type": "git",
     "url": "https://github.com/thephpleague/commonmark.git",
-    "reference": "d150f911e0079e90ae3c106734c93137c184f932"
+    "reference": "d990688c91cedfb69753ffc2512727ec646df2ad"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/d150f911e0079e90ae3c106734c93137c184f932",
-    "reference": "d150f911e0079e90ae3c106734c93137c184f932",
+    "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/d990688c91cedfb69753ffc2512727ec646df2ad",
+    "reference": "d990688c91cedfb69753ffc2512727ec646df2ad",
     "shasum": ""
    },
    "require": {
@@ -2258,7 +2397,7 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-12-07T15:34:16+00:00"
+   "time": "2024-12-29T14:10:59+00:00"
   },
   {
    "name": "league/config",
@@ -2939,16 +3078,16 @@
   },
   {
    "name": "nesbot/carbon",
-   "version": "3.8.2",
+   "version": "3.8.4",
    "source": {
     "type": "git",
-    "url": "https://github.com/briannesbitt/Carbon.git",
-    "reference": "e1268cdbc486d97ce23fef2c666dc3c6b6de9947"
+    "url": "https://github.com/CarbonPHP/carbon.git",
+    "reference": "129700ed449b1f02d70272d2ac802357c8c30c58"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e1268cdbc486d97ce23fef2c666dc3c6b6de9947",
-    "reference": "e1268cdbc486d97ce23fef2c666dc3c6b6de9947",
+    "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/129700ed449b1f02d70272d2ac802357c8c30c58",
+    "reference": "129700ed449b1f02d70272d2ac802357c8c30c58",
     "shasum": ""
    },
    "require": {
@@ -2980,10 +3119,6 @@
    ],
    "type": "library",
    "extra": {
-    "branch-alias": {
-     "dev-master": "3.x-dev",
-     "dev-2.x": "2.x-dev"
-    },
     "laravel": {
      "providers": [
       "Carbon\\Laravel\\ServiceProvider"
@@ -2993,6 +3128,10 @@
      "includes": [
       "extension.neon"
      ]
+    },
+    "branch-alias": {
+     "dev-2.x": "2.x-dev",
+     "dev-master": "3.x-dev"
     }
    },
    "autoload": {
@@ -3041,7 +3180,7 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-11-07T17:46:48+00:00"
+   "time": "2024-12-27T09:25:35+00:00"
   },
   {
    "name": "nette/schema",
@@ -4446,6 +4585,266 @@
    "time": "2024-04-27T21:32:50+00:00"
   },
   {
+   "name": "shetabit/multipay",
+   "version": "v1.58.0",
+   "source": {
+    "type": "git",
+    "url": "https://github.com/shetabit/multipay.git",
+    "reference": "5b5264a85ac517d150cedc5f8ab9ed4e002930b6"
+   },
+   "dist": {
+    "type": "zip",
+    "url": "https://api.github.com/repos/shetabit/multipay/zipball/5b5264a85ac517d150cedc5f8ab9ed4e002930b6",
+    "reference": "5b5264a85ac517d150cedc5f8ab9ed4e002930b6",
+    "shasum": ""
+   },
+   "require": {
+    "chillerlan/php-cache": "^4.1|^5.0",
+    "ext-json": "*",
+    "guzzlehttp/guzzle": ">=6.2",
+    "nesbot/carbon": "^1.39|^2.0|^3.0",
+    "php": ">=7.2",
+    "ramsey/uuid": "^3.7|^3.8|^3.9|^4.0"
+   },
+   "require-dev": {
+    "phpunit/phpunit": "^8.0|^9.0",
+    "squizlabs/php_codesniffer": "^3.5"
+   },
+   "type": "library",
+   "autoload": {
+    "psr-4": {
+     "Shetabit\\Multipay\\": "src"
+    }
+   },
+   "notification-url": "https://packagist.org/downloads/",
+   "license": [
+    "MIT"
+   ],
+   "authors": [
+    {
+     "name": "Mahdi Khanzadi",
+     "email": "khanzadimahdi@gmail.com",
+     "homepage": "https://github.com/shetabit",
+     "role": "Developer"
+    }
+   ],
+   "description": "PHP Payment Gateway Integration Package",
+   "homepage": "https://github.com/shetabit/multipay",
+   "keywords": [
+    "Bank",
+    "Meli",
+    "Payline",
+    "asan pardakht",
+    "gateway",
+    "iranKish payment gateway",
+    "irankish",
+    "jahanPay payment gateway",
+    "jahanpay",
+    "jibit",
+    "jibit payment gateway",
+    "meli payment gateway",
+    "mellat",
+    "mellat payment gateway",
+    "melli",
+    "parsian",
+    "parsian payment gateway",
+    "pasargad",
+    "pasargad payment gateway",
+    "pay",
+    "pay payment gateway",
+    "payline payment gateway",
+    "payment",
+    "payment gateway",
+    "paypal",
+    "paypal payment gateway",
+    "php asan pardakht",
+    "php iranKish",
+    "php iranKish package",
+    "php jahanPay",
+    "php jahanPay package",
+    "php jibit",
+    "php jibit package",
+    "php meli",
+    "php meli package",
+    "php mellat",
+    "php mellat package",
+    "php melli bank payment package",
+    "php parsian",
+    "php parsian package",
+    "php pasargad",
+    "php pasargad package",
+    "php pay",
+    "php pay package",
+    "php payline",
+    "php payline package",
+    "php payment gateway",
+    "php payment package",
+    "php paypal",
+    "php paypal package",
+    "php sadad",
+    "php sadad package",
+    "php saderat",
+    "php saderat package",
+    "php saman",
+    "php saman package",
+    "php shaparak",
+    "php shaparak package",
+    "php zarinpal",
+    "php zarinpal package",
+    "sadad",
+    "sadad payment gateway",
+    "saderat",
+    "saderat payment gateway",
+    "saman",
+    "saman payment gateway",
+    "shaparak",
+    "shaparak payment gateway",
+    "shetabit",
+    "zarinpal",
+    "zarinpal payment gateway"
+   ],
+   "support": {
+    "issues": "https://github.com/shetabit/multipay/issues",
+    "source": "https://github.com/shetabit/multipay/tree/v1.58.0"
+   },
+   "time": "2024-12-21T19:43:49+00:00"
+  },
+  {
+   "name": "shetabit/payment",
+   "version": "v5.8.0",
+   "source": {
+    "type": "git",
+    "url": "https://github.com/shetabit/payment.git",
+    "reference": "969534e9a15882a40aa0d5639cd7817b13b3c9a1"
+   },
+   "dist": {
+    "type": "zip",
+    "url": "https://api.github.com/repos/shetabit/payment/zipball/969534e9a15882a40aa0d5639cd7817b13b3c9a1",
+    "reference": "969534e9a15882a40aa0d5639cd7817b13b3c9a1",
+    "shasum": ""
+   },
+   "require": {
+    "illuminate/broadcasting": "^5.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+    "illuminate/support": "^5.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+    "php": ">=7.2",
+    "shetabit/multipay": "^1.0"
+   },
+   "require-dev": {
+    "orchestra/testbench": "^3.0|^4.0|^5.0|^6.0|^7.0|^8.0|^9.0",
+    "phpunit/phpunit": "^6.0|^7.0|^8.0|^9.0|^10.0",
+    "squizlabs/php_codesniffer": "^3.5"
+   },
+   "suggest": {
+    "ext-soap": "Needed to support some drivers that required SOAP"
+   },
+   "type": "library",
+   "extra": {
+    "laravel": {
+     "aliases": {
+      "Payment": "Shetabit\\Payment\\Facade\\Payment"
+     },
+     "providers": [
+      "Shetabit\\Payment\\Provider\\PaymentServiceProvider"
+     ]
+    }
+   },
+   "autoload": {
+    "psr-4": {
+     "Shetabit\\Payment\\": "src"
+    }
+   },
+   "notification-url": "https://packagist.org/downloads/",
+   "license": [
+    "MIT"
+   ],
+   "authors": [
+    {
+     "name": "Mahdi Khanzadi",
+     "email": "khanzadimahdi@gmail.com",
+     "homepage": "https://github.com/shetabit",
+     "role": "Developer"
+    }
+   ],
+   "description": "Laravel Payment Gateway Integration Package",
+   "homepage": "https://github.com/shetabit/payment",
+   "keywords": [
+    "Bank",
+    "Meli",
+    "Payline",
+    "gateway",
+    "iranKish payment gateway",
+    "irankish",
+    "jahanPay payment gateway",
+    "jahanpay",
+    "jibit",
+    "jibit payment gateway",
+    "laravel iranKish",
+    "laravel iranKish package",
+    "laravel jahanPay",
+    "laravel jahanPay package",
+    "laravel jibit",
+    "laravel jibit package",
+    "laravel meli",
+    "laravel meli package",
+    "laravel mellat",
+    "laravel mellat package",
+    "laravel melli bank payment package",
+    "laravel parsian",
+    "laravel parsian package",
+    "laravel pasargad",
+    "laravel pasargad package",
+    "laravel pay",
+    "laravel pay package",
+    "laravel payline",
+    "laravel payline package",
+    "laravel payment gateway",
+    "laravel payment package",
+    "laravel paypal",
+    "laravel paypal package",
+    "laravel sadad",
+    "laravel sadad package",
+    "laravel saderat",
+    "laravel saderat package",
+    "laravel saman",
+    "laravel saman package",
+    "laravel shaparak",
+    "laravel shaparak package",
+    "laravel zarinpal",
+    "laravel zarinpal package",
+    "meli payment gateway",
+    "mellat",
+    "mellat payment gateway",
+    "melli",
+    "parsian",
+    "parsian payment gateway",
+    "pasargad",
+    "pasargad payment gateway",
+    "pay",
+    "pay payment gateway",
+    "payline payment gateway",
+    "payment",
+    "payment gateway",
+    "paypal",
+    "paypal payment gateway",
+    "sadad",
+    "sadad payment gateway",
+    "saderat",
+    "saderat payment gateway",
+    "saman",
+    "saman payment gateway",
+    "shaparak",
+    "shaparak payment gateway",
+    "shetabit",
+    "zarinpal",
+    "zarinpal payment gateway"
+   ],
+   "support": {
+    "issues": "https://github.com/shetabit/payment/issues",
+    "source": "https://github.com/shetabit/payment/tree/v5.8.0"
+   },
+   "time": "2024-03-07T10:11:00+00:00"
+  },
+  {
    "name": "symfony/clock",
    "version": "v7.2.0",
    "source": {
@@ -4696,12 +5095,12 @@
    },
    "type": "library",
    "extra": {
+    "thanks": {
+     "url": "https://github.com/symfony/contracts",
+     "name": "symfony/contracts"
+    },
     "branch-alias": {
      "dev-main": "3.5-dev"
-    },
-    "thanks": {
-     "name": "symfony/contracts",
-     "url": "https://github.com/symfony/contracts"
     }
    },
    "autoload": {
@@ -4746,16 +5145,16 @@
   },
   {
    "name": "symfony/error-handler",
-   "version": "v7.2.1",
+   "version": "v7.2.3",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/error-handler.git",
-    "reference": "6150b89186573046167796fa5f3f76601d5145f8"
+    "reference": "959a74d044a6db21f4caa6d695648dcb5584cb49"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/error-handler/zipball/6150b89186573046167796fa5f3f76601d5145f8",
-    "reference": "6150b89186573046167796fa5f3f76601d5145f8",
+    "url": "https://api.github.com/repos/symfony/error-handler/zipball/959a74d044a6db21f4caa6d695648dcb5584cb49",
+    "reference": "959a74d044a6db21f4caa6d695648dcb5584cb49",
     "shasum": ""
    },
    "require": {
@@ -4801,7 +5200,7 @@
    "description": "Provides tools to manage errors and ease debugging PHP code",
    "homepage": "https://symfony.com",
    "support": {
-    "source": "https://github.com/symfony/error-handler/tree/v7.2.1"
+    "source": "https://github.com/symfony/error-handler/tree/v7.2.3"
    },
    "funding": [
     {
@@ -4817,7 +5216,7 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-12-07T08:50:44+00:00"
+   "time": "2025-01-07T09:39:55+00:00"
   },
   {
    "name": "symfony/event-dispatcher",
@@ -4919,12 +5318,12 @@
    },
    "type": "library",
    "extra": {
+    "thanks": {
+     "url": "https://github.com/symfony/contracts",
+     "name": "symfony/contracts"
+    },
     "branch-alias": {
      "dev-main": "3.5-dev"
-    },
-    "thanks": {
-     "name": "symfony/contracts",
-     "url": "https://github.com/symfony/contracts"
     }
    },
    "autoload": {
@@ -4977,16 +5376,16 @@
   },
   {
    "name": "symfony/finder",
-   "version": "v7.2.0",
+   "version": "v7.2.2",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/finder.git",
-    "reference": "6de263e5868b9a137602dd1e33e4d48bfae99c49"
+    "reference": "87a71856f2f56e4100373e92529eed3171695cfb"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/finder/zipball/6de263e5868b9a137602dd1e33e4d48bfae99c49",
-    "reference": "6de263e5868b9a137602dd1e33e4d48bfae99c49",
+    "url": "https://api.github.com/repos/symfony/finder/zipball/87a71856f2f56e4100373e92529eed3171695cfb",
+    "reference": "87a71856f2f56e4100373e92529eed3171695cfb",
     "shasum": ""
    },
    "require": {
@@ -5021,7 +5420,7 @@
    "description": "Finds files and directories via an intuitive fluent interface",
    "homepage": "https://symfony.com",
    "support": {
-    "source": "https://github.com/symfony/finder/tree/v7.2.0"
+    "source": "https://github.com/symfony/finder/tree/v7.2.2"
    },
    "funding": [
     {
@@ -5037,20 +5436,20 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-10-23T06:56:12+00:00"
+   "time": "2024-12-30T19:00:17+00:00"
   },
   {
    "name": "symfony/http-foundation",
-   "version": "v7.2.0",
+   "version": "v7.2.3",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/http-foundation.git",
-    "reference": "e88a66c3997859532bc2ddd6dd8f35aba2711744"
+    "reference": "ee1b504b8926198be89d05e5b6fc4c3810c090f0"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/http-foundation/zipball/e88a66c3997859532bc2ddd6dd8f35aba2711744",
-    "reference": "e88a66c3997859532bc2ddd6dd8f35aba2711744",
+    "url": "https://api.github.com/repos/symfony/http-foundation/zipball/ee1b504b8926198be89d05e5b6fc4c3810c090f0",
+    "reference": "ee1b504b8926198be89d05e5b6fc4c3810c090f0",
     "shasum": ""
    },
    "require": {
@@ -5099,7 +5498,7 @@
    "description": "Defines an object-oriented layer for the HTTP specification",
    "homepage": "https://symfony.com",
    "support": {
-    "source": "https://github.com/symfony/http-foundation/tree/v7.2.0"
+    "source": "https://github.com/symfony/http-foundation/tree/v7.2.3"
    },
    "funding": [
     {
@@ -5115,20 +5514,20 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-11-13T18:58:46+00:00"
+   "time": "2025-01-17T10:56:55+00:00"
   },
   {
    "name": "symfony/http-kernel",
-   "version": "v7.2.1",
+   "version": "v7.2.3",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/http-kernel.git",
-    "reference": "d8ae58eecae44c8e66833e76cc50a4ad3c002d97"
+    "reference": "caae9807f8e25a9b43ce8cc6fafab6cf91f0cc9b"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/http-kernel/zipball/d8ae58eecae44c8e66833e76cc50a4ad3c002d97",
-    "reference": "d8ae58eecae44c8e66833e76cc50a4ad3c002d97",
+    "url": "https://api.github.com/repos/symfony/http-kernel/zipball/caae9807f8e25a9b43ce8cc6fafab6cf91f0cc9b",
+    "reference": "caae9807f8e25a9b43ce8cc6fafab6cf91f0cc9b",
     "shasum": ""
    },
    "require": {
@@ -5213,7 +5612,7 @@
    "description": "Provides a structured process for converting a Request into a Response",
    "homepage": "https://symfony.com",
    "support": {
-    "source": "https://github.com/symfony/http-kernel/tree/v7.2.1"
+    "source": "https://github.com/symfony/http-kernel/tree/v7.2.3"
    },
    "funding": [
     {
@@ -5229,20 +5628,20 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-12-11T12:09:10+00:00"
+   "time": "2025-01-29T07:40:13+00:00"
   },
   {
    "name": "symfony/mailer",
-   "version": "v7.2.0",
+   "version": "v7.2.3",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/mailer.git",
-    "reference": "e4d358702fb66e4c8a2af08e90e7271a62de39cc"
+    "reference": "f3871b182c44997cf039f3b462af4a48fb85f9d3"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/mailer/zipball/e4d358702fb66e4c8a2af08e90e7271a62de39cc",
-    "reference": "e4d358702fb66e4c8a2af08e90e7271a62de39cc",
+    "url": "https://api.github.com/repos/symfony/mailer/zipball/f3871b182c44997cf039f3b462af4a48fb85f9d3",
+    "reference": "f3871b182c44997cf039f3b462af4a48fb85f9d3",
     "shasum": ""
    },
    "require": {
@@ -5293,7 +5692,7 @@
    "description": "Helps sending emails",
    "homepage": "https://symfony.com",
    "support": {
-    "source": "https://github.com/symfony/mailer/tree/v7.2.0"
+    "source": "https://github.com/symfony/mailer/tree/v7.2.3"
    },
    "funding": [
     {
@@ -5309,20 +5708,20 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-11-25T15:21:05+00:00"
+   "time": "2025-01-27T11:08:17+00:00"
   },
   {
    "name": "symfony/mime",
-   "version": "v7.2.1",
+   "version": "v7.2.3",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/mime.git",
-    "reference": "7f9617fcf15cb61be30f8b252695ed5e2bfac283"
+    "reference": "2fc3b4bd67e4747e45195bc4c98bea4628476204"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/mime/zipball/7f9617fcf15cb61be30f8b252695ed5e2bfac283",
-    "reference": "7f9617fcf15cb61be30f8b252695ed5e2bfac283",
+    "url": "https://api.github.com/repos/symfony/mime/zipball/2fc3b4bd67e4747e45195bc4c98bea4628476204",
+    "reference": "2fc3b4bd67e4747e45195bc4c98bea4628476204",
     "shasum": ""
    },
    "require": {
@@ -5377,7 +5776,7 @@
     "mime-type"
    ],
    "support": {
-    "source": "https://github.com/symfony/mime/tree/v7.2.1"
+    "source": "https://github.com/symfony/mime/tree/v7.2.3"
    },
    "funding": [
     {
@@ -5393,7 +5792,7 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-12-07T08:50:44+00:00"
+   "time": "2025-01-27T11:08:17+00:00"
   },
   {
    "name": "symfony/polyfill-ctype",
@@ -6094,16 +6493,16 @@
   },
   {
    "name": "symfony/routing",
-   "version": "v7.2.0",
+   "version": "v7.2.3",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/routing.git",
-    "reference": "e10a2450fa957af6c448b9b93c9010a4e4c0725e"
+    "reference": "ee9a67edc6baa33e5fae662f94f91fd262930996"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/routing/zipball/e10a2450fa957af6c448b9b93c9010a4e4c0725e",
-    "reference": "e10a2450fa957af6c448b9b93c9010a4e4c0725e",
+    "url": "https://api.github.com/repos/symfony/routing/zipball/ee9a67edc6baa33e5fae662f94f91fd262930996",
+    "reference": "ee9a67edc6baa33e5fae662f94f91fd262930996",
     "shasum": ""
    },
    "require": {
@@ -6155,7 +6554,7 @@
     "url"
    ],
    "support": {
-    "source": "https://github.com/symfony/routing/tree/v7.2.0"
+    "source": "https://github.com/symfony/routing/tree/v7.2.3"
    },
    "funding": [
     {
@@ -6171,7 +6570,7 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-11-25T11:08:51+00:00"
+   "time": "2025-01-17T10:56:55+00:00"
   },
   {
    "name": "symfony/service-contracts",
@@ -6197,12 +6596,12 @@
    },
    "type": "library",
    "extra": {
+    "thanks": {
+     "url": "https://github.com/symfony/contracts",
+     "name": "symfony/contracts"
+    },
     "branch-alias": {
      "dev-main": "3.5-dev"
-    },
-    "thanks": {
-     "name": "symfony/contracts",
-     "url": "https://github.com/symfony/contracts"
     }
    },
    "autoload": {
@@ -6345,16 +6744,16 @@
   },
   {
    "name": "symfony/translation",
-   "version": "v7.2.0",
+   "version": "v7.2.2",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/translation.git",
-    "reference": "dc89e16b44048ceecc879054e5b7f38326ab6cc5"
+    "reference": "e2674a30132b7cc4d74540d6c2573aa363f05923"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/translation/zipball/dc89e16b44048ceecc879054e5b7f38326ab6cc5",
-    "reference": "dc89e16b44048ceecc879054e5b7f38326ab6cc5",
+    "url": "https://api.github.com/repos/symfony/translation/zipball/e2674a30132b7cc4d74540d6c2573aa363f05923",
+    "reference": "e2674a30132b7cc4d74540d6c2573aa363f05923",
     "shasum": ""
    },
    "require": {
@@ -6420,7 +6819,7 @@
    "description": "Provides tools to internationalize your application",
    "homepage": "https://symfony.com",
    "support": {
-    "source": "https://github.com/symfony/translation/tree/v7.2.0"
+    "source": "https://github.com/symfony/translation/tree/v7.2.2"
    },
    "funding": [
     {
@@ -6436,7 +6835,7 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-11-12T20:47:56+00:00"
+   "time": "2024-12-07T08:18:10+00:00"
   },
   {
    "name": "symfony/translation-contracts",
@@ -6457,12 +6856,12 @@
    },
    "type": "library",
    "extra": {
+    "thanks": {
+     "url": "https://github.com/symfony/contracts",
+     "name": "symfony/contracts"
+    },
     "branch-alias": {
      "dev-main": "3.5-dev"
-    },
-    "thanks": {
-     "name": "symfony/contracts",
-     "url": "https://github.com/symfony/contracts"
     }
    },
    "autoload": {
@@ -6592,16 +6991,16 @@
   },
   {
    "name": "symfony/var-dumper",
-   "version": "v7.2.0",
+   "version": "v7.2.3",
    "source": {
     "type": "git",
     "url": "https://github.com/symfony/var-dumper.git",
-    "reference": "c6a22929407dec8765d6e2b6ff85b800b245879c"
+    "reference": "82b478c69745d8878eb60f9a049a4d584996f73a"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/symfony/var-dumper/zipball/c6a22929407dec8765d6e2b6ff85b800b245879c",
-    "reference": "c6a22929407dec8765d6e2b6ff85b800b245879c",
+    "url": "https://api.github.com/repos/symfony/var-dumper/zipball/82b478c69745d8878eb60f9a049a4d584996f73a",
+    "reference": "82b478c69745d8878eb60f9a049a4d584996f73a",
     "shasum": ""
    },
    "require": {
@@ -6655,7 +7054,7 @@
     "dump"
    ],
    "support": {
-    "source": "https://github.com/symfony/var-dumper/tree/v7.2.0"
+    "source": "https://github.com/symfony/var-dumper/tree/v7.2.3"
    },
    "funding": [
     {
@@ -6671,35 +7070,37 @@
      "type": "tidelift"
     }
    ],
-   "time": "2024-11-08T15:48:14+00:00"
+   "time": "2025-01-17T11:39:41+00:00"
   },
   {
    "name": "tijsverkoyen/css-to-inline-styles",
-   "version": "v2.2.7",
+   "version": "v2.3.0",
    "source": {
     "type": "git",
     "url": "https://github.com/tijsverkoyen/CssToInlineStyles.git",
-    "reference": "83ee6f38df0a63106a9e4536e3060458b74ccedb"
+    "reference": "0d72ac1c00084279c1816675284073c5a337c20d"
    },
    "dist": {
     "type": "zip",
-    "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/83ee6f38df0a63106a9e4536e3060458b74ccedb",
-    "reference": "83ee6f38df0a63106a9e4536e3060458b74ccedb",
+    "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/0d72ac1c00084279c1816675284073c5a337c20d",
+    "reference": "0d72ac1c00084279c1816675284073c5a337c20d",
     "shasum": ""
    },
    "require": {
     "ext-dom": "*",
     "ext-libxml": "*",
-    "php": "^5.5 || ^7.0 || ^8.0",
-    "symfony/css-selector": "^2.7 || ^3.0 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
+    "php": "^7.4 || ^8.0",
+    "symfony/css-selector": "^5.4 || ^6.0 || ^7.0"
    },
    "require-dev": {
-    "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0 || ^7.5 || ^8.5.21 || ^9.5.10"
+    "phpstan/phpstan": "^2.0",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "phpunit/phpunit": "^8.5.21 || ^9.5.10"
    },
    "type": "library",
    "extra": {
     "branch-alias": {
-     "dev-master": "2.2.x-dev"
+     "dev-master": "2.x-dev"
     }
    },
    "autoload": {
@@ -6722,9 +7123,9 @@
    "homepage": "https://github.com/tijsverkoyen/CssToInlineStyles",
    "support": {
     "issues": "https://github.com/tijsverkoyen/CssToInlineStyles/issues",
-    "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.2.7"
+    "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.3.0"
    },
-   "time": "2023-12-08T13:03:43+00:00"
+   "time": "2024-12-21T16:25:41+00:00"
   },
   {
    "name": "vlucas/phpdotenv",

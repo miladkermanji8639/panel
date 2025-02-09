@@ -18,7 +18,8 @@
   "laravel/tinker": "^2.8",
   "morilog/jalali": "^3.4",
   "nwidart/laravel-modules": "^11.1",
-  "predis/predis": "^2.3"
+  "predis/predis": "^2.3",
+  "shetabit/payment": "^5.8"
  },
  "require-dev": {
   "fakerphp/faker": "^1.9.1",
