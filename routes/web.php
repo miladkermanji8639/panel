@@ -1,6 +1,4 @@
 <?php
-use App\Http\Controllers\Dr\Panel\Profile\DrUpgradeProfileController;
-use App\Http\Controllers\Dr\Panel\Profile\SubUserController;
 use Mockery\Container;
 use Illuminate\Support\Facades\Route;
 use App\Models\Dr\SecretaryPermission;
@@ -23,6 +21,7 @@ use App\Http\Controllers\Admin\Authentications\LoginCover;
 use App\Http\Controllers\Admin\Ads\Banner\BannerController;
 use App\Http\Controllers\Admin\Agent\AgentWalletController;
 use App\Http\Controllers\Admin\language\LanguageController;
+use App\Http\Controllers\Dr\Panel\Profile\SubUserController;
 use App\Http\Controllers\Dr\Panel\Tickets\TicketsController;
 use App\Http\Controllers\Dr\Panel\Turn\DrScheduleController;
 use App\Http\Controllers\Secretary\Auth\SecretaryController;
@@ -50,6 +49,7 @@ use App\Http\Controllers\Admin\Authentications\ForgotPasswordCover;
 use App\Http\Controllers\Admin\Dashboard\Holiday\HolidayController;
 use App\Http\Controllers\Admin\dashboard\Setting\SettingController;
 use App\Http\Controllers\Admin\UsersManagement\Auth\AuthController;
+use App\Http\Controllers\Dr\Panel\Tickets\TicketResponseController;
 use App\Http\Controllers\Admin\ContentManagement\Blog\BlogController;
 use App\Http\Controllers\Admin\ContentManagement\Tags\TagsController;
 use App\Http\Controllers\Admin\Dashboard\HomePage\HomePageController;
@@ -57,6 +57,7 @@ use App\Http\Controllers\Admin\Doctors\Moshavere\MoshavereController;
 use App\Http\Controllers\Admin\Questions\Question\QuestionController;
 use App\Http\Controllers\Admin\Tools\NewsLatter\NewsLatterController;
 use App\Http\Controllers\Admin\UsersManagement\Users\UsersController;
+use App\Http\Controllers\Dr\Panel\Profile\DrUpgradeProfileController;
 use App\Http\Controllers\Admin\Ads\Banner\Packages\PackagesController;
 use App\Http\Controllers\Admin\ContentManagement\Links\LinksController;
 use App\Http\Controllers\Admin\ContentManagement\Slide\SlideController;
@@ -522,7 +523,17 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
         });
 
         Route::get('/patient-records', [PatientRecordsController::class, 'index'])->middleware('secretary.permission:patient_records')->name('dr-patient-records');
-        Route::get('tickets/', [TicketsController::class, 'index'])->middleware('secretary.permission:messages')->name('dr-panel-tickets');
+        Route::prefix('tickets')->group(function () {
+            Route::get('/', [TicketsController::class, 'index'])->name('dr-panel-tickets');
+            Route::post('/store', [TicketsController::class, 'store'])->name('dr-panel-tickets.store');
+
+            Route::delete('/destroy/{id}', [TicketsController::class, 'destroy'])->name('dr-panel-tickets.destroy');
+            Route::get('/show/{id}', [TicketsController::class, 'show'])->name('dr-panel-tickets.show');
+
+            // مسیرهای مربوط به پاسخ تیکت‌ها
+            Route::post('/{id}/responses', [TicketResponseController::class, 'store'])->name('dr-panel-tickets.responses.store');
+        });
+
         Route::get('activation/consult/rules', [ConsultRulesController::class, 'index'])->middleware('secretary.permission:consult')->name('activation.consult.rules');
         Route::get('activation/consult/help', [ConsultRulesController::class, 'help'])->middleware('secretary.permission:consult')->name('activation.consult.help');
         Route::get('activation/consult/messengers', [ConsultRulesController::class, 'messengers'])->middleware('secretary.permission:consult')->name('activation.consult.messengers');

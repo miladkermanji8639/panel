@@ -2,18 +2,28 @@
 
 namespace App\Http\Controllers\Dr\Panel\Tickets;
 
+use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TicketsController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tickets = [];
-        return view('dr.panel.tickets.index',compact('tickets'));
+        $tickets = Ticket::latest()->paginate(2);
+
+        if ($request->ajax()) {
+            return view('dr.panel.tickets.index', compact('tickets'))->render();
+        }
+
+        return view('dr.panel.tickets.index', compact('tickets'));
     }
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -28,15 +38,48 @@ class TicketsController
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        $ticket = Ticket::create([
+            'doctor_id' => Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'status' => 'open', // ✅ تیکت‌های جدید باز می‌شوند
+        ]);
+
+        return response()->json([
+            'message' => 'تیکت با موفقیت اضافه شد!',
+            'tickets' => Ticket::latest()->get()
+        ]);
     }
+
+
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        $ticket = Ticket::with('responses.doctor')->findOrFail($id);
+        return view('dr.panel.tickets.show', compact('ticket'));
+    }
+
+
+    public function destroy($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->delete();
+
+        // ارسال لیست جدید تیکت‌ها
+        $tickets = Ticket::all();
+
+        return response()->json([
+            'message' => 'تیکت با موفقیت حذف شد!',
+            'tickets' => $tickets
+        ]);
     }
 
     /**
@@ -58,8 +101,5 @@ class TicketsController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+  
 }
