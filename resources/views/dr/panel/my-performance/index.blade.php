@@ -381,9 +381,15 @@
        <br>
        توجه کنید که در جستجوی بیماران، بر اساس موقعیت جغرافیایی بیمار اولویت مشاهده دارید.
        <br>
-       <a href="{{ route('activation-doctor-clinic') }}" class="font-weight-bold text-primary mt-3">
-        برای تنظیم موقعیت دقیق مطب خود روی نقشه کلیک کنید.
-       </a>
+       <span class="font-weight-bold text-success mt-3 d-block">
+        برای تنظیم موقعیت دقیق مطب خود روی مطب های خود کلیک کرده و از روی نقشه آن هارا فعال کنید.
+       </span>
+       <span class="d-block">مطب های شما</span>
+      @foreach($clinics as $clinic)  
+    <a href="{{ route('activation-doctor-clinic', ['clinic' => $clinic->id]) }}" class="mt-2 text-primary">
+      {{ $clinic->name }}
+      </a>
+    @endforeach
       </p>
      </div>
     </div>
