@@ -6,9 +6,9 @@ body {
 .calendar {
  max-width: 500px;
  margin: auto;
- border: 2px solid #ddd;
+ border: 1px solid #ddd;
  border-radius: 10px;
- padding: 20px;
+ padding: 10px;
  background-color: white;
 }
 .calendar-day.active {
@@ -16,6 +16,14 @@ body {
  /* رنگ آبی روشن */
  border-color: #004085;
  color: #004085;
+}
+.my-modal-header{
+ position: relative;
+}
+.my-modal-header button{
+ position: relative !important;
+ left: 15px !important;
+ top: 10px !important;
 }
 .calendar-header {
  display: flex;

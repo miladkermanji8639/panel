@@ -421,6 +421,10 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
 
     Route::prefix('panel')->middleware(['doctor', 'secretary', 'complete-profile'])->group(function () {
         Route::get('/', [DrPanelController::class, 'index'])->middleware('secretary.permission:dashboard')->name('dr-panel');
+        Route::get('/doctor/appointments/by-date', [DrPanelController::class, 'getAppointmentsByDate'])
+            ->name('doctor.appointments.by-date');
+        Route::get('/search/patients', [DrPanelController::class, 'searchPatients'])->name('search.patients');
+
 
         Route::prefix('turn')->middleware('secretary.permission:appointments')->group(function () {
             Route::prefix('schedule')->group(function () {

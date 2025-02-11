@@ -20,7 +20,7 @@
   width: 100%;
  }
 </style>
-<div class="w-100 d-flex justify-content-around mt-2 align-items-center">
+<div class="w-100 d-flex justify-content-around  align-items-center">
  <div class="w-100 d-flex align-items-center gap-4">
   <div>
    <button id="prev" class="btn btn-light">
