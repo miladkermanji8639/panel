@@ -22,6 +22,14 @@
 </head>
 
 <body>
+    <!-- لودینگ کلی سایت -->
+    <div id="global-loader">
+      <div class="loader-backdrop"></div> <!-- بک‌دراپ -->
+      <div class="loader-content">
+        <div class="spinner"></div> <!-- انیمیشن لودینگ -->
+        <p>لطفا منتظر بمانید...</p>
+      </div>
+    </div>
  <header class="bg-light text-dark p-3 text-left my-shodow">
   <h5>محل مطب من</h5>
  </header>
@@ -313,7 +321,7 @@
      $('#doneModal').modal('hide'); // بستن مودال
      $('body').removeClass('modal-open'); // جلوگیری از اسکرول مودال
      $('.modal-backdrop').remove(); // حذف overlay
-     location.href = "{{ route('doctors.clinic.cost',$clinic->id) }}"
+     location.href = "{{ route('doctors.clinic.cost', $clinic->id) }}"
     },
     error: function() {
      buttonText.show();
