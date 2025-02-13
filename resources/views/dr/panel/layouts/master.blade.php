@@ -22,11 +22,11 @@
  <div class="content">
   <!-- لودینگ کلی سایت -->
   <div id="global-loader">
-    <div class="loader-backdrop"></div> <!-- بک‌دراپ -->
-    <div class="loader-content">
-      <div class="spinner"></div> <!-- انیمیشن لودینگ -->
-      <p>لطفا منتظر بمانید...</p>
-    </div>
+   <div class="loader-backdrop"></div> <!-- بک‌دراپ -->
+   <div class="loader-content">
+    <div class="spinner"></div> <!-- انیمیشن لودینگ -->
+    <p>لطفا منتظر بمانید...</p>
+   </div>
   </div>
 
   @include('dr.panel.layouts.partials.header')
@@ -97,37 +97,38 @@
           </div>
          </div>
          @foreach ($clinics as $clinic)
-        <div
-         class="d-flex justify-content-between align-items-center option-card {{ !$clinic->is_active ? 'inactive-clinic' : '' }}"
-         aria-hidden="true" data-id="{{ $clinic->id }}" data-active="{{ $clinic->is_active ? '1' : '0' }}">
+          <div
+           class="d-flex justify-content-between align-items-center option-card {{ !$clinic->is_active ? 'inactive-clinic' : '' }}"
+           aria-hidden="true" data-id="{{ $clinic->id }}" data-active="{{ $clinic->is_active ? '1' : '0' }}">
 
-         <div class="d-flex align-items-center p-3 position-relative">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-         <path
-          d="M20.83 8.01002L14.28 2.77002C13 1.75002 11 1.74002 9.73002 2.76002L3.18002 8.01002C2.24002 8.76002 1.67002 10.26 1.87002 11.44L3.13002 18.98C3.42002 20.67 4.99002 22 6.70002 22H17.3C18.99 22 20.59 20.64 20.88 18.97L22.14 11.43C22.32 10.26 21.75 8.76002 20.83 8.01002Z"
-          fill="#3F3F79"></path>
-        </svg>
+           <div class="d-flex align-items-center p-3 position-relative">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <path
+              d="M20.83 8.01002L14.28 2.77002C13 1.75002 11 1.74002 9.73002 2.76002L3.18002 8.01002C2.24002 8.76002 1.67002 10.26 1.87002 11.44L3.13002 18.98C3.42002 20.67 4.99002 22 6.70002 22H17.3C18.99 22 20.59 20.64 20.88 18.97L22.14 11.43C22.32 10.26 21.75 8.76002 20.83 8.01002Z"
+              fill="#3F3F79"></path>
+            </svg>
 
-        <div class="d-flex flex-column mx-3">
-         <span class="font-weight-bold d-block fs-15"> {{ $clinic->name }}</span>
-         <span class="font-weight-bold d-block fs-13">{{ $clinic->province->name }} ، {{ $clinic->address }}</span>
-        </div>
+            <div class="d-flex flex-column mx-3">
+             <span class="font-weight-bold d-block fs-15"> {{ $clinic->name }}</span>
+             <span class="font-weight-bold d-block fs-13">{{ $clinic->province->name }} ، {{ $clinic->address }}</span>
+            </div>
 
-        @if (!$clinic->is_active)
-         <div class="inactive-dot" title="این مطب هنوز فعال نشده است برای فعالسازی روی دکمه فعالسازی کلیک کنید"></div> <!-- نقطه قرمز برای کلینیک‌های غیرفعال -->
-        @endif
-         </div>
+            @if (!$clinic->is_active)
+             <div class="inactive-dot" title="این مطب هنوز فعال نشده است برای فعالسازی روی دکمه فعالسازی کلیک کنید">
+             </div> <!-- نقطه قرمز برای کلینیک‌های غیرفعال -->
+            @endif
+           </div>
 
-         <div class="mx-2">
-        @if (!$clinic->is_active)
-         <button class="btn btn-primary fs-13 btn-sm h-35" tabindex="0" type="button"
-          onclick="window.location.href='{{ route('activation-doctor-clinic', $clinic) }}'">فعال‌سازی
-         </button>
-        @endif
-         </div>
+           <div class="mx-2">
+            @if (!$clinic->is_active)
+             <button class="btn btn-primary fs-13 btn-sm h-35" tabindex="0" type="button"
+              onclick="window.location.href='{{ route('activation-doctor-clinic', $clinic) }}'">فعال‌سازی
+             </button>
+            @endif
+           </div>
 
-        </div>
-     @endforeach
+          </div>
+         @endforeach
 
         </div>
        </div>
@@ -140,6 +141,40 @@
 </body>
 @include('dr.panel.layouts.partials.scripts')
 @yield('scripts')
+<script>
+ $(document).ready(function() {
+  $('.modal').on('show.bs.modal', function() {
+   let modalDialog = $(this).find('.modal-dialog');
+   modalDialog.css({
+    transform: 'translateY(100%)',
+    opacity: 0
+   });
+   setTimeout(function() {
+    modalDialog.css({
+     transition: 'transform 0.5s ease-out, opacity 0.5s ease-out',
+     transform: 'translateY(0)',
+     opacity: 1
+    });
+   }, 10);
+  });
 
+  $('.modal').on('hide.bs.modal', function() {
+   let modalDialog = $(this).find('.modal-dialog');
+   modalDialog.css({
+    transition: 'transform 0.4s ease-in, opacity 0.4s ease-in',
+    transform: 'translateY(100%)',
+    opacity: 0
+   });
+  });
+
+  $('.modal').on('hidden.bs.modal', function() {
+   $(this).find('.modal-dialog').css({
+    transform: '',
+    opacity: '',
+    transition: ''
+   });
+  });
+ });
+</script>
 
 </html>
