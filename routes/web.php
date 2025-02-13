@@ -435,6 +435,8 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
                 Route::get('/my-appointments', [DrScheduleController::class, 'myAppointments'])->middleware('secretary.permission:my-appointments')->name('my-dr-appointments');
 
                 Route::get('/my-appointments/by-date', [DrScheduleController::class, 'showByDateAppointments'])->name('dr.turn.my-appointments.by-date');
+                Route::get('filter-appointments', [DrScheduleController::class, 'filterAppointments'])->name('dr.turn.filter-appointments');
+
                 Route::get('/moshavere_setting', [DrMoshavereSettingController::class, 'index'])->middleware('secretary.permission:appointments')->name('dr-moshavere_setting');
                 Route::post('/copy-work-hours-counseling', [DrMoshavereSettingController::class, 'copyWorkHours'])->middleware('secretary.permission:appointments')->name('copy-work-hours-counseling');
                 Route::get('get-work-schedule-counseling', [DrMoshavereSettingController::class, 'getWorkSchedule'])->middleware('secretary.permission:appointments')->name('dr-get-work-schedule-counseling');

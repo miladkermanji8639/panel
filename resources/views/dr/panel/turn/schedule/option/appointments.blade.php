@@ -44,6 +44,31 @@
    modal.find('.tracking-code').text(tracking_code); // نام مرکز
   });
  });
+  function getPaymentStatus(status) {
+        switch (status) {
+            case 'pending':
+                return 'درحال پرداخت';
+            case 'paid':
+                return 'پرداخت شده';
+            case 'unpaid':
+                return 'پرداخت نشده';
+            default:
+                return '';
+        }
+    }
+
+    function getAppointmentType(type) {
+        switch (type) {
+            case 'online':
+                return 'آنلاین';
+            case 'in_person':
+                return 'حضوری';
+            case 'phone':
+                return 'تلفنی';
+            default:
+                return '';
+        }
+    }
  document.addEventListener('DOMContentLoaded', function() {
   const datepickerSpan = document.getElementById('datepicker');
   const appointmentsContainer = document.querySelector('.my-appointments-lists-cards');
@@ -134,31 +159,7 @@
    });
   }
   // توابع کمکی برای تبدیل وضعیت‌ها
-  function getPaymentStatus(status) {
-   switch (status) {
-    case 'pending':
-     return 'درحال پرداخت';
-    case 'paid':
-     return 'پرداخت شده';
-    case 'unpaid':
-     return 'پرداخت نشده';
-    default:
-     return '';
-   }
-  }
-
-  function getAppointmentType(type) {
-   switch (type) {
-    case 'online':
-     return 'آنلاین';
-    case 'in_person':
-     return 'حضوری';
-    case 'phone':
-     return 'تلفنی';
-    default:
-     return '';
-   }
-  }
+ 
   // اضافه کردن رویداد به روزهای تقویم
   const calendarBody = document.getElementById('calendar-body');
   // رویداد کلیک سراسری روی calendarBody
@@ -168,6 +169,111 @@
     const selectedDate = target.getAttribute('data-date');
     handleDateSelection(selectedDate);
     $('#calendarModal').modal('hide');
+   }
+  });
+ });
+
+ $(document).ready(function() {
+  let selectedDate = $('#datepicker').text().trim();
+
+  $('.appointments-filter-drop-toggle li').on('click', function() {
+   let filterType = $(this).text().trim();
+
+   if ($(this).find('span').text().includes('فعالسازی نوبت دهی مطب')) {
+    window.location.href = 'آدرس_مشخص_شده_توسط_کاربر';
+    return;
+   }
+
+   let appointmentsContainer = $('#appointment-lists-container');
+   let loadingSpinner = $(
+    '<div class="text-center w-100"><div class="spinner-border text-primary" role="status"><span class="sr-only">در حال بارگذاری...</span></div></div>'
+    );
+
+   appointmentsContainer.empty().append(loadingSpinner); // نمایش لودینگ
+
+   $('.btn-filter-appointment-toggle span.text-btn-425').text(filterType);
+
+   $.ajax({
+    url: "{{ route('dr.turn.filter-appointments') }}",
+    type: "GET",
+   data: {
+           type: filterType === 'کل نوبت ها' ? '' : (filterType === 'نوبت های مطب' ? 'in_person' : 'online'),
+           date: selectedDate
+       },
+
+    success: function(response) {
+        
+
+     appointmentsContainer.empty(); // پاک کردن لودینگ بعد از دریافت داده‌ها
+        
+      if (response.appointments.length > 0) {
+            // ایجاد HTML برای هر نوبت
+          response.appointments.forEach(function (appointment) {
+              // تبدیل تاریخ با احتیاط
+              const appointment_date = moment(appointment.appointment_date);
+              const formattedTime = appointment_date.format('HH:mm');
+              const formattedDate = appointment_date.locale('fa').format('dddd، jD jMMMM');
+        let appointmentHTML = `
+                  <div class="my-appointments-lists-card w-100 d-flex justify-content-between align-items-center p-3 my-border">
+                                <div class="d-flex align-items-center gap-10 cursor-pointer"
+                                    data-toggle="modal"
+                                    data-target="#userInfoModalCenter"
+                                    data-time="${formattedTime}"
+                                    data-tracking-code="${appointment.tracking_code}"
+                                    data-date="${formattedDate}"
+                                    data-fullname="${appointment.patient.first_name + ' ' + appointment.patient.last_name}"
+                                    data-mobile="${appointment.patient.mobile}"
+                                    data-national-code="${appointment.patient.national_code}"
+                                    data-payment-status="${getPaymentStatus(appointment.payment_status)}"
+                                    data-appointment-type="${getAppointmentType(appointment.appointment_type)}"
+                                    data-center-name="${appointment.clinic ? appointment.clinic.name : ''}">
+                                    <button class="btn h-50 border border-success bg-light-success d-flex justify-content-center align-items-center">
+                                        ${formattedTime}
+                                    </button>
+                                    <div class="d-flex flex-column gap-10">
+                                        <span class="font-weight-bold">
+                                            ${appointment.patient.first_name + ' ' + appointment.patient.last_name}
+                                        </span>
+                                        <span class="font-weight-light font-size-13">
+                                            ${appointment.patient.mobile}
+                                        </span>
+                                        <span class="font-weight-light text-danger font-size-13">
+                                            ${getPaymentStatus(appointment.payment_status)}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="font-size-13 font-weight-bold">
+                                        ${appointment.patient.national_code}
+                                    </span>
+                                </div>
+                                <div>
+                                    <button class="btn btn-outline-info" data-toggle="modal" data-target="#endVisitModalCenter">
+                                        پایان ویزیت
+                                    </button>
+                                </div>
+                            </div>`;
+
+        appointmentsContainer.append(appointmentHTML);
+
+       });
+      } else {
+       appointmentsContainer.html('<div class="text-center w-100">نوبتی یافت نشد.</div>');
+     }
+    },
+    complete: function() {
+     $('.appointments-filter-drop-toggle').removeClass('show'); // بستن منوی فیلتر
+    },
+    error: function() {
+     appointmentsContainer.html('<div class="text-center w-100 text-danger">خطا در بارگذاری نوبت‌ها.</div>');
+    }
+   });
+  });
+
+  $('#calendar-body').on('click', '.calendar-day', function() {
+   if (!$(this).hasClass('empty')) {
+    selectedDate = $(this).data('date');
+    $('#datepicker').text(selectedDate);
    }
   });
  });

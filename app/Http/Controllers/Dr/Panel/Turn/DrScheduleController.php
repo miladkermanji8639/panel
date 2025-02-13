@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Dr\Panel\Turn;
 
+use Carbon\Carbon;
 use App\Models\Dr\SubUser;
 use Illuminate\Http\Request;
 use Morilog\Jalali\Jalalian;
@@ -34,25 +35,25 @@ class DrScheduleController
      */
     public function index(Request $request)
     {
-        // دریافت پزشک مرتبط
         $doctor = $this->getAuthenticatedDoctor();
 
-        // اگر دکتر یافت نشد، دسترسی غیرمجاز است
         if (!$doctor) {
             abort(403, 'شما به این بخش دسترسی ندارید.');
         }
 
-        // دریافت تاریخ امروز
-        $now = \Carbon\Carbon::now()->format('Y-m-d');
+        // دریافت کلینیک‌های مرتبط با دکتر که فعال نیستند
+        $clinics = $doctor->clinics()->where('is_active', 0)->get();
 
-        // دریافت نوبت‌ها
+        $now = Carbon::now()->format('Y-m-d');
+
         $appointments = Appointment::with(['doctor', 'patient', 'insurance', 'clinic'])
             ->where('doctor_id', $doctor->id)
             ->where('appointment_date', $now)
             ->get();
 
-        return view("dr.panel.turn.schedule.appointments", compact('appointments'));
+        return view("dr.panel.turn.schedule.appointments", compact('appointments', 'clinics'));
     }
+
 
     /**
      * نمایش صفحه نوبت‌های من
@@ -78,6 +79,37 @@ class DrScheduleController
 
         return view("dr.panel.turn.schedule.my-appointments", compact('appointments'));
     }
+
+    public function filterAppointments(Request $request)
+    {
+        $doctor = $this->getAuthenticatedDoctor();
+        if (!$doctor) {
+            return response()->json(['error' => 'دسترسی غیرمجاز!'], 403);
+        }
+
+        $filterType = $request->input('type');
+        $selectedDate = $request->input('date'); // دریافت تاریخ جلالی از فرانت‌اند
+
+        // تبدیل تاریخ جلالی به میلادی
+        try {
+            $gregorianDate = Jalalian::fromFormat('Y/m/d', $selectedDate)->toCarbon()->format('Y-m-d');
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'فرمت تاریخ نامعتبر است.'], 400);
+        }
+
+        $query = Appointment::with(['patient', 'clinic'])
+            ->where('doctor_id', $doctor->id)
+            ->whereDate('appointment_date', $gregorianDate);
+
+        if ($filterType != null) {
+            $query->where('appointment_type', $filterType);
+        }
+
+        $appointments = $query->get();
+
+        return response()->json(['appointments' => $appointments]);
+    }
+
 
 
 
