@@ -54,7 +54,7 @@
         <div class="modal fade" id="addressModalCenter" tabindex="-1" role="dialog"
          aria-labelledby="addressModalCenterLabel" aria-hidden="true">
          <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content border-radius-8">
+          <div class="modal-content border-radius-6">
            <div class="modal-header">
             <h5 class="modal-title" id="addressModalCenterLabel">ثبت آدرس</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -97,7 +97,7 @@
  <div class="modal fade" id="doneModal" tabindex="-1" role="dialog" aria-labelledby="doneModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-   <div class="modal-content border-radius-8">
+   <div class="modal-content border-radius-6">
     <div class="modal-header">
      <h5 class="modal-title fs-6 font-weight-bold" id="doneModalLabel">اطلاعات تماس مطب</h5>
      <button type="button" class="close" data-dismiss="modal" aria-label="Close">

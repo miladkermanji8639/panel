@@ -125,7 +125,7 @@
  <!-- مودال افزودن کاربر -->
  <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-   <div class="modal-content border-radius-8">
+   <div class="modal-content border-radius-6">
     <div class="modal-header">
      <h5 class="modal-title" id="addUserModalLabel">افزودن کاربر مسدود</h5>
      <button type="button" class="close" data-dismiss="modal" aria-label="بستن">
@@ -168,7 +168,7 @@
  <!-- مودال ارسال پیام -->
 <div class="modal fade" id="sendSmsModal" tabindex="-1" aria-labelledby="sendSmsModalLabel" aria-hidden="true">
  <div class="modal-dialog">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h5 class="modal-title" id="sendSmsModalLabel">ارسال پیام</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="بستن">

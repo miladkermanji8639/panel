@@ -61,7 +61,7 @@
     <div class="modal fade" id="dateModal" tabindex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered">
 
-    <div class="modal-content border-radius-8">
+    <div class="modal-content border-radius-6">
 
      <div class="modal-header">
     <h6 class="modal-title" id="dateModalLabel">تاریخ</h6>
@@ -79,7 +79,7 @@
     <!-- جابجایی نوبت Modal -->
     <div class="modal  fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content border-radius-8">
+    <div class="modal-content border-radius-6">
      <div class="modal-header">
     <h6 class="modal-title" id="rescheduleModalLabel">جابجایی نوبت</h6>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

@@ -75,7 +75,7 @@
  <div class="modal fade" id="add-patient-modal" tabindex="-1" role="dialog" aria-labelledby="add-patient-modal-label"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
-   <div class="modal-content border-radius-8">
+   <div class="modal-content border-radius-6">
     <div class="modal-header">
      <h5 class="modal-title" id="add-patient-modal-label">افزودن بیمار جدید</h5>
      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -115,7 +115,7 @@
   <div class="modal fade" id="edit-patient-modal-{{ $patient->id }}" tabindex="-1" role="dialog"
    aria-labelledby="edit-patient-modal-label-{{ $patient->id }}" aria-hidden="true">
    <div class="modal-dialog" role="document">
-    <div class="modal-content border-radius-8">
+    <div class="modal-content border-radius-6">
      <div class="modal-header">
       <h5 class="modal-title" id="edit-patient-modal-label-{{ $patient->id }}">ویرایش بیمار</h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -160,7 +160,7 @@
   <div class="modal fade" id="delete-patient-modal-{{ $patient->id }}" tabindex="-1" role="dialog"
    aria-labelledby="delete-patient-modal-label-{{ $patient->id }}" aria-hidden="true">
    <div class="modal-dialog" role="document">
-    <div class="modal-content border-radius-8">
+    <div class="modal-content border-radius-6">
      <div class="modal-header">
       <h5 class="modal-title" id="delete-patient-modal-label-{{ $patient->id }}">حذف بیمار</h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">

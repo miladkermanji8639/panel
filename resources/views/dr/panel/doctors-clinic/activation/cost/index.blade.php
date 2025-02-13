@@ -64,7 +64,7 @@
        <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-         <div class="modal-content border-radius-8">
+         <div class="modal-content border-radius-6">
           <div class="modal-body">
            <ul class="list-unstyled">
             <li class="mt-3 font-size-14 font-weight-bold">• بیمار در صورتی موفق به اخذ نوبت می‌شود که بیعانه را پرداخت نماید.

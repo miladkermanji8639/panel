@@ -60,7 +60,7 @@
     <div class="modal fade " id="exampleModalCenterAddSick" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered " role="document">
-      <div class="modal-content border-radius-8">
+      <div class="modal-content border-radius-6">
        <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle"> ویرایش </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -154,7 +154,7 @@
     <div class="modal fade " id="exampleModalCenterEdit" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered " role="document">
-      <div class="modal-content border-radius-8">
+      <div class="modal-content border-radius-6">
        <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle"> ویرایش </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">

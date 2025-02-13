@@ -45,7 +45,7 @@
    <div class="modal fade" id="addNewPatientModal" tabindex="-1" role="dialog" aria-labelledby="addNewPatientLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-     <div class="modal-content border-radius-8">
+     <div class="modal-content border-radius-6">
       <form id="add-new-patient-form">
        @csrf
        <div class="modal-header">
@@ -179,7 +179,7 @@
     <div class="modal fade " id="calendarModal" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered " role="document">
-      <div class="modal-content border-radius-8">
+      <div class="modal-content border-radius-6">
        <div class="my-modal-header p-3">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
          <span aria-hidden="true">&times;</span>
@@ -246,7 +246,7 @@
 <div class="modal fade" id="editPatientModal" tabindex="-1" role="dialog" aria-labelledby="editPatientLabel"
  aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <form id="edit-patient-form">
     @csrf
     <div class="modal-header">

@@ -77,7 +77,7 @@
 <div class="modal fade" id="add-ticket-modal" tabindex="-1" role="dialog" aria-labelledby="add-ticket-modal-label"
  aria-hidden="true">
  <div class="modal-dialog" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h5 class="modal-title" id="add-ticket-modal-label">افزودن تیکت جدید</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

@@ -12,7 +12,7 @@
 <div class="modal fade" id="clinicEditModal" tabindex="-1" role="dialog" aria-labelledby="clinicEditModalLabel"
  aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h5 class="modal-title" id="clinicEditModalLabel">ویرایش مطب</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -86,7 +86,7 @@
 <div class="modal fade " id="clinicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
  aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered " role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h5 class="modal-title" id="exampleModalLongTitle"> افزودن مطب </h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

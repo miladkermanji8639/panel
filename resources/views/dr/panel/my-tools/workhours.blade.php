@@ -1984,7 +1984,7 @@
 <div class="modal fade" id="scheduleModal" tabindex="-1" data-selected-day="" role="dialog"
  aria-labelledby="scheduleModalLabel" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered my-modal-lg" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h6 class="modal-title font-weight-bold" id="scheduleModalLabel">برنامه زمانبندی</h6>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -2045,7 +2045,7 @@
 <div class="modal fade" id="checkboxModal" tabindex="-1" role="dialog" aria-labelledby="checkboxModalLabel"
  aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h6 class="modal-title font-weight-bold" id="checkboxModalLabel"> کپی ساعت کاری برای روز های : </h6>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -2080,7 +2080,7 @@
 <div class="modal fade" id="CalculatorModal" tabindex="-1" role="dialog" aria-labelledby="CalculatorModalLabel"
  aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content border-radius-8" id="calculate-modal">
+  <div class="modal-content border-radius-6" id="calculate-modal">
    <div class="modal-header">
     <h6 class="modal-title font-weight-bold" id="checkboxModalLabel"> انتخاب تعداد نوبت یا زمان ویزیت: </h6>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

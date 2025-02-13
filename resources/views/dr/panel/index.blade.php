@@ -57,7 +57,7 @@
      <div class="modal fade " id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered " role="document">
-       <div class="modal-content border-radius-8">
+       <div class="modal-content border-radius-6">
         <div class="my-modal-header">
          <div>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -88,7 +88,7 @@
     <div class="modal fade " id="exampleModalCenterAddSick" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered " role="document">
-      <div class="modal-content border-radius-8">
+      <div class="modal-content border-radius-6">
        <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">افزودن بیمار </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -117,7 +117,7 @@
     <div class="modal fade " id="exampleModalCenterPaziresh" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered " role="document">
-      <div class="modal-content border-radius-8">
+      <div class="modal-content border-radius-6">
        <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle"> ارجاع </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -262,7 +262,7 @@
 <div class="modal fade" id="activation-modal" tabindex="-1" role="dialog"
  aria-labelledby="activation-modal-label" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h5 class="modal-title" id="activation-modal-label">فعالسازی نوبت دهی</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -294,7 +294,7 @@
 <div class="modal fade" id="contact-modal" tabindex="-1" role="dialog" aria-labelledby="contact-modal-label"
  aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h5 class="modal-title" id="activation-modal-label">تماس امن</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -326,7 +326,7 @@
 <div class="modal  fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel"
  aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered modal-lg">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h6 class="modal-title" id="rescheduleModalLabel">جابجایی نوبت</h6>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

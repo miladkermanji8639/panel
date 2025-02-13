@@ -13,7 +13,7 @@
 <!-- Modal افزودن -->
 <div class="modal fade" id="addSubUserModal" tabindex="-1" role="dialog">
  <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h5 class="modal-title">افزودن کاربر</h5>
     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
@@ -43,7 +43,7 @@
 <!-- Modal ویرایش -->
 <div class="modal fade" id="editSubUserModal" tabindex="-1" role="dialog">
  <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content border-radius-8">
+  <div class="modal-content border-radius-6">
    <div class="modal-header">
     <h5 class="modal-title">ویرایش کاربر</h5>
     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
