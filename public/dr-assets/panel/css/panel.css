@@ -876,7 +876,29 @@ button {
  z-index: 201;
 }
 
+.dropdown-menu {
+  position: absolute !important;
+  z-index: 1050;
+  /* مقدار بالا برای اطمینان از نمایش روی سایر المان‌ها */
+  top: 100%;
+  /* باعث می‌شود زیر دکمه نمایش داده شود */
+  left: 0;
+  /* از چپ چین شود */
+  min-width: 160px;
+  /* اندازه حداقل */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  /* سایه برای بهتر دیده شدن */
+  display: none;
+  /* در حالت عادی مخفی باشد */
+}
 
+.dropdown-menu.show {
+  display: block;
+  /* نمایش منو زمانی که کلاس show اضافه شود */
+}
+.top-table{
+  overflow: visible !important;
+}
 
 
 .label-top-input-special-takhasos {

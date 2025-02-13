@@ -28,9 +28,11 @@ return new class extends Migration {
             $table->timestamp('reserved_at')->nullable();
             $table->timestamp('confirmed_at')->nullable();
 
-            $table->enum('status', ['scheduled', 'completed', 'cancelled'])->default('scheduled');
-            // فیلد جدید برای مدیریت وضعیت حضور
-            $table->enum('attendance_status', ['attended', 'missed', 'cancelled'])->default('attended');
+            $table->enum('status', ['scheduled', 'cancelled', 'attended', 'missed'])->default('scheduled');
+
+            // فیلد مدیریت وضعیت حضور
+            $table->enum('attendance_status', ['attended', 'missed', 'cancelled'])->nullable();
+
             $table->text('notes')->nullable();
             $table->text('title')->nullable();
             $table->string('tracking_code')->nullable()->unique();
@@ -40,6 +42,7 @@ return new class extends Migration {
             $table->string('location')->nullable();
             $table->boolean('notification_sent')->default(false);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('cascade');
             $table->foreign('patient_id')->references('id')->on('users')->onDelete('cascade');

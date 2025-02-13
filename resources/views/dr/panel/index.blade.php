@@ -59,9 +59,11 @@
       <div class="modal-dialog modal-dialog-centered " role="document">
        <div class="modal-content border-radius-8">
         <div class="my-modal-header">
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-         </button>
+         <div>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+          </button>
+         </div>
         </div>
         <div class="modal-body">
          <x-jalali-calendar />
@@ -142,16 +144,19 @@
 </div>
 {{-- here put calender --}}
 <x-jalali-calendar-row />
-<div class="sicks-content h-100 mt-4 w-100  position-relative">
- <div class="" style="">
-  <div class="table-responsive position-absolute top-table">
-   <table class="table w-full text-sm text-center">
+<div class="sicks-content h-100 mt-4 w-100  position-relative border">
+ <div>
+  <div class="table-responsive position-relative top-table">
+   <table class="table w-100 text-sm text-center">
     <thead class="text-xs text-gray-700 uppercase border-b border-solid bg-gray-50 border-b-gray-100">
      <tr>
+    <th>
+        <input type="checkbox" id="select-all-row" disabled>
+    </th>
       <th scope="col" class="px-6 py-3">نام بیمار</th>
       <th scope="col" class="px-6 py-3">شماره‌موبایل</th>
       <th scope="col" class="px-6 py-3">کد ملی</th>
-      <th scope="col" class="px-6 py-3">وضعیت نسخه</th>
+      <th scope="col" class="px-6 py-3">وضعیت نوبت</th>
       <th scope="col" class="px-6 py-3">بیمه</th>
       <th scope="col" class="px-6 py-3">تاریخ نوبت</th>
       <th scope="col" class="px-6 py-3">عملیات</th>
@@ -166,30 +171,32 @@
    <div class="turning_filterWrapper__2cOOi">
     <div class="dropdown">
      <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" aria-haspopup="true"
-      aria-expanded="false">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+      aria-expanded="true">
+      <svg xmlns="http://www.w3.org/2000/svg" id="dropIcon" width="20" height="20" viewBox="0 0 24 24" fill="none">
        <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" fill="#000" />
       </svg>
-      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+      <input class="form-check-input" type="checkbox" value="" id="select-all">
      </button>
      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <ul class="dropdown-list" style="list-style-type: none; padding: 0; margin: 0;">
-       <li>
-        <a href="#" id="all-users" class="dropdown-item">همه</a>
-       </li>
-       <li>
-        <a href="#" id="visited-users" class="dropdown-item">ویزیت شده</a>
-       </li>
-       <li>
-        <a href="#" id="unvisited-users" class="dropdown-item">ویزیت نشده</a>
-       </li>
-       <li>
-        <a href="#" id="blocked-users" class="dropdown-item">کاربران مسدود</a>
-       </li>
-       <li>
-        <a href="#" id="blocked-users" class="dropdown-item"> لغو شده</a>
-       </li>
-      </ul>
+    <ul class="dropdown-list" style="list-style-type: none; padding: 0; margin: 0;">
+        <li>
+            <a href="#" id="all-appointments" class="dropdown-item">همه نوبت‌ها</a>
+        </li>
+        <li>
+            <a href="#" id="scheduled-appointments" class="dropdown-item">در انتظار</a>
+        </li>
+        <li>
+            <a href="#" id="cancelled-appointments" class="dropdown-item">لغو شده</a>
+        </li>
+        <li>
+            <a href="#" id="attended-appointments" class="dropdown-item">ویزیت شده</a>
+        </li>
+        <li>
+            <a href="#" id="missed-appointments" class="dropdown-item">ویزیت نشده</a>
+        </li>
+     
+    </ul>
+
      </div>
     </div>
    </div>
@@ -200,6 +207,10 @@
     dropdownButton.addEventListener('click', function() {
      dropdownMenu.classList.toggle('show');
     });
+    const checkBox = document.getElementById("select-all").addEventListener('click',function(){
+      event.stopPropagation();
+      
+    })
     dropdownItems.forEach(item => {
      item.addEventListener('click', function(event) {
       event.stopPropagation();
@@ -212,7 +223,7 @@
      }
     });
    </script>
-   <button class="btn btn-light h-50 fs-13 d-flex align-items-center justify-content-center">
+   <button id="cancel-appointments-btn" class="btn btn-light h-50 fs-13 d-flex align-items-center justify-content-center">
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" height="20"
      width="20" version="1.1" id="Capa_1" viewBox="0 0 58 58" xml:space="preserve">
      <g>
@@ -224,7 +235,7 @@
     </svg>
     <span class="d-none d-md-block mx-1">لغو نوبت</span>
    </button>
-   <button class="btn btn-light h-50 fs-13 d-flex align-items-center justify-content-center">
+   <button id="move-appointments-btn"  class="btn btn-light h-50 fs-13 d-flex align-items-center justify-content-center">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
      <path
       d="M7.37756 11.6296H6.62756H7.37756ZM7.37756 12.5556L6.81609 13.0528C6.95137 13.2056 7.14306 13.2966 7.34695 13.3049C7.55084 13.3133 7.74932 13.2382 7.89662 13.0969L7.37756 12.5556ZM9.51905 11.5414C9.81805 11.2547 9.82804 10.7799 9.54137 10.4809C9.2547 10.182 8.77994 10.172 8.48095 10.4586L9.51905 11.5414ZM6.56148 10.5028C6.28686 10.1927 5.81286 10.1639 5.50277 10.4385C5.19267 10.7131 5.16391 11.1871 5.43852 11.4972L6.56148 10.5028ZM14.9317 9.0093C15.213 9.31337 15.6875 9.33184 15.9915 9.05055C16.2956 8.76927 16.3141 8.29476 16.0328 7.9907L14.9317 9.0093ZM12.0437 6.25C9.05802 6.25 6.62756 8.653 6.62756 11.6296H8.12756C8.12756 9.49251 9.87531 7.75 12.0437 7.75V6.25ZM6.62756 11.6296L6.62756 12.5556H8.12756L8.12756 11.6296H6.62756ZM7.89662 13.0969L9.51905 11.5414L8.48095 10.4586L6.85851 12.0142L7.89662 13.0969ZM7.93904 12.0583L6.56148 10.5028L5.43852 11.4972L6.81609 13.0528L7.93904 12.0583ZM16.0328 7.9907C15.0431 6.9209 13.6212 6.25 12.0437 6.25V7.75C13.1879 7.75 14.2154 8.23504 14.9317 9.0093L16.0328 7.9907Z"
@@ -236,7 +247,7 @@
     </svg>
     <span class="d-none d-md-block mx-1">جابجایی نوبت</span>
    </button>
-   <button class="btn btn-light h-50 fs-13 d-flex align-items-center justify-content-center">
+   <button id="block-users-btn" class="btn btn-light h-50 fs-13 d-flex align-items-center justify-content-center">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
      <path
       d="M14.8086 19.7053L19.127 16.3467M11 15C10.1183 15 9.28093 14.8098 8.52682 14.4682C8.00429 14.2315 7.74302 14.1131 7.59797 14.0722C7.4472 14.0297 7.35983 14.0143 7.20361 14.0026C7.05331 13.9914 6.94079 14 6.71575 14.0172C6.6237 14.0242 6.5425 14.0341 6.46558 14.048C5.23442 14.2709 4.27087 15.2344 4.04798 16.4656C4 16.7306 4 17.0485 4 17.6841V19.4C4 19.9601 4 20.2401 4.10899 20.454C4.20487 20.6422 4.35785 20.7951 4.54601 20.891C4.75992 21 5.03995 21 5.6 21H11M20 18C20 19.6569 18.6569 21 17 21C15.3431 21 14 19.6569 14 18C14 16.3431 15.3431 15 17 15C18.6569 15 20 16.3431 20 18ZM15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7Z"
@@ -312,8 +323,65 @@
   </div>
  </div>
 </div>
-@endsection
+<div class="modal  fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel"
+ aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal-content border-radius-8">
+   <div class="modal-header">
+    <h6 class="modal-title" id="rescheduleModalLabel">جابجایی نوبت</h6>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+     <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body">
+    <p class="font-weight-bold">لطفا یک روز جدید را انتخاب کنید:</p>
+    <div class="calendar-header w-100 d-flex justify-content-between align-items-center gap-4">
+     <div class="">
+      <button id="prev-month-reschedule" class="btn btn-light">
+       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <g id="Arrow / Chevron_Right_MD">
+         <path id="Vector" d="M10 8L14 12L10 16" stroke="#000000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+        </g>
+       </svg>
+      </button>
+     </div>
+     <div class="w-100">
+      <select id="year-reschedule" class="form-select w-100 bg-light border-0"></select>
+     </div>
+     <div class="w-100">
+      <select id="month-reschedule" class="form-select w-100 bg-light border-0"></select>
+     </div>
+     <div class="">
+      <button id="next-month-reschedule" class="btn btn-light"><svg xmlns="http://www.w3.org/2000/svg"
+        width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <g id="Arrow / Chevron_Left_MD">
+         <path id="Vector" d="M14 16L10 12L14 8" stroke="#000000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+        </g>
+       </svg>
+      </button>
+     </div>
+    </div>
+    <div class="w-100 d-flex justify-content-end">
+     <button id="goToFirstAvailable" class="btn btn-light w-100 border">برو به اولین نوبت خالی</button>
+    </div>
+    <div id="calendar-reschedule" class="calendar-body"></div>
+    <div class="w-100 d-flex justify-content-between gap-4 mt-3">
+     <button type="button" class="btn btn-primary h-50 w-100" id="confirmRescheduleDashboard">تأیید</button>
+     <button type="button" class="btn btn-danger h-50 w-100 close-modal" class="close" data-dismiss="modal"
+      aria-label="Close">انصراف</button>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
 @section('scripts')
+<script src="{{ asset('dr-assets/panel/js/calendar/custm-calendar.js') }}"></script>
+
+@include('dr.panel.my-tools.dashboardTools')
+
 <script src="{{ asset('dr-assets/panel/js/dr-panel.js') }}"></script>
 <script>
  var appointmentsSearchUrl = "{{ route('search.appointments') }}";
@@ -327,383 +395,6 @@
    // فرض کنید ID مودال شما "activation-modal" است
    $('#activation-modal').modal('show');
   }
- });
-</script>
-<script src="{{ asset('dr-assets/panel/js/calendar/custm-calendar.js') }}"></script>
-<script>
- const appointmentsTableBody = $('.table tbody'); // بخش <tbody> جدول
- // لودینگ به جدول اضافه کنیم
- let loadingIndicator = `<tr id="loading-row">
-                                <td colspan="6" class="text-center py-3">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="sr-only">در حال بارگذاری...</span>
-                                    </div>
-                                </td>
-                            </tr>`;
-
-
- $(document).ready(function() {
-  let currentDate = moment().format('YYYY-MM-DD');
-  const days = 14;
-  const calendar = $('#calendar');
-  // مخفی کردن لودینگ بعد از دریافت داده‌ها
-  function loadCalendar(date) {
-   calendar.empty();
-   for (let i = 0; i < days; i++) {
-    const current = moment(date).add(i, 'days');
-    const persianDate = current.locale('fa').format('dddd');
-    const persianFormattedDate = current.locale('fa').format('YYYY-MM-DD'); // فرمت استاندارد برای ارسال به سرور
-    const isActive = current.isSame(moment(), 'day') ? 'my-active' : '';
-    const card =
-     ` <div class="calendar-card btn btn-light ${isActive}" data-date="${persianFormattedDate}"> 
-         <div class="day-name">${persianDate}</div> 
-         <div class="date">${current.locale('fa').format('D MMMM YYYY')}</div> 
-       </div>`;
-    calendar.append(card);
-   }
-   // اضافه کردن رویداد کلیک به تاریخ‌های تقویم
-   $('.calendar-card').click(function() {
-    const selectedDate = $(this).attr('data-date');
-    $('.calendar-card').removeClass('my-active'); // حذف انتخاب قبلی
-    $(this).addClass('my-active'); // افزودن کلاس برای تاریخ انتخاب‌شده
-    loadAppointments(selectedDate);
-   });
-  }
-
-  function animateAndLoadCalendar(direction) {
-   const animation = {
-    left: direction === 'next' ? '-100%' : '100%',
-    opacity: 0
-   };
-   calendar.animate(animation, 300, function() {
-    if (direction === 'next') {
-     currentDate = moment(currentDate).add(days, 'days').format('YYYY-MM-DD');
-    } else {
-     currentDate = moment(currentDate).subtract(days, 'days').format('YYYY-MM-DD');
-    }
-    loadCalendar(currentDate);
-    calendar.css({
-     left: direction === 'next' ? '100%' : '-100%',
-     opacity: 0
-    });
-    calendar.animate({
-     left: '0%',
-     opacity: 1
-    }, 300);
-   });
-  }
-  $('#next').click(function() {
-   animateAndLoadCalendar('next');
-  });
-  $('#prev').click(function() {
-   animateAndLoadCalendar('prev');
-  });
-
-  function loadAppointments(selectedDate) {
-   let persianDate = moment(selectedDate, 'YYYY-MM-DD').locale('fa').format('jYYYY/jMM/jDD');
-   $.ajax({
-    url: "{{ route('doctor.appointments.by-date') }}",
-    method: 'GET',
-    data: {
-     date: selectedDate
-    },
-    success: function(response) {
-     appointmentsTableBody.html('');
-     if (response.appointments.length > 0) {
-      response.appointments.forEach(function(appointment) {
-
-       const nationalCode = appointment.patient.national_code ?
-        appointment.patient.national_code :
-        'نامشخص'; // نمایش مقدار در صورت نبود مقدار
-
-       const appointmentHTML = `
-                        <tr>
-                            <td>${appointment.patient.first_name} ${appointment.patient.last_name}</td>
-                            <td>${appointment.patient.mobile}</td>
-                            <td>${nationalCode}</td> 
-                            <td>${getPrescriptionStatus(appointment.prescription_status)}</td>
-                            <td>${appointment.insurance ? appointment.insurance.name : 'ندارد'}</td>
-                            <td>${moment(appointment.appointment_date).locale('fa').format('jYYYY/jMM/jDD')}</td>
-                            <td></td>
-                        </tr>`;
-       appointmentsTableBody.append(appointmentHTML);
-      });
-     } else {
-      appointmentsTableBody.html(`
-                    <tr>
-                        <td colspan="7" class="text-center py-3">هیچ نوبتی برای این تاریخ وجود ندارد.</td>
-                    </tr>
-                `);
-     }
-    },
-    error: function() {
-     appointmentsTableBody.html(`
-                <tr>
-                    <td colspan="7" class="text-center py-3 text-danger">خطا در دریافت نوبت‌ها.</td>
-                </tr>
-            `);
-    }
-   });
-  }
-
-
-
-
-  loadCalendar(currentDate); // بارگذاری اولیه تقویم
- });
- // نمایش لودینگ قبل از ارسال درخواست AJAX
- $(document).ready(function() {
-  let currentDate = moment().format('YYYY-MM-DD');
-  const days = 14;
-  const calendar = $('#calendar');
-  const appointmentsTableBody = $('.table tbody'); // بخش <tbody> جدول
-
-  function showLoading() {
-   appointmentsTableBody.html(`
-            <tr id="loading-row">
-                <td colspan="6" class="text-center py-3">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="sr-only">در حال بارگذاری...</span>
-                    </div>
-                </td>
-            </tr>
-        `);
-  }
-
-  function hideLoading() {
-   $("#loading-row").remove();
-  }
-
-  function getPrescriptionStatus(status) {
-   switch (status) {
-    case 'pending':
-     return 'در انتظار';
-    case 'approved':
-     return 'تایید شده';
-    case 'rejected':
-     return 'رد شده';
-    default:
-     return 'نامشخص';
-   }
-  }
-
-  function handleDateSelection(selectedDate) {
-   showLoading();
-   $.ajax({
-    url: "{{ route('doctor.appointments.by-date') }}",
-    method: 'GET',
-    data: {
-     date: selectedDate
-    },
-    success: function(response) {
-     hideLoading();
-     appointmentsTableBody.html('');
-
-     if (response.appointments.length > 0) {
-      response.appointments.forEach(function(appointment) {
-       const appointmentHTML = `
-                            <tr>
-                                <td>${appointment.patient.first_name} ${appointment.patient.last_name}</td>
-                                <td>${appointment.patient.mobile}</td>
-                                <td>${appointment.patient.national_code}</td>
-                                <td>${getPrescriptionStatus(appointment.prescription_status)}</td>
-                                <td>${appointment.insurance ? appointment.insurance.name : 'ندارد'}</td>
-                                <td>${moment(appointment.appointment_date).locale('fa').format('jYYYY/jMM/jDD')}</td>
-                                <td></td>
-                            </tr>`;
-       appointmentsTableBody.append(appointmentHTML);
-      });
-     } else {
-      appointmentsTableBody.html(`
-                        <tr>
-                            <td colspan="6" class="text-center py-3">هیچ نوبتی برای این تاریخ وجود ندارد.</td>
-                        </tr>`);
-     }
-    },
-    error: function() {
-     hideLoading();
-     appointmentsTableBody.html(`
-                    <tr>
-                        <td colspan="6" class="text-center py-3 text-danger">خطا در دریافت نوبت‌ها.</td>
-                    </tr>`);
-    }
-   });
-  }
-
-  function loadCalendar(date) {
-   calendar.empty();
-   let todayExists = false;
-   $('.calendar-card').removeClass('my-active'); // حذف انتخاب قبلی
-
-   for (let i = 0; i < days; i++) {
-    const current = moment(date).add(i, 'days');
-    const persianDate = current.locale('fa').format('dddd');
-    const persianFormattedDate = current.locale('fa').format('YYYY-MM-DD');
-    const isActive = current.isSame(moment(), 'day') ? 'my-active' : '';
-
-    if (isActive) todayExists = persianFormattedDate; // ذخیره تاریخ امروز برای انتخاب پیش‌فرض
-
-    const card = `
-                <div class="calendar-card btn btn-light ${isActive}" data-date="${persianFormattedDate}">
-                    <div class="day-name">${persianDate}</div>
-                    <div class="date">${current.locale('fa').format('D MMMM YYYY')}</div>
-                </div>`;
-    calendar.append(card);
-   }
-
-   // افزودن رویداد کلیک به کارت‌های تقویم
-   $('.calendar-card').click(function() {
-    const selectedDate = $(this).attr('data-date');
-    $('.calendar-card').removeClass('my-active');
-    $(this).addClass('my-active');
-    handleDateSelection(selectedDate);
-   });
-
-   // در اولین لود صفحه، داده‌های امروز را نمایش دهیم
-   if (todayExists) {
-    $('.calendar-card[data-date="' + todayExists + '"]').addClass('my-active');
-    handleDateSelection(todayExists);
-   }
-  }
-
-  function animateAndLoadCalendar(direction) {
-   const animation = {
-    left: direction === 'next' ? '-100%' : '100%',
-    opacity: 0
-   };
-   calendar.animate(animation, 300, function() {
-    currentDate = moment(currentDate).add(direction === 'next' ? days : -days, 'days').format('YYYY-MM-DD');
-    loadCalendar(currentDate);
-    calendar.css({
-     left: direction === 'next' ? '100%' : '-100%',
-     opacity: 0
-    });
-    calendar.animate({
-     left: '0%',
-     opacity: 1
-    }, 300);
-   });
-  }
-
-  $('#next').click(() => animateAndLoadCalendar('next'));
-  $('#prev').click(() => animateAndLoadCalendar('prev'));
-
-  $(document).on("click", ".calendar-day", function() {
-   let selectedDate = $(this).attr("data-date");
-   let gregorianDate = moment.from(selectedDate, 'fa', 'jYYYY/jMM/jDD').format('YYYY-MM-DD');
-   $('#calendarModal').modal('hide'); // بستن مودال
-   handleDateSelection(selectedDate);
-  });
-
-  loadCalendar(currentDate); // بارگذاری اولیه تقویم
- });
- $(document).ready(function() {
-  let currentDate = moment().format('YYYY-MM-DD'); // مقدار پیش‌فرض (امروز)
-  let isInitialLoad = true; // بررسی اولین بارگذاری صفحه
-
-  function searchPatients(query, date) {
-
-   // اگر مقدار اینپوت جستجو خالی باشد، پارامتر `query` را حذف کنیم
-   let requestData = {
-    date: date
-   };
-   if (query !== "") {
-    requestData.query = query;
-   }
-
-   $.ajax({
-    url: "{{ route('search.patients') }}",
-    method: "GET",
-    data: requestData,
-    beforeSend: function() {
-     if (!isInitialLoad) { // در اولین لود، لودینگ نشان نده
-      $(".table tbody").html(`
-                        <tr>
-                            <td colspan="6" class="text-center py-3">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="sr-only">در حال جستجو...</span>
-                                </div>
-                            </td>
-                        </tr>
-                    `);
-     }
-    },
-    success: function(response) {
-     let appointmentsTableBody = $(".table tbody");
-     appointmentsTableBody.html("");
-
-     if (response.patients.length > 0) {
-      response.patients.forEach(function(appointment) {
-       let patient = appointment.patient || {};
-       let insurance = appointment.insurance ? appointment.insurance.name : 'ندارد';
-       let appointmentDate = appointment.appointment_date ?
-        moment(appointment.appointment_date).locale('fa').format('jYYYY/jMM/jDD') :
-        'نامشخص';
-
-       let appointmentHTML = `
-                            <tr>
-                                <td>${patient.first_name ? patient.first_name : 'نامشخص'} 
-                                    ${patient.last_name ? patient.last_name : ''}</td>
-                                <td>${patient.mobile ? patient.mobile : 'نامشخص'}</td>
-                                <td>${patient.national_code ? patient.national_code : 'نامشخص'}</td>
-                                <td>${appointment.prescription_status ? appointment.prescription_status : 'نامشخص'}</td>
-                                <td>${insurance}</td>
-                                <td>${appointmentDate}</td>
-                                <td></td>
-                            </tr>`;
-       appointmentsTableBody.append(appointmentHTML);
-      });
-     } else if (!isInitialLoad) { // در لود اولیه، پیام "هیچ نتیجه‌ای یافت نشد" را نمایش ندهد
-      appointmentsTableBody.html(`
-                        <tr>
-                            <td colspan="6" class="text-center py-3 text-muted">
-                                هیچ نتیجه‌ای یافت نشد.
-                            </td>
-                        </tr>
-                    `);
-     }
-
-     isInitialLoad = false; // بعد از اولین بارگذاری مقدار را تغییر بده
-    },
-    error: function() {
-     $(".table tbody").html(`
-                    <tr>
-                        <td colspan="6" class="text-center py-3 text-danger">
-                            خطا در دریافت اطلاعات
-                        </td>
-                    </tr>
-                `);
-    }
-   });
-  }
-
-  // 📌 **جستجو فقط از طریق تقویم مودال**
-  $(document).on("click", ".calendar-day", function() {
-   let selectedDate = $(this).attr("data-date"); // خواندن مقدار از تقویم مودال
-
-   if (!selectedDate) {
-    console.error("خطا: مقدار تاریخ از تقویم مودال دریافت نشد!");
-    return;
-   }
-
-   // تبدیل تاریخ جلالی به میلادی
-   let gregorianDate = moment.from(selectedDate, 'fa', 'jYYYY/jMM/jDD').format('YYYY-MM-DD');
-
-   $('#calendarModal').modal('hide'); // بستن مودال بعد از انتخاب تاریخ
-
-   // بررسی مقدار اینپوت جستجو و اعمال فیلتر فقط در صورت مقدار داشتن
-   let searchText = $(".my-form-control").val().trim();
-   searchPatients(searchText, gregorianDate);
-  });
-
-  // 📌 **جستجو هنگام تایپ در فیلد جستجو**
-  $(".my-form-control").on("input", function() {
-   let searchText = $(this).val().trim();
-   searchPatients(searchText, currentDate);
-  });
-
-  // 📌 **بارگذاری اولیه لیست نوبت‌های امروز**
-  searchPatients("", currentDate);
  });
 </script>
 @endsection

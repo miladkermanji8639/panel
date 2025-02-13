@@ -14,8 +14,6 @@
 <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/dr-panel.css') }}">
 
 <script src="{{ asset('dr-assets/panel/js/jquery-3.4.1.min.js') }}"></script>
-<script src="{{ asset('dr-assets/panel/js/home/bootstrap/bootstrap.bootstrap.min.js') }}"></script>
-
 <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/style.css') }}">
 <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/responsive_991.css') }}" media="(max-width:991px)">
 <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/responsive_768.css') }}" media="(max-width:768px)">

@@ -424,7 +424,10 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
         Route::get('/doctor/appointments/by-date', [DrPanelController::class, 'getAppointmentsByDate'])
             ->name('doctor.appointments.by-date');
         Route::get('/search/patients', [DrPanelController::class, 'searchPatients'])->name('search.patients');
+        Route::post('/appointments/update-date/{id}', [DrPanelController::class, 'updateAppointmentDate'])
+            ->name('updateAppointmentDate');
 
+        Route::get('/doctor/appointments/filter', [DrPanelController::class, 'filterAppointments'])->name('doctor.appointments.filter');
 
         Route::prefix('turn')->middleware('secretary.permission:appointments')->group(function () {
             Route::prefix('schedule')->group(function () {
@@ -466,14 +469,40 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
                 });
 
                 Route::prefix('scheduleSetting/blocking_users')->group(function () {
-                    Route::get('/', [BlockingUsersController::class, 'index'])->middleware('secretary.permission:appointments')->name('doctor-blocking-users.index');
-                    Route::post('/store', [BlockingUsersController::class, 'store'])->middleware('secretary.permission:appointments')->name('doctor-blocking-users.store');
-                    Route::post('/send-message', [BlockingUsersController::class, 'sendMessage'])->middleware('secretary.permission:appointments')->name('doctor-blocking-users.send-message');
-                    Route::get('/messages', [BlockingUsersController::class, 'getMessages'])->middleware('secretary.permission:appointments')->name('doctor-blocking-users.messages');
-                    Route::delete('/doctor-blocking-users/{id}', [BlockingUsersController::class, 'destroy'])->middleware('secretary.permission:appointments')->name('doctor-blocking-users.destroy');
-                    Route::patch('/update-status', [BlockingUsersController::class, 'updateStatus'])->middleware('secretary.permission:appointments')->name('doctor-blocking-users.update-status');
-                    Route::delete('/messages/{id}', [BlockingUsersController::class, 'deleteMessage'])->middleware('secretary.permission:appointments')->name('doctor-blocking-users.delete-message');
+                    Route::get('/', [BlockingUsersController::class, 'index'])
+                        ->middleware('secretary.permission:appointments')
+                        ->name('doctor-blocking-users.index');
+
+                    Route::post('/store', [BlockingUsersController::class, 'store'])
+                        ->middleware('secretary.permission:appointments')
+                        ->name('doctor-blocking-users.store');
+
+                    // اضافه کردن روت جدید برای مسدود کردن گروهی کاربران
+                    Route::post('/store-multiple', [BlockingUsersController::class, 'storeMultiple'])
+                        ->middleware('secretary.permission:appointments')
+                        ->name('doctor-blocking-users.store-multiple');
+
+                    Route::post('/send-message', [BlockingUsersController::class, 'sendMessage'])
+                        ->middleware('secretary.permission:appointments')
+                        ->name('doctor-blocking-users.send-message');
+
+                    Route::get('/messages', [BlockingUsersController::class, 'getMessages'])
+                        ->middleware('secretary.permission:appointments')
+                        ->name('doctor-blocking-users.messages');
+
+                    Route::delete('/doctor-blocking-users/{id}', [BlockingUsersController::class, 'destroy'])
+                        ->middleware('secretary.permission:appointments')
+                        ->name('doctor-blocking-users.destroy');
+
+                    Route::patch('/update-status', [BlockingUsersController::class, 'updateStatus'])
+                        ->middleware('secretary.permission:appointments')
+                        ->name('doctor-blocking-users.update-status');
+
+                    Route::delete('/messages/{id}', [BlockingUsersController::class, 'deleteMessage'])
+                        ->middleware('secretary.permission:appointments')
+                        ->name('doctor-blocking-users.delete-message');
                 });
+
 
                 Route::get('/scheduleSetting/workhours', [ScheduleSettingController::class, 'workhours'])->middleware('secretary.permission:appointments')->name('dr-workhours');
                 Route::post('/save-appointment-settings', [ScheduleSettingController::class, 'saveAppointmentSettings'])->middleware('secretary.permission:appointments')->name('save-appointment-settings');
@@ -505,6 +534,7 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
                 Route::post('/doctor/toggle-holiday', [ScheduleSettingController::class, 'toggleHolidayStatus'])->middleware('secretary.permission:appointments')->name('doctor.toggle_holiday');
                 Route::post('/doctor/holiday-status', [ScheduleSettingController::class, 'getHolidayStatus'])->middleware('secretary.permission:appointments')->name('doctor.get_holiday_status');
                 Route::post('/doctor/cancel-appointments', [ScheduleSettingController::class, 'cancelAppointments'])->middleware('secretary.permission:appointments')->name('doctor.cancel_appointments');
+                
                 Route::post('/doctor/reschedule-appointment', [ScheduleSettingController::class, 'rescheduleAppointment'])->middleware('secretary.permission:appointments')->name('doctor.reschedule_appointment');
                 Route::get('/turnContract', [ScheduleSettingController::class, 'turnContract'])->middleware('secretary.permission:appointments')->name('dr-scheduleSetting-turnContract');
                 Route::post('/update-first-available-appointment', [ScheduleSettingController::class, 'updateFirstAvailableAppointment'])->middleware('secretary.permission:appointments')->name('doctor.update_first_available_appointment');

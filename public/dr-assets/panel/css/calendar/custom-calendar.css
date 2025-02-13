@@ -11,6 +11,11 @@ body {
  padding: 10px;
  background-color: white;
 }
+.text-title-calendar-modal{
+  position: relative !important;
+   right: 15px !important;
+   top: 10px !important;
+}
 .calendar-day.active {
  background-color: #cce5ff;
  /* رنگ آبی روشن */

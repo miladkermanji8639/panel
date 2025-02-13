@@ -273,18 +273,24 @@ class AppointmentController
             'status' => 'required|in:scheduled,completed,cancelled',
         ]);
 
-
         // دریافت نوبت از دیتابیس
         $appointment = Appointment::findOrFail($id);
 
-        // به‌روزرسانی وضعیت نوبت
-        $appointment->status = $request->input('status');
+        // اگر نوبت لغو شد، فیلد deleted_at را مقداردهی کن
+        if ($request->input('status') === 'cancelled') {
+            $appointment->status = 'cancelled';
+            $appointment->deleted_at = now(); // مقداردهی به deleted_at
+        } else {
+            $appointment->status = $request->input('status');
+            $appointment->deleted_at = null; // اگر مجدداً فعال شد، حذف نرم‌افزاری را بردار
+        }
+
         $appointment->save();
 
-        // برگشت پاسخ موفق
         return response()->json([
             'message' => 'وضعیت نوبت با موفقیت به‌روز شد.',
             'appointment' => $appointment,
         ]);
     }
+
 }

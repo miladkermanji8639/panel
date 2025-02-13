@@ -4,7 +4,6 @@
 
 
 
-<script src="{{ asset('dr-assets/panel/js/jquery-3.4.1.min.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/popper.min.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/home/bootstrap/bootstrap.bootstrap.min.js') }}"></script>
     

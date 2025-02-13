@@ -76,7 +76,10 @@ class DrPanelController
   {
     $query = $request->query('query'); // مقدار جستجو شده
     $date = $request->query('date'); // تاریخ انتخاب شده
-
+    if (strpos($date, '-') !== false) {
+      // اگر تاریخ با `-` جدا شده بود، آن را به `/` تبدیل کنیم
+      $date = str_replace('-', '/', $date);
+    }
     $patients = Appointment::with('patient', 'insurance')
       ->whereDate('appointment_date', $date)
       ->whereHas('patient', function ($q) use ($query) {
@@ -89,6 +92,52 @@ class DrPanelController
       ->get();
 
     return response()->json(['patients' => $patients]);
+  }
+
+
+  public function updateAppointmentDate(Request $request, $id)
+  {
+    $request->validate([
+      'new_date' => 'required|date_format:Y-m-d', // اعتبارسنجی تاریخ
+    ]);
+
+    $appointment = Appointment::findOrFail($id); // یافتن نوبت
+    $newDate = Carbon::parse($request->new_date); // تبدیل به Carbon
+
+    // بررسی اینکه تاریخ جدید از امروز عقب‌تر نباشد
+    if ($newDate->lt(Carbon::today())) {
+      return response()->json(['error' => 'امکان جابجایی به تاریخ گذشته وجود ندارد.'], 400);
+    }
+
+    $appointment->appointment_date = $newDate;
+    $appointment->save(); // ذخیره تغییرات
+
+    return response()->json(['message' => 'نوبت با موفقیت جابجا شد.']);
+  }
+  public function filterAppointments(Request $request)
+  {
+    $status = $request->query('status');
+    $attendanceStatus = $request->query('attendance_status');
+
+    $query = Appointment::query();
+
+    // فیلتر بر اساس `status`
+    if (!empty($status)) {
+      $query->where('status', $status);
+    }
+
+    // فیلتر بر اساس `attendance_status`
+    if (!empty($attendanceStatus)) {
+      $query->where('attendance_status', $attendanceStatus);
+    }
+
+    // دریافت نوبت‌ها به همراه اطلاعات بیمار، پزشک و کلینیک
+    $appointments = $query->with(['patient', 'doctor', 'clinic', 'insurance'])->get();
+
+    return response()->json([
+      'success' => true,
+      'appointments' => $appointments
+    ]);
   }
 
 

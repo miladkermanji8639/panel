@@ -873,7 +873,7 @@ class ScheduleSettingController
     Appointment::where('appointment_date', $validatedData['date'])->delete();
     return response()->json([
       'status' => true,
-      'message' => 'تمام نوبت‌ها با موفقیت لغو شدند.',
+      'message' => ' نوبت‌ها با موفقیت لغو شدند.',
     ]);
   }
   public function rescheduleAppointment(Request $request)
