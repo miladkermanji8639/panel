@@ -8,7 +8,6 @@ use Hekmatinasser\Verta\Verta;
 use Morilog\Jalali\CalendarUtils;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
 class DrPanelController
 {
   /**
@@ -18,56 +17,44 @@ class DrPanelController
   {
     $today = Carbon::today();
     $doctorId = Auth::guard('doctor')->user()->id; // گرفتن ID پزشک لاگین‌شده
-
     // تعداد بیماران امروز فقط برای این پزشک
     $totalPatientsToday = Appointment::where('doctor_id', $doctorId)
       ->whereDate('appointment_date', $today)
       ->count();
-
     // بیماران ویزیت شده فقط برای این پزشک
     $visitedPatients = Appointment::where('doctor_id', $doctorId)
       ->whereDate('appointment_date', $today)
       ->where('attendance_status', 'attended')
       ->count();
-
     // بیماران باقی‌مانده فقط برای این پزشک
     $remainingPatients = $totalPatientsToday - $visitedPatients;
-
     return view("dr.panel.index", compact('totalPatientsToday', 'visitedPatients', 'remainingPatients'));
   }
-
   public function getAppointmentsByDate(Request $request)
   {
     $jalaliDate = $request->input('date'); // دریافت تاریخ جلالی از فرانت‌اند
-
     // **اصلاح فرمت تاریخ ورودی**
     if (strpos($jalaliDate, '-') !== false) {
       // اگر تاریخ با `-` جدا شده بود، آن را به `/` تبدیل کنیم
       $jalaliDate = str_replace('-', '/', $jalaliDate);
     }
-
     // بررسی صحت فرمت تاریخ ورودی (1403/11/24)
     if (!preg_match('/^\d{4}\/\d{2}\/\d{2}$/', $jalaliDate)) {
       return response()->json(['error' => 'فرمت تاریخ جلالی نادرست است.'], 400);
     }
-
     // **تبدیل تاریخ جلالی به میلادی**
     try {
       $gregorianDate = Jalalian::fromFormat('Y/m/d', $jalaliDate)->toCarbon()->format('Y-m-d');
     } catch (\Exception $e) {
       return response()->json(['error' => 'خطا در تبدیل تاریخ جلالی به میلادی.'], 500);
     }
-
     // لاگ‌گیری برای بررسی تبدیل صحیح
-
     $doctorId = Auth::guard('doctor')->user()->id; // دریافت ID پزشک لاگین‌شده
-
     // گرفتن نوبت‌های پزشک جاری در تاریخ تبدیل‌شده به میلادی
     $appointments = Appointment::where('doctor_id', $doctorId)
       ->whereDate('appointment_date', $gregorianDate)
       ->with(['patient', 'insurance']) // گرفتن اطلاعات بیمار و بیمه
       ->get();
-
     return response()->json([
       'appointments' => $appointments
     ]);
@@ -90,100 +77,41 @@ class DrPanelController
           ->orWhere('national_code', 'like', "%$query%");
       })
       ->get();
-
     return response()->json(['patients' => $patients]);
   }
-
-
   public function updateAppointmentDate(Request $request, $id)
   {
     $request->validate([
       'new_date' => 'required|date_format:Y-m-d', // اعتبارسنجی تاریخ
     ]);
-
     $appointment = Appointment::findOrFail($id); // یافتن نوبت
     $newDate = Carbon::parse($request->new_date); // تبدیل به Carbon
-
     // بررسی اینکه تاریخ جدید از امروز عقب‌تر نباشد
     if ($newDate->lt(Carbon::today())) {
       return response()->json(['error' => 'امکان جابجایی به تاریخ گذشته وجود ندارد.'], 400);
     }
-
     $appointment->appointment_date = $newDate;
     $appointment->save(); // ذخیره تغییرات
-
     return response()->json(['message' => 'نوبت با موفقیت جابجا شد.']);
   }
   public function filterAppointments(Request $request)
   {
     $status = $request->query('status');
     $attendanceStatus = $request->query('attendance_status');
-
-    $query = Appointment::query();
-
+    $query = Appointment::withTrashed(); // اضافه کردن withTrashed برای نمایش نوبت‌های لغو شده
     // فیلتر بر اساس `status`
     if (!empty($status)) {
       $query->where('status', $status);
     }
-
     // فیلتر بر اساس `attendance_status`
     if (!empty($attendanceStatus)) {
       $query->where('attendance_status', $attendanceStatus);
     }
-
     // دریافت نوبت‌ها به همراه اطلاعات بیمار، پزشک و کلینیک
     $appointments = $query->with(['patient', 'doctor', 'clinic', 'insurance'])->get();
-
     return response()->json([
       'success' => true,
       'appointments' => $appointments
     ]);
-  }
-
-
-
-
-  /**
-   * Show the form for creating a new resource.
-   */
-  public function create()
-  {
-    //
-  }
-  /**
-   * Store a newly created resource in storage.
-   */
-  public function store(Request $request)
-  {
-    //
-  }
-  /**
-   * Display the specified resource.
-   */
-  public function show(string $id)
-  {
-    //
-  }
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(string $id)
-  {
-    //
-  }
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request, string $id)
-  {
-    //
-  }
-  /**
-   * Remove the specified resource from storage.
-   */
-  public function destroy(string $id)
-  {
-    //
-
   }
 }

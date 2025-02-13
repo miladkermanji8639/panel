@@ -763,7 +763,8 @@ class ScheduleSettingController
       $appointments = DB::table('appointments')
         ->select(DB::raw('appointment_date, COUNT(*) as appointment_count'))
         ->where('doctor_id', $doctorId)
-        ->where('status', 'scheduled') // فیلتر برای نوبت‌های فعال
+        ->where('status', 'scheduled')
+        ->where('deleted_at',NULL) // فیلتر برای نوبت‌های فعال
         ->groupBy('appointment_date')
         ->get();
       // ساختاردهی داده‌ها به فرمت دلخواه
@@ -870,12 +871,22 @@ class ScheduleSettingController
     $validatedData = $request->validate([
       'date' => 'required|date',
     ]);
-    Appointment::where('appointment_date', $validatedData['date'])->delete();
+
+    // دریافت تمام نوبت‌ها برای تاریخ مشخص
+    $appointments = Appointment::where('appointment_date', $validatedData['date'])->get();
+
+    foreach ($appointments as $appointment) {
+      $appointment->status = 'cancelled';
+      $appointment->deleted_at = now(); // حذف نرم‌افزاری
+      $appointment->save();
+    }
+
     return response()->json([
       'status' => true,
-      'message' => ' نوبت‌ها با موفقیت لغو شدند.',
+      'message' => 'نوبت‌ها با موفقیت لغو شدند.',
     ]);
   }
+
   public function rescheduleAppointment(Request $request)
   {
     $validated = $request->validate([

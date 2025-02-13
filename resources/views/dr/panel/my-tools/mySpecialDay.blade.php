@@ -356,9 +356,8 @@
             <div class="alert alert-info">
                 این روز تعطیل است. آیا می‌خواهید آن را از حالت تعطیلی خارج کنید؟
             </div>
-            <div class="d-flex justify-content-between mt-3 gap-4">
-                <button id="confirmUnHolidayButton" class="btn btn-primary h-50 w-100 me-2">بله</button>
-                <button class="btn btn-danger h-50 w-100 close-modal" data-bs-dismiss="modal" aria-label="Close">خیر</button>
+            <div class="d-flex justify-content-between mt-3 gap-4 w-100">
+                <button id="confirmUnHolidayButton" class="btn btn-primary h-50 w-100 me-2">خارج کردن از تعطیلی</button>
             </div>
         `);
   }
@@ -391,9 +390,8 @@
             <button id="updateWorkHours" onclick="updateWorkhours()" class="btn btn-primary w-100 h-50 mt-3" style="display: none;">
               بروزرسانی ساعات کاری
              </button>
-            <div class="d-flex justify-content-between mt-3 gap-4">
-                <button id="confirmHolidayButton" class="btn btn-primary h-50 w-100 me-2">بله</button>
-               <button class="btn btn-danger h-50 w-100 close-modal" data-bs-dismiss="modal" aria-label="Close">خیر</button>
+            <div class="d-flex justify-content-between mt-3 gap-4 w-100">
+                <button id="confirmHolidayButton" class="btn btn-primary h-50 w-100 me-2">تعطیل کردن این روز</button>
             </div>
         `);
   }
@@ -810,10 +808,7 @@
             این روز قبلاً تعطیل شده است. 
             <div class="w-100 d-flex justify-content-between gap-4 mt-3">
               <div class="w-100">
-                <button type="button" id="confirmUnHolidayButton" class="btn btn-primary h-50 w-100">بله</button>
-              </div>
-              <div class="w-100">
-                <button type="button" class="btn btn-danger h-50 w-100 close-modal" data-dismiss="modal" aria-label="Close">خیر</button>
+                <button type="button" id="confirmUnHolidayButton" class="btn btn-primary h-50 w-100">خارج کردن از تعطیلی</button>
               </div>
             </div>
           `);
@@ -843,11 +838,9 @@
             آیا می‌خواهید این روز را تعطیل کنید؟
             <div class="w-100 d-flex justify-content-between gap-4 mt-3">
               <div class="w-100">
-                <button type="button" id="confirmHolidayButton" class="btn btn-primary h-50 w-100">بله</button>
+                <button type="button" id="confirmHolidayButton" class="btn btn-primary h-50 w-100">تعطیل کردن این روز</button>
               </div>
-              <div class="w-100">
-                <button type="button" class="btn btn-danger h-50 w-100 close-modal" data-dismiss="modal" aria-label="Close">خیر</button>
-              </div>
+
             </div>
           `);
      }

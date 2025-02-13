@@ -366,6 +366,24 @@
     <div class="w-100 d-flex justify-content-end">
      <button id="goToFirstAvailableDashboard" class="btn btn-light w-100 border">برو به اولین نوبت خالی</button>
     </div>
+    <div class="calendar-body calendar-body-g-425"> <!-- عناوین روزهای هفته -->
+      <div class="calendar-day-name text-center">شنبه</div>
+      <div class="calendar-day-name text-center">یک‌شنبه</div>
+      <div class="calendar-day-name text-center">دوشنبه</div>
+      <div class="calendar-day-name text-center">سه‌شنبه</div>
+      <div class="calendar-day-name text-center">چهارشنبه</div>
+      <div class="calendar-day-name text-center">پنج‌شنبه</div>
+      <div class="calendar-day-name text-center">جمعه</div>
+    </div>
+    <div class="calendar-body-425 d-none"> <!-- عناوین روزهای هفته -->
+      <div class="calendar-day-name text-center">ش</div>
+      <div class="calendar-day-name text-center">ی</div>
+      <div class="calendar-day-name text-center">د</div>
+      <div class="calendar-day-name text-center">س</div>
+      <div class="calendar-day-name text-center">چ</div>
+      <div class="calendar-day-name text-center">پ</div>
+      <div class="calendar-day-name text-center">ج</div>
+    </div>
     <div id="calendar-reschedule" class="calendar-body"></div>
 
    </div>

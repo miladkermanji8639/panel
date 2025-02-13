@@ -1666,7 +1666,7 @@ $('#goToFirstAvailableDashboard').on('click', function() {
     const gregorianDate = moment(newDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
     const today = moment().format('YYYY-MM-DD');
     if (gregorianDate < today || $(this).hasClass('holiday') || $(this).find('.my-badge-success').length > 0) {
-     Swal.fire('خطا', 'تاریخ معتبر نیست.', 'error');
+     Swal.fire('خطا', 'امکان جابجایی نوبت به گذشته وجود ندارد.', 'error');
      return;
     }
 
