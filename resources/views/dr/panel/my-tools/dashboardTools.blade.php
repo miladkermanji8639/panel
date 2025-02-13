@@ -127,7 +127,7 @@
      } else {
       appointmentsTableBody.html(`
                     <tr>
-                        <td colspan="7" class="text-center py-3">هیچ نوبتی برای این تاریخ وجود ندارد.</td>
+                        <td colspan="10" class="text-center py-3">هیچ نوبتی برای این تاریخ وجود ندارد.</td>
                     </tr>
                 `);
      }
@@ -135,7 +135,7 @@
     error: function() {
      appointmentsTableBody.html(`
                 <tr>
-                    <td colspan="7" class="text-center py-3 text-danger">خطا در دریافت نوبت‌ها.</td>
+                    <td colspan="10" class="text-center py-3 text-danger">خطا در دریافت نوبت‌ها.</td>
                 </tr>
             `);
     }
@@ -969,57 +969,7 @@
    }
   });
  }
- $('#goToFirstAvailable').on('click', function() {
-  $.ajax({
-   url: "{{ route('doctor.get_next_available_date') }}",
-   method: 'GET',
-   success: function(response) {
-    if (response.status) {
-     const nextAvailableDate = response.date; // تاریخ اولین نوبت خالی
-     const oldDate = $('#dateModal').data('selectedDate'); // تاریخ قبلی از مودال اولیه
 
-     Swal.fire({
-      title: `اولین نوبت خالی (${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')})`,
-      text: `آیا می‌خواهید نوبت از تاریخ ${moment(oldDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} به تاریخ ${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} منتقل شود؟`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'بله، جابجا کن',
-      cancelButtonText: 'لغو',
-     }).then((result) => {
-      if (result.isConfirmed) {
-       // ارسال درخواست برای جابجایی
-       $.ajax({
-        url: "{{ route('doctor.update_first_available_appointment') }}",
-        method: 'POST',
-        data: {
-         old_date: oldDate,
-         new_date: nextAvailableDate,
-         _token: '{{ csrf_token() }}',
-        },
-        success: function(updateResponse) {
-         if (updateResponse.status) {
-          Swal.fire('موفقیت', updateResponse.message, 'success');
-          // بروزرسانی تقویم
-          loadAppointmentsCount();
-          loadHolidayStyles();
-         }
-        },
-        error: function(xhr) {
-
-         Swal.fire('خطا', xhr.responseJSON.message, 'error');
-        },
-       });
-      }
-     });
-    } else {
-     Swal.fire('اطلاع', response.message, 'info');
-    }
-   },
-   error: function() {
-    Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
-   },
-  });
- });
 
  // اضافه کردن event listener به دکمه
  function getWorkHours(selectedDate) {
@@ -1070,6 +1020,65 @@
   });
  }
 
+$('#goToFirstAvailableDashboard').on('click', function() {
+  $.ajax({
+    url: "{{ route('doctor.get_next_available_date') }}",
+    method: 'GET',
+    success: function(response) {
+      if (response.status) {
+        const nextAvailableDate = response.date;
+        let oldDates = [];
+
+        // دریافت تاریخ‌ها از آرایه selectedAppointments
+        let selected = getSelectedAppointments(); 
+        if (selected.length > 0) {
+          oldDates = [...new Set(selected.map(item => item.date))]; 
+        } else {
+          let oldDate = $('#dateModal').data('selectedDate') || $("#rescheduleModal").data("old-date");
+          if (oldDate) oldDates.push(oldDate);
+        }
+
+        Swal.fire({
+          title: `اولین نوبت خالی (${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')})`,
+          text: `آیا می‌خواهید نوبت‌ها از تاریخ(های) ${oldDates.map(date => moment(date, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')).join(', ')} به تاریخ ${moment(nextAvailableDate, 'YYYY-MM-DD').locale('fa').format('jD jMMMM jYYYY')} منتقل شوند؟`,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'بله، جابجا کن',
+          cancelButtonText: 'لغو',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            oldDates.forEach(oldDate => {
+              $.ajax({
+                url: "{{ route('doctor.update_first_available_appointment') }}",
+                method: 'POST',
+                data: {
+                  old_date: oldDate,
+                  new_date: nextAvailableDate,
+                  _token: '{{ csrf_token() }}',
+                },
+                success: function(updateResponse) {
+                  if (updateResponse.status) {
+                    Swal.fire('موفقیت', updateResponse.message, 'success');
+                    loadAppointmentsCount();
+                    loadHolidayStyles();
+                  }
+                },
+                error: function(xhr) {
+                  Swal.fire('خطا', xhr.responseJSON.message, 'error');
+                },
+              });
+            });
+          }
+        });
+      } else {
+        Swal.fire('اطلاع', response.message, 'info');
+      }
+    },
+    error: function() {
+      Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
+    },
+  });
+});
 
  $(document).ready(function() {
 
@@ -1517,7 +1526,7 @@
     let appointmentsTableBody = $(".table tbody");
     appointmentsTableBody.html(`
             <tr>
-                <td colspan="7" class="text-center py-3">
+                <td colspan="10" class="text-center py-3">
                     <div class="spinner-border text-primary" role="status">
                         <span class="sr-only">در حال بارگذاری...</span>
                     </div>
@@ -1572,7 +1581,7 @@
       } else {
        appointmentsTableBody.html(`
                         <tr>
-                            <td colspan="7" class="text-center py-3">هیچ نوبتی برای این فیلتر وجود ندارد.</td>
+                            <td colspan="10" class="text-center py-3">هیچ نوبتی برای این فیلتر وجود ندارد.</td>
                         </tr>
                     `);
       }
@@ -1580,7 +1589,7 @@
      error: function() {
       appointmentsTableBody.html(`
                     <tr>
-                        <td colspan="7" class="text-center py-3 text-danger">خطا در دریافت نوبت‌ها.</td>
+                        <td colspan="10" class="text-center py-3 text-danger">خطا در دریافت نوبت‌ها.</td>
                     </tr>
                 `);
      }
@@ -1588,7 +1597,21 @@
    });
   });
  });
-
+    function getSelectedAppointments() {
+        let selectedAppointments = [];
+        $('.row-checkbox:checked').each(function () {
+            let row = $(this).closest('tr');
+            selectedAppointments.push({
+                row: row,
+                id: row.find('.cancel-appointment').data('id'),
+                mobile: row.find('.block-user').data('mobile'),
+                userId: row.find('.block-user').data('user-id'),
+                userName: row.find('.block-user').data('user-name'),
+                date: row.find('.move-appointment').data('date')
+            });
+        });
+        return selectedAppointments;
+    }
 
  $(document).ready(function() {
   const selectAllCheckbox = $('#select-all');
@@ -1601,21 +1624,7 @@
   });
 
   // ✅ تابع گرفتن ردیف‌های انتخاب‌شده
-  function getSelectedAppointments() {
-   let selectedAppointments = [];
-   $('.row-checkbox:checked').each(function() {
-    let row = $(this).closest('tr');
-    selectedAppointments.push({
-     row: row,
-     id: row.find('.cancel-appointment').data('id'),
-     mobile: row.find('.block-user').data('mobile'),
-     userId: row.find('.block-user').data('user-id'),
-     userName: row.find('.block-user').data('user-name'),
-     date: row.find('.move-appointment').data('date')
-    });
-   });
-   return selectedAppointments;
-  }
+
 
   // ✅ لغو نوبت گروهی
   $('#cancel-appointments-btn').click(function() {

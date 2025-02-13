@@ -364,14 +364,10 @@
      </div>
     </div>
     <div class="w-100 d-flex justify-content-end">
-     <button id="goToFirstAvailable" class="btn btn-light w-100 border">برو به اولین نوبت خالی</button>
+     <button id="goToFirstAvailableDashboard" class="btn btn-light w-100 border">برو به اولین نوبت خالی</button>
     </div>
     <div id="calendar-reschedule" class="calendar-body"></div>
-    <div class="w-100 d-flex justify-content-between gap-4 mt-3">
-     <button type="button" class="btn btn-primary h-50 w-100" id="confirmRescheduleDashboard">تأیید</button>
-     <button type="button" class="btn btn-danger h-50 w-100 close-modal" class="close" data-dismiss="modal"
-      aria-label="Close">انصراف</button>
-    </div>
+
    </div>
   </div>
  </div>
