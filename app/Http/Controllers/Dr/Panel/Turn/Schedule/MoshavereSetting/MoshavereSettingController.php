@@ -256,7 +256,6 @@ class MoshavereSettingController
   }
   public function saveTimeSlot(Request $request)
   {
-    Log::info($request);
     $validated = $request->validate([
       'day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
       'start_time' => 'required|date_format:H:i',

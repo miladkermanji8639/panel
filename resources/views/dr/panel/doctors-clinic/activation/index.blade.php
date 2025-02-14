@@ -12,6 +12,7 @@
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/profile/edit-profile.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/doctors-clininc/activation/index.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-asset/panel/css/toastify/toastify.min.css') }}">
+<link rel="stylesheet" href="{{ asset('dr-assets/panel/css/toastr/toastr.min.css') }}">
 
  <!-- Leaflet -->
  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -22,35 +23,90 @@
 </head>
 
 <body>
-    <!-- لودینگ کلی سایت -->
-    <div id="global-loader">
-      <div class="loader-backdrop"></div> <!-- بک‌دراپ -->
-      <div class="loader-content">
-        <div class="spinner"></div> <!-- انیمیشن لودینگ -->
-        <p>لطفا منتظر بمانید...</p>
-      </div>
-    </div>
- <header class="bg-light text-dark p-3 text-left my-shodow">
-  <h5>محل مطب من</h5>
+ <!-- لودینگ کلی سایت -->
+ <div id="global-loader">
+  <div class="loader-backdrop"></div> <!-- بک‌دراپ -->
+  <div class="loader-content">
+   <div class="spinner"></div> <!-- انیمیشن لودینگ -->
+   <p>لطفا منتظر بمانید...</p>
+  </div>
+ </div>
+ <header class="bg-light text-dark p-3 my-shodow w-100 d-flex align-items-center">
+  <div class="back w-50">
+   <a href="{{ route('dr-panel') }}" class="btn btn-light">
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none">
+     <g id="Arrow / Chevron_Right_MD">
+      <path id="Vector" d="M10 8L14 12L10 16" stroke="#000000" stroke-width="2" stroke-linecap="round"
+       stroke-linejoin="round"></path>
+     </g>
+    </svg>
+    <span class="font-weight-bold">بازگشت</span>
+
+   </a>
+  </div>
+  <div class="w-50">
+   <h5 class="font-weight-bold title-header">محل مطب من</h5>
+  </div>
  </header>
- <div class="d-flex w-100 justify-content-center">
-  <div class="my-container-fluid mt-2 border-radius-8 d-flex w-100 justify-content-center">
+
+ <div class="d-flex w-100 justify-content-center align-items-center flex-column">
+  <div class="roadmap-container mt-3">
+   <div class="step completed">
+    <span class="step-title">شروع</span>
+    <svg class="icon" viewBox="0 0 36 36" fill="none">
+     <circle cx="18" cy="18" r="16" stroke="#0d6efd" stroke-width="2" fill="#0d6efd" />
+     <path d="M12 18l4 4l8-8" stroke="#fff" stroke-width="2" fill="none" />
+    </svg>
+   </div>
+   <div class="line completed"></div>
+   <div class="step ">
+    <span class="step-title">آدرس</span>
+    <svg class="icon" viewBox="0 0 36 36" fill="none">
+     <circle cx="18" cy="18" r="16" stroke="#0d6efd" stroke-width="2" fill="#fff" />
+    </svg>
+   </div>
+   <div class="line"></div>
+   <div class="step">
+    <span class="step-title"> بیعانه</span>
+    <svg class="icon" viewBox="0 0 36 36" fill="none">
+     <circle cx="18" cy="18" r="16" stroke="#ccc" stroke-width="2" fill="#f0f0f0" />
+    </svg>
+   </div>
+   <div class="line"></div>
+   <div class="step">
+    <span class="step-title">ساعت کاری</span>
+    <svg class="icon" viewBox="0 0 36 36" fill="none">
+     <circle cx="18" cy="18" r="16" stroke="#ccc" stroke-width="2" fill="#f0f0f0" />
+    </svg>
+   </div>
+   <div class="line"></div>
+   <div class="step">
+    <span class="step-title">پایان</span>
+    <svg class="icon" viewBox="0 0 36 36" fill="none">
+     <circle cx="18" cy="18" r="16" stroke="#ccc" stroke-width="2" fill="#f0f0f0" />
+    </svg>
+   </div>
+  </div>
+
+
+
+  <div class="my-container-fluid  border-radius-8 d-flex w-100 justify-content-center">
    <div class="row d-flex w-100 justify-content-center">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 border-radius-8">
-     <div class="card mt-3 shadow">
+     <div class="card  shadow">
       <div class="card-body">
        <div id="searchContainer" class="text-center">
         <input id="searchInput" type="text" placeholder="جستجوی مکان...">
         <div id="searchResults" class="search-results"></div>
        </div>
-       <div id="map" style="height: 400px; width: 100%;"></div>
+       <div id="map" style="height: 280px; width: 100%;"></div>
        <p class="text-start font-weight-bold mt-3">محل مطب خود را از روی نقشه انتخاب کنید:</p>
-      <div class="alert alert-secondary">
-        <span class="font-weight-bold font-size-13">برای ویرایش آدرس بر آدرس زیر کلیک کنید 👇  </span>
-      </div>
+       <div class="alert alert-secondary">
+        <span class="font-weight-bold font-size-13">برای ویرایش آدرس بر آدرس زیر کلیک کنید 👇 </span>
+       </div>
        <div class="input-group mt-2">
-        <input type="text" value="{{ $clinic->address ?? "" }}" class="my-form-control w-100" placeholder="آدرس شما" readonly data-toggle="modal"
-         data-target="#addressModalCenter">
+        <input type="text" value="{{ $clinic->address ?? '' }}" class="my-form-control w-100"
+         placeholder="آدرس شما" readonly data-toggle="modal" data-target="#addressModalCenter">
         <div class="modal fade" id="addressModalCenter" tabindex="-1" role="dialog"
          aria-labelledby="addressModalCenterLabel" aria-hidden="true">
          <div class="modal-dialog modal-dialog-centered" role="document">
@@ -83,7 +139,8 @@
         </div>
 
         <div class="mt-3 w-100">
-         <button class="btn btn-primary h-50 w-100 " type="button" data-toggle="modal" data-target="#doneModal">انجام
+         <button class="btn btn-primary h-50 w-100 " type="button" data-toggle="modal"
+          data-target="#doneModal">انجام
           شد</button>
         </div>
        </div>
@@ -116,9 +173,9 @@
         onclick="addPhoneField()">افزودن شماره تماس</a>
       </div>
       <div class="alert alert-info w-100 mt-2">
-        <span class="font-weight-bold font-size-13">
-          لطفا برای اطلاع رسانی نوبت های مطب شماره موبایل منشی خود را وارد نمایید.
-        </span>
+       <span class="font-weight-bold font-size-13">
+        لطفا برای اطلاع رسانی نوبت های مطب شماره موبایل منشی خود را وارد نمایید.
+       </span>
       </div>
       <div class="mt-3">
        <button type="submit" class="btn btn-primary w-100 h-50 d-flex justify-content-center align-items-center">
@@ -137,6 +194,8 @@
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
+
  <script>
   const clinicId = {{ $clinic->id }};
   const updateAddressUrl = "{{ route('doctors.clinic.update.address', ['id' => $clinic->id]) }}";
@@ -218,11 +277,12 @@
         $(`#phoneGroup${phoneCount}`).remove();
         phoneCount--; // کاهش تعداد شماره‌ها
         toggleAddPhoneButton(); // به‌روزرسانی وضعیت دکمه
-        showToast('شماره تماس با موفقیت حذف شد.', 'success');
+        toastr.success('شماره تماس با موفقیت حذف شد.');
         document.getElementById("addPhoneLink").removeAttribute('style');
        },
        error: function() {
-        showToast('خطا در حذف شماره تماس.', 'error');
+        toastr.error('خطا در حذف شماره تماس.');
+
        }
       });
      }
@@ -234,10 +294,11 @@
 
     toggleAddPhoneButton(); // به‌روزرسانی وضعیت دکمه
    }
-  } $('#doneModal').on('hidden.bs.modal', function () {
-      $('body').removeClass('modal-open'); // حذف کلاس اسکرول
-      $('.modal-backdrop').remove(); // حذف بک‌دراپ
-    });
+  }
+  $('#doneModal').on('hidden.bs.modal', function() {
+   $('body').removeClass('modal-open'); // حذف کلاس اسکرول
+   $('.modal-backdrop').remove(); // حذف بک‌دراپ
+  });
 
   $('#doneModal').on('show.bs.modal', function() {
    // نمایش لودینگ
@@ -317,7 +378,8 @@
     success: function(response) {
      buttonText.show();
      loader.hide();
-     showToast('شماره‌های تماس با موفقیت ذخیره شدند.', 'success');
+        toastr.success('شماره‌های تماس با موفقیت ذخیره شدند.');
+
      $('#doneModal').modal('hide'); // بستن مودال
      $('body').removeClass('modal-open'); // جلوگیری از اسکرول مودال
      $('.modal-backdrop').remove(); // حذف overlay
@@ -326,7 +388,8 @@
     error: function() {
      buttonText.show();
      loader.hide();
-     showToast('خطا در ذخیره شماره‌ها. دوباره تلاش کنید.', 'error');
+        toastr.error('خطا در ذخیره شماره‌ها. دوباره تلاش کنید.');
+
     },
     complete: function() {
      buttonText.show();
@@ -413,16 +476,6 @@
   }
  </script>
  <script>
-  function showToast(message, type = 'success') {
-   Toastify({
-    text: message,
-    duration: 3000,
-    close: true,
-    gravity: 'top',
-    position: 'right',
-    backgroundColor: type === 'success' ? 'green' : 'red',
-   }).showToast();
-  }
   document.addEventListener("DOMContentLoaded", function() {
    // مقداردهی اولیه نقشه
    var map = L.map('map').setView([35.6892, 51.3890], 13);
@@ -527,11 +580,14 @@
       $('#addressModalCenter').modal('hide');
       $('body').removeClass('modal-open');
       $('.modal-backdrop').remove();
-      showToast('آدرس شما با موفقیت به‌روزرسانی شد.', 'success');
+        toastr.success('آدرس شما با موفقیت به‌روزرسانی شد.');
+
       document.querySelector('.my-form-control').value = address;
      },
      error: function() {
-      showToast('مشکلی پیش آمد. دوباره تلاش کنید.', 'error');
+     
+        toastr.error('مشکلی پیش آمد. دوباره تلاش کنید.');
+
      },
      complete: function() {
       buttonText.show();

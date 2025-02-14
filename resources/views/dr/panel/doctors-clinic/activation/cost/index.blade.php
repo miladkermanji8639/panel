@@ -22,12 +22,64 @@
 </head>
 
 <body dir="rtl">
-<header class="bg-light text-dark p-3 text-left my-shodow">
-     <h5 class="card-title text-center font-weight-bold">مبلغ بیعانه</h5>
+<header class="bg-light text-dark p-3 my-shodow w-100 d-flex align-items-center">
+  <div class="back w-50">
+    <a href="{{ route('activation-doctor-clinic', $clinicId) }}" class="btn btn-light">
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <g id="Arrow / Chevron_Right_MD">
+          <path id="Vector" d="M10 8L14 12L10 16" stroke="#000000" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </g>
+      </svg>
+      <span class="font-weight-bold">بازگشت</span>
 
+    </a>
+  </div>
+  <div class="w-50">
+    <h5 class="font-weight-bold title-header">  بیعانه</h5>
+  </div>
 </header>
 
- <div class="d-flex w-100 justify-content-center mt-3">
+
+ <div class="d-flex w-100 justify-content-center align-items-center flex-column">
+  <div class="roadmap-container mt-3">
+    <div class="step completed">
+      <span class="step-title">شروع</span>
+      <svg class="icon" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16" stroke="#0d6efd" stroke-width="2" fill="#0d6efd" />
+        <path d="M12 18l4 4l8-8" stroke="#fff" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+    <div class="line completed"></div>
+    <div class="step completed">
+      <span class="step-title">آدرس</span>
+    <svg class="icon" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="16" stroke="#0d6efd" stroke-width="2" fill="#0d6efd" />
+      <path d="M12 18l4 4l8-8" stroke="#fff" stroke-width="2" fill="none" />
+    </svg>
+    </div>
+    <div class="line"></div>
+    <div class="step">
+      <span class="step-title"> بیعانه</span>
+      <svg class="icon" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16" stroke="#ccc" stroke-width="2" fill="#f0f0f0" />
+      </svg>
+    </div>
+    <div class="line"></div>
+    <div class="step">
+      <span class="step-title">ساعت کاری</span>
+      <svg class="icon" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16" stroke="#ccc" stroke-width="2" fill="#f0f0f0" />
+      </svg>
+    </div>
+    <div class="line"></div>
+    <div class="step">
+      <span class="step-title">پایان</span>
+      <svg class="icon" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16" stroke="#ccc" stroke-width="2" fill="#f0f0f0" />
+      </svg>
+    </div>
+  </div>
  <div class="my-container-fluid-cost mt-2 border-radius-8 d-flex  justify-content-center">
   <div class="row justify-content-center">
    <div class="">
@@ -36,7 +88,10 @@
       دریافت بیعانه به هنگام ثبت نوبت اینترنتی باعث می‌شود کسانی که نوبت گرفته‌اند، مقید به حضور حتمی و به موقع در مطب
       شوند.
      </div>
-     <p class="text-center font-weight-bold">همکاران شما به‌صورت میانگین مبلغ ۵۰,۰۰۰ تومان را در نظر گرفته‌اند.</p>
+<p class="text-center font-weight-bold">
+  همکاران شما به‌صورت میانگین مبلغ {{ number_format($averageDeposit) }} تومان را در نظر گرفته‌اند.
+</p>
+
      <form id="depositForm">
       @csrf
          <input type="hidden" name="clinic_id" value="{{ $clinicId }}"> <!-- شناسه مطب -->

@@ -2072,7 +2072,6 @@
      <span class="button_text">ذخیره تغیرات</span>
      <div class="loader"></div>
     </button>
-    <button type="button" class="btn btn-danger h-50 w-50" data-dismiss="modal">لغو</button>
    </div>
   </div>
  </div>

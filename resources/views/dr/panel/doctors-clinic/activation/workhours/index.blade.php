@@ -9,6 +9,7 @@
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/bootstrap.min.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/style.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/profile/edit-profile.css') }}">
+<link rel="stylesheet" href="{{ asset('dr-assets/panel/css/doctors-clininc/activation/index.css') }}">
 
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/doctors-clinic/duration/duration.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/doctors-clinic/activation/workhours/workhours.css') }}">
@@ -16,11 +17,66 @@
 </head>
 
 <body dir="rtl">
- <header class="bg-light text-dark p-3 text-left my-shadow">
-  <h5 class="card-title text-center font-weight-bold"> مدت زمان ویزیت</h5>
- </header>
+<header class="bg-light text-dark p-3 my-shodow w-100 d-flex align-items-center">
+  <div class="back w-50">
+    <a href="" class="btn btn-light">
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <g id="Arrow / Chevron_Right_MD">
+          <path id="Vector" d="M10 8L14 12L10 16" stroke="#000000" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </g>
+      </svg>
+      <span class="font-weight-bold">بازگشت</span>
 
- <div class="d-flex w-100 justify-content-center mt-3">
+    </a>
+  </div>
+  <div class="w-50">
+    <h5 class="font-weight-bold title-header">  ساعات کاری</h5>
+  </div>
+</header>
+
+ <div class="d-flex w-100 justify-content-center align-items-center flex-column">
+  <div class="roadmap-container mt-3">
+    <div class="step completed">
+      <span class="step-title">شروع</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#0d6efd" stroke-width="2" fill="#0d6efd" />
+        <path d="M7 12l3 3l5-5" stroke="#fff" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+    <div class="line completed"></div>
+    <div class="step completed">
+      <span class="step-title">آدرس</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#0d6efd" stroke-width="2" fill="#0d6efd" />
+        <path d="M7 12l3 3l5-5" stroke="#fff" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+    <div class="line completed"></div>
+    <div class="step completed">
+      <span class="step-title"> بیعانه</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#0d6efd" stroke-width="2" fill="#0d6efd" />
+        <path d="M7 12l3 3l5-5" stroke="#fff" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+    <div class="line completed"></div>
+    <div class="step active">
+      <span class="step-title">ساعت کاری</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#0d6efd" stroke-width="2" fill="#0d6efd" />
+        <path d="M7 12l3 3l5-5" stroke="#fff" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+    <div class="line"></div>
+    <div class="step active">
+      <span class="step-title">پایان</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#0d6efd" stroke-width="2" fill="#0d6efd" />
+        <path d="M7 12l3 3l5-5" stroke="#fff" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+  </div>
   <div class="my-container-fluid mt-2 border-radius-8 d-flex justify-content-center">
    <div class="row justify-content-center">
     <div class="">
@@ -365,21 +421,16 @@
           ).prop('disabled', true);
         },
         success: function (response) {
-          Toastify({
-            text: response.message,
-            style: { background: "green" },
-            duration: 3000
-          }).showToast();
+        
+        toastr.success(response.message);
+
           loadWorkHours(selectedDays);
         },
         error: function (xhr) {
           const errors = xhr.responseJSON.errors;
           for (let field in errors) {
-            Toastify({
-              text: errors[field].join(", "),
-              style: { background: "red" },
-              duration: 3000
-            }).showToast();
+        toastr.success(errors[field].join(", "));
+
           }
         },
         complete: function () {

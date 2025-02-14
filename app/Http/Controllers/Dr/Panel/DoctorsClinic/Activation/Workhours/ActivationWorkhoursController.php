@@ -28,6 +28,7 @@ class ActivationWorkhoursController
             'work_hours.*.end' => ['required', 'date_format:H:i', 'after:work_hours.*.start'],
         ]);
 
+        $appointmentDuration = DoctorAppointmentConfig::where('clinic_id', $request->clinic_id)->first()->appointment_duration;
 
         foreach ($request->day as $day) {
             $schedule = DoctorWorkSchedule::firstOrNew([
@@ -37,18 +38,50 @@ class ActivationWorkhoursController
             ]);
 
             $existingHours = $schedule->work_hours ? json_decode($schedule->work_hours, true) : [];
-            $newHours = array_merge($existingHours, $request->work_hours);
 
-            // حذف ساعات تکراری
-            $uniqueHours = collect($newHours)->unique()->values()->toArray();
+            $newHours = [];
+            foreach ($request->work_hours as $hour) {
+                $start = \Carbon\Carbon::createFromFormat('H:i', $hour['start']);
+                $end = \Carbon\Carbon::createFromFormat('H:i', $hour['end']);
+
+                // بررسی همه شرایط زمانی:
+                if ($end->lessThan($start)) {
+                    // اگر زمان پایان کوچکتر از شروع بود (عبور از نیمه‌شب)
+                    $end = $end->addDay(); // روز بعد برای زمان پایان
+                }
+
+                // محاسبه دقیق اختلاف دقیقه‌ها
+                $diffInMinutes = $end->diffInMinutes($start);
+
+                // اطمینان از مثبت بودن اختلاف (اگر باز هم مشکلی بود)
+                if ($diffInMinutes < 0) {
+                    $diffInMinutes = 1440 - $start->diffInMinutes($end->copy()->subDay());
+                }
+
+                $maxAppointments = intdiv($diffInMinutes, $appointmentDuration);
+
+                $newHours[] = [
+                    'start' => $hour['start'],
+                    'end' => $hour['end'],
+                    'max_appointments' => max($maxAppointments, 0), // اطمینان از عدم منفی بودن
+                ];
+            }
+
+
+
+
+            // ترکیب و حذف ساعات تکراری
+            $mergedHours = array_merge($existingHours, $newHours);
+            $uniqueHours = collect($mergedHours)->unique()->values()->toArray();
 
             $schedule->is_working = true;
-            $schedule->work_hours = json_encode($uniqueHours);
+            $schedule->work_hours = json_encode($uniqueHours, JSON_UNESCAPED_UNICODE); // ذخیره به صورت JSON
             $schedule->save();
         }
 
         return response()->json(['success' => true, 'message' => 'ساعات کاری با موفقیت ذخیره شد.']);
     }
+
 
 
     public function getWorkHours($clinicId, $doctorId)

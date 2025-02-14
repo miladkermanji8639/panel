@@ -11,8 +11,11 @@ class CostController
     public function index($clinicId)
     {
         $doctorId = Auth::guard('doctor')->user()->id;
-        return view('dr.panel.doctors-clinic.activation.cost.index', compact('clinicId', 'doctorId'));
+        $averageDeposit = ClinicDepositSetting::whereNotNull('deposit_amount')->avg('deposit_amount'); // میانگین بیعانه
+
+        return view('dr.panel.doctors-clinic.activation.cost.index', compact('clinicId', 'doctorId', 'averageDeposit'));
     }
+
     public function listDeposits($clinicId)
     {
         $deposits = ClinicDepositSetting::where('clinic_id', $clinicId)

@@ -69,3 +69,85 @@ iframe {
   max-width: 100% !important;
  }
 }
+
+
+
+/* roadmap styles */
+.roadmap-container {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ margin-bottom: 20px;
+ position: relative;
+}
+
+.step {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ position: relative;
+}
+
+.step-title {
+ margin-bottom: 8px;
+ font-size: 13px;
+ font-weight: 600;
+ color: #333;
+ text-align: center;
+}
+
+.icon {
+ width: 32px;
+ height: 32px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ z-index: 1;
+}
+
+.line {
+ height: 2px;
+ width: 140px;
+ background-color: #e0e0e0;
+ flex: 1;
+ position: relative;
+ top: 16px;
+ margin-left: -16px;
+ margin-right: -16px;
+}
+
+/* خط‌های قبل از استپ active */
+.step.completed+.line,
+.step.active+.line {
+ background-color: #0d6efd;
+}
+.completed .line {
+ background-color: #0d6efd;
+}
+
+.active .icon circle {
+ stroke: #0d6efd;
+ fill: #fff;
+}
+
+.completed .icon circle {
+ stroke: #0d6efd;
+ fill: #0d6efd;
+}
+
+.completed .icon path {
+ stroke: #fff;
+}
+/* roadmap styles */
+@media only screen and (max-width: 768px) {
+ .roadmap-container {
+  overflow-y: hidden !important;
+  overflow-x: scroll !important;
+  text-wrap: nowrap !important;
+  width: 100% !important;
+  padding: 10px 20px !important;
+  }
+ .title-header{
+  display: none;
+ }
+}
