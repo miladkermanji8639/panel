@@ -9,17 +9,19 @@
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/bootstrap.min.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/style.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/profile/edit-profile.css') }}">
+
 <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/doctors-clininc/activation/index.css') }}">
 
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/doctors-clinic/duration/duration.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/doctors-clinic/activation/workhours/workhours.css') }}">
+ 
  <link rel="stylesheet" href="{{ asset('dr-asset/panel/css/toastify/toastify.min.css') }}">
 </head>
 
 <body dir="rtl">
 <header class="bg-light text-dark p-3 my-shodow w-100 d-flex align-items-center">
   <div class="back w-50">
-    <a href="" class="btn btn-light">
+    <a href="{{ route('duration.index', $clinicId) }}" class="btn btn-light">
       <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none">
         <g id="Arrow / Chevron_Right_MD">
           <path id="Vector" d="M10 8L14 12L10 16" stroke="#000000" stroke-width="2" stroke-linecap="round"
@@ -34,7 +36,14 @@
     <h5 class="font-weight-bold title-header">  ساعات کاری</h5>
   </div>
 </header>
-
+  <!-- لودینگ کلی سایت -->
+  <div id="global-loader">
+    <div class="loader-backdrop"></div> <!-- بک‌دراپ -->
+    <div class="loader-content">
+      <div class="spinner"></div> <!-- انیمیشن لودینگ -->
+      <p>لطفا منتظر بمانید...</p>
+    </div>
+  </div>
  <div class="d-flex w-100 justify-content-center align-items-center flex-column">
   <div class="roadmap-container mt-3">
     <div class="step completed">
@@ -143,13 +152,13 @@
          <label class="label-top-input-special-takhasos">شروع</label>
          <input type="text"
           class="form-control  h-50 timepicker-ui-input text-center font-weight-bold font-size-13 W-100" id="startTime"
-          value="00:00">
+          value="00:00" style="direction: ltr">
         </div>
         <div class="form-group position-relative timepicker-ui w-100">
          <label class="label-top-input-special-takhasos">پایان</label>
          <input type="text"
           class="form-control h-50 timepicker-ui-input text-center font-weight-bold font-size-13 W-100" id="endTime"
-          value="23:59">
+          value="23:59" style="direction: ltr">
         </div>
        </div>
 

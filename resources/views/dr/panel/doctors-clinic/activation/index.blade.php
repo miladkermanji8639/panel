@@ -12,13 +12,8 @@
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/profile/edit-profile.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/doctors-clininc/activation/index.css') }}">
  <link rel="stylesheet" href="{{ asset('dr-asset/panel/css/toastify/toastify.min.css') }}">
-<link rel="stylesheet" href="{{ asset('dr-assets/panel/css/toastr/toastr.min.css') }}">
-
- <!-- Leaflet -->
- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
- <!-- فونت آیکون -->
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"
-  crossorigin="anonymous" referrerpolicy="no-referrer" />
+ <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/toastr/toastr.min.css') }}">
+ <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/leaflet/leaflet.css') }}">
  @include('dr.panel.my-tools.loader-btn')
 </head>
 
@@ -191,10 +186,10 @@
 
  @include('dr.panel.layouts.partials.scripts')
  <script src="{{ asset('dr-asset/panel/js/toastify/toastify.min.js') }}"></script>
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
- <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-<script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
+ <script src="{{ asset('dr-assets/panel/js/sweetalert2/sweetalert2.js') }}"></script>
+ <script src="{{ asset('dr-assets/panel/js/leaflet/leaflet.js') }}"></script>
+ <script src="{{ asset('dr-assets/panel/js/leaflet/leaflet-control-geocoder/dist/Control.Geocoder.js') }}"></script>
+ <script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
 
  <script>
   const clinicId = {{ $clinic->id }};
@@ -378,7 +373,7 @@
     success: function(response) {
      buttonText.show();
      loader.hide();
-        toastr.success('شماره‌های تماس با موفقیت ذخیره شدند.');
+     toastr.success('شماره‌های تماس با موفقیت ذخیره شدند.');
 
      $('#doneModal').modal('hide'); // بستن مودال
      $('body').removeClass('modal-open'); // جلوگیری از اسکرول مودال
@@ -388,7 +383,7 @@
     error: function() {
      buttonText.show();
      loader.hide();
-        toastr.error('خطا در ذخیره شماره‌ها. دوباره تلاش کنید.');
+     toastr.error('خطا در ذخیره شماره‌ها. دوباره تلاش کنید.');
 
     },
     complete: function() {
@@ -580,13 +575,13 @@
       $('#addressModalCenter').modal('hide');
       $('body').removeClass('modal-open');
       $('.modal-backdrop').remove();
-        toastr.success('آدرس شما با موفقیت به‌روزرسانی شد.');
+      toastr.success('آدرس شما با موفقیت به‌روزرسانی شد.');
 
       document.querySelector('.my-form-control').value = address;
      },
      error: function() {
-     
-        toastr.error('مشکلی پیش آمد. دوباره تلاش کنید.');
+
+      toastr.error('مشکلی پیش آمد. دوباره تلاش کنید.');
 
      },
      complete: function() {
