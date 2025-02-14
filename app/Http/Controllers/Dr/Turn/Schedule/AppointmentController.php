@@ -271,10 +271,22 @@ class AppointmentController
         // اعتبارسنجی ورودی
         $request->validate([
             'status' => 'required|in:scheduled,completed,cancelled',
+            'selectedClinicId' => 'nullable|string', // اضافه کردن فیلتر selectedClinicId
         ]);
 
         // دریافت نوبت از دیتابیس
         $appointment = Appointment::findOrFail($id);
+
+        // بررسی selectedClinicId
+        $selectedClinicId = $request->input('selectedClinicId');
+        if ($selectedClinicId && $selectedClinicId !== 'default') {
+            // اگر selectedClinicId وجود دارد و برابر 'default' نیست، بررسی کنید که نوبت متعلق به این کلینیک است
+            if ($appointment->clinic_id != $selectedClinicId) {
+                return response()->json([
+                    'error' => 'این نوبت متعلق به کلینیک انتخاب شده نیست.',
+                ], 403);
+            }
+        }
 
         // اگر نوبت لغو شد، فیلد deleted_at را مقداردهی کن
         if ($request->input('status') === 'cancelled') {

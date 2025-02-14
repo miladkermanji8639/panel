@@ -35,6 +35,7 @@ class BlockingUsersController
     'blocked_at' => 'required|date',
     'unblocked_at' => 'nullable|date|after:blocked_at',
     'reason' => 'nullable|string|max:255',
+    'selectedClinicId' => 'nullable|string',
    ]);
 
    // بررسی اینکه آیا کاربر قبلاً مسدود شده است یا خیر

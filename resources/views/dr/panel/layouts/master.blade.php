@@ -44,7 +44,7 @@
      <div class="my-tooltip mx-2">
       <svg data-toggle="tooltip" data-placement="bottom"
        title="از این قسمت، مرکزی که در آن مشغول تجویز و طبابت هستید را انتخاب کنید" width="16" height="17"
-       viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" class="hidden lg:block svg-help"
+       viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" class=" lg:block svg-help"
        color="#3f4079" data-tip="true" data-for="centerSelect" currentItem="false">
        <path
         d="M8.00006 9.9198V9.70984C8.00006 9.02984 8.42009 8.66982 8.84009 8.37982C9.25009 8.09982 9.66003 7.73983 9.66003 7.07983C9.66003 6.15983 8.92006 5.4198 8.00006 5.4198C7.08006 5.4198 6.34009 6.15983 6.34009 7.07983"

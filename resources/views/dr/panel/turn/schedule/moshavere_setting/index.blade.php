@@ -37,7 +37,7 @@
       <div class="d-flex justify-content-end w-100 mt-2">
        <div class="my-tooltip mx-2 position-absolute">
         <svg data-toggle="tooltip" data-placement="bottom" title="" width="16" height="17"
-         viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" class="hidden lg:block svg-help"
+         viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" class="lg:block svg-help"
          color="#3f4079" data-tip="true" data-for="centerSelect" currentitem="false"
          data-original-title=" توجه! مبلغ هر دقیقه مکالمه در بسته های زیر پورسانت سایت میباشد 1,000 تومان
 به طور مثال ۱۰ دقیقه مکامله با نرخ ۵۰۰ تومان میشود پنج هزارتومان که از هر مشاوره شما کسر و دریافت میگردد
