@@ -3,11 +3,7 @@
 
  $(document).ready(function() {
   let dropdownOpen = false;
-/*      let currentDate = moment().format('YYYY-MM-DD');
-     let persianDate = moment(currentDate, 'YYYY-MM-DD').locale('fa').format('jYYYY/jMM/jDD');
-     loadAppointments(persianDate, localStorage.getItem('selectedClinicId')) */
 
-  // بررسی مقدار ذخیره شده در localStorage
   let selectedClinic = localStorage.getItem('selectedClinic');
   let selectedClinicId = localStorage.getItem('selectedClinicId');
 
@@ -80,7 +76,7 @@
    localStorage.setItem('selectedClinicId', selectedId);
 
    checkInactiveClinics();
-   handleDateSelection(persianDate,selectedId);
+   handleDateSelection(persianDate, selectedId);
    loadAppointments(persianDate, selectedId)
    $('.dropdown-trigger').removeClass('border border-primary');
    $('.my-dropdown-menu').addClass('d-none');
@@ -335,12 +331,12 @@
    calendar.append(card);
   }
   // افزودن رویداد کلیک به کارت‌های تقویم
-  $('.calendar-card').on('click',function() {
+  $('.calendar-card').on('click', function() {
    const selectedDate = $(this).attr('data-date');
    selectedClinicId = localStorage.getItem('selectedClinicId')
    $('.calendar-card').removeClass('my-active');
    $(this).addClass('my-active');
-   handleDateSelection(selectedDate,selectedClinicId);
+   handleDateSelection(selectedDate, selectedClinicId);
    loadAppointments(selectedDate, selectedClinicId)
   });
   // در اولین لود صفحه، داده‌های امروز را نمایش دهیم
@@ -390,11 +386,11 @@
  $(document).ready(function() {
   let currentDate = moment().format('YYYY-MM-DD'); // مقدار پیش‌فرض (امروز)
   let persianDate = moment(currentDate, 'YYYY-MM-DD').locale('fa').format('jYYYY/jMM/jDD');
-  
+
   let isInitialLoad = true; // بررسی اولین بارگذاری صفحه
   function searchPatients(query) {
    let selectedDate = currentDate; // همیشه مقدار تاریخ را از `currentDate` بگیریم
-  let spanTextDate = $('.selectDate_datepicker__xkZeS span').text()
+   let spanTextDate = $('.selectDate_datepicker__xkZeS span').text()
 
    let requestData = {
     date: spanTextDate,
@@ -485,7 +481,7 @@
   // 📌 **وقتی در اینپوت جستجو تایپ شد**
   $(".my-form-control").on("input", function() {
    let searchText = $(this).val().trim();
-   
+
    searchPatients(searchText);
   });
   // 📌 **بارگذاری اولیه لیست نوبت‌های امروز**
@@ -1527,7 +1523,7 @@
    let gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'); // تبدیل به میلادی
    $("#selectedDate").val(gregorianDate); // ذخیره تاریخ میلادی در فیلد مخفی
    $("#selectedDate").val(gregorianDate); // ذخیره تاریخ میلادی در فیلد مخفی
-      handleDateSelection(persianDate, localStorage.getItem('selectedClinicId'));
+   handleDateSelection(persianDate, localStorage.getItem('selectedClinicId'));
    // بررسی تعطیل بودن روز
    $.ajax({
     url: "{{ route('doctor.get_holiday_status') }}",
@@ -1548,10 +1544,10 @@
       // اگر روز تعطیل نبود، ساعات کاری را دریافت کند
       getWorkHours(gregorianDate);
      }
-        $(".selectDate_datepicker__xkZeS span.mx-1").text(persianDate);
-        $('#calendarModal').modal('hide'); // بستن مودال
-        // اجرای جستجو با تاریخ جدید
-        $('.my-form-control').val('')
+     $(".selectDate_datepicker__xkZeS span.mx-1").text(persianDate);
+     $('#calendarModal').modal('hide'); // بستن مودال
+     // اجرای جستجو با تاریخ جدید
+     $('.my-form-control').val('')
     }
    });
   });
