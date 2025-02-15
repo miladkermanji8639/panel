@@ -77,7 +77,6 @@ class DrPanelController
     $query = $request->query('query'); // مقدار جستجو شده
     $date = $request->query('date'); // تاریخ انتخاب شده
     $selectedClinicId = $request->query('selectedClinicId');
-
     // **اصلاح فرمت تاریخ ورودی**
     if (strpos($date, '-') !== false) {
       // اگر تاریخ با `-` جدا شده بود، آن را به `/` تبدیل کنیم
@@ -90,7 +89,6 @@ class DrPanelController
     } catch (\Exception $e) {
       return response()->json(['error' => 'خطا در تبدیل تاریخ جلالی به میلادی.'], 500);
     }
-
     // ایجاد کوئری پایه
     $appointmentsQuery = Appointment::with('patient', 'insurance')
       ->whereDate('appointment_date', $gregorianDate)

@@ -385,22 +385,19 @@
 
   $('#next').click(() => animateAndLoadCalendar('next'));
   $('#prev').click(() => animateAndLoadCalendar('prev'));
-  $(document).on("click", ".calendar-day", function() {
-   let selectedDate = $(this).attr("data-date");
-   let gregorianDate = moment.from(selectedDate, 'fa', 'jYYYY/jMM/jDD').format('YYYY-MM-DD');
-   $('#calendarModal').modal('hide'); // بستن مودال
-   handleDateSelection(selectedDate, localStorage.getItem('selectedClinicId'));
-  });
   loadCalendar(currentDate); // بارگذاری اولیه تقویم
  });
  $(document).ready(function() {
   let currentDate = moment().format('YYYY-MM-DD'); // مقدار پیش‌فرض (امروز)
   let persianDate = moment(currentDate, 'YYYY-MM-DD').locale('fa').format('jYYYY/jMM/jDD');
+  
   let isInitialLoad = true; // بررسی اولین بارگذاری صفحه
   function searchPatients(query) {
    let selectedDate = currentDate; // همیشه مقدار تاریخ را از `currentDate` بگیریم
+  let spanTextDate = $('.selectDate_datepicker__xkZeS span').text()
+
    let requestData = {
-    date: persianDate,
+    date: spanTextDate,
     selectedClinicId: localStorage.getItem('selectedClinicId')
    };
    if (query !== "") {
@@ -484,24 +481,11 @@
     }
    });
   }
-  // 📌 **انتخاب تاریخ از تقویم مودال**
-  $(document).on("click", ".calendar-day", function() {
-   let selectedDate = $(this).attr("data-date");
-   if (!selectedDate) {
-    console.error("خطا: مقدار تاریخ از تقویم مودال دریافت نشد!");
-    return;
-   }
-   // تبدیل تاریخ جلالی به میلادی و ذخیره در `currentDate`
-   currentDate = moment.from(selectedDate, 'fa', 'jYYYY/jMM/jDD').format('YYYY-MM-DD');
-   // مقدار تاریخ در دکمه نمایش را به‌روزرسانی کن
-   $(".selectDate_datepicker__xkZeS span.mx-1").text(selectedDate);
-   $('#calendarModal').modal('hide'); // بستن مودال
-   // اجرای جستجو با تاریخ جدید
-   searchPatients($(".my-form-control").val().trim());
-  });
+
   // 📌 **وقتی در اینپوت جستجو تایپ شد**
   $(".my-form-control").on("input", function() {
    let searchText = $(this).val().trim();
+   
    searchPatients(searchText);
   });
   // 📌 **بارگذاری اولیه لیست نوبت‌های امروز**
@@ -1543,7 +1527,7 @@
    let gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'); // تبدیل به میلادی
    $("#selectedDate").val(gregorianDate); // ذخیره تاریخ میلادی در فیلد مخفی
    $("#selectedDate").val(gregorianDate); // ذخیره تاریخ میلادی در فیلد مخفی
-
+      handleDateSelection(persianDate, localStorage.getItem('selectedClinicId'));
    // بررسی تعطیل بودن روز
    $.ajax({
     url: "{{ route('doctor.get_holiday_status') }}",
@@ -1564,8 +1548,10 @@
       // اگر روز تعطیل نبود، ساعات کاری را دریافت کند
       getWorkHours(gregorianDate);
      }
-
-     $("#dateModal").modal("show"); // باز کردن مودال
+        $(".selectDate_datepicker__xkZeS span.mx-1").text(persianDate);
+        $('#calendarModal').modal('hide'); // بستن مودال
+        // اجرای جستجو با تاریخ جدید
+        $('.my-form-control').val('')
     }
    });
   });
