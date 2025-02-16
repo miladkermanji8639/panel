@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('user_id'); // کاربر مسدود شده
             $table->unsignedBigInteger('doctor_id'); // دکتری که کاربر نزد او مسدود شده است
+            $table->unsignedBigInteger('clinic_id')->nullable(); // دکتری که کاربر نزد او مسدود شده است
             $table->dateTime('blocked_at'); // زمان شروع مسدودیت
             $table->dateTime('unblocked_at')->nullable(); // زمان پایان مسدودیت
             $table->string('reason')->nullable(); // دلیل مسدودیت
@@ -25,6 +26,7 @@ return new class extends Migration {
             // ایجاد کلیدهای خارجی
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('cascade');
+            $table->foreign('clinic_id')->references('id')->on('clinics')->onDelete('cascade');
         });
 
     }

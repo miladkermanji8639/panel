@@ -13,6 +13,7 @@ class UserBlocking extends Model
     protected $fillable = [
         'user_id',
         'doctor_id',
+        'clinic_id',
         'blocked_at',
         'unblocked_at',
         'reason',

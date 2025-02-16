@@ -16,6 +16,7 @@ class Vacation extends Model
     // مشخص کردن فیلدهای قابل پر کردن
     protected $fillable = [
         'doctor_id',
+        'clinic_id',
         'date',
         'start_time',
         'end_time',
