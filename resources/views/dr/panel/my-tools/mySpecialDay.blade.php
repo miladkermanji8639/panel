@@ -1,4 +1,71 @@
 <script>
+  $(document).ready(function () {
+      let dropdownOpen = false;
+      let selectedClinic = localStorage.getItem('selectedClinic');
+      let selectedClinicId = localStorage.getItem('selectedClinicId');
+      if (selectedClinic && selectedClinicId) {
+        $('.dropdown-label').text(selectedClinic);
+        $('.option-card').each(function () {
+          if ($(this).attr('data-id') === selectedClinicId) {
+            $('.option-card').removeClass('card-active');
+            $(this).addClass('card-active');
+          }
+        });
+      } else {
+        localStorage.setItem('selectedClinic', 'ویزیت آنلاین به نوبه');
+        localStorage.setItem('selectedClinicId', 'default');
+      }
+
+      function checkInactiveClinics() {
+        var hasInactiveClinics = $('.option-card[data-active="0"]').length > 0;
+        if (hasInactiveClinics) {
+          $('.dropdown-trigger').addClass('warning');
+        } else {
+          $('.dropdown-trigger').removeClass('warning');
+        }
+      }
+      checkInactiveClinics();
+
+      $('.dropdown-trigger').on('click', function (event) {
+        event.stopPropagation();
+        dropdownOpen = !dropdownOpen;
+        $(this).toggleClass('border border-primary');
+        $('.my-dropdown-menu').toggleClass('d-none');
+        setTimeout(() => {
+          dropdownOpen = $('.my-dropdown-menu').is(':visible');
+        }, 100);
+      });
+
+      $(document).on('click', function () {
+        if (dropdownOpen) {
+          $('.dropdown-trigger').removeClass('border border-primary');
+          $('.my-dropdown-menu').addClass('d-none');
+          dropdownOpen = false;
+        }
+      });
+
+      $('.my-dropdown-menu').on('click', function (event) {
+        event.stopPropagation();
+      });
+
+      $('.option-card').on('click', function () {
+        var selectedText = $(this).find('.font-weight-bold.d-block.fs-15').text().trim();
+        var selectedId = $(this).attr('data-id');
+        $('.option-card').removeClass('card-active');
+        $(this).addClass('card-active');
+        $('.dropdown-label').text(selectedText);
+
+        localStorage.setItem('selectedClinic', selectedText);
+        localStorage.setItem('selectedClinicId', selectedId);
+        checkInactiveClinics();
+        $('.dropdown-trigger').removeClass('border border-primary');
+        $('.my-dropdown-menu').addClass('d-none');
+        dropdownOpen = false;
+
+        // ریلود صفحه با پارامتر جدید
+        window.location.href = window.location.pathname + "?selectedClinicId=" + selectedId;
+      });
+    });
  let selectedDay = null;
 
  function generateCalendar(year, month) {
@@ -47,7 +114,8 @@
    data: {
     date: $("#selectedDate").val(),
     work_hours: JSON.stringify(workHours),
-    _token: $("meta[name='csrf-token']").attr("content")
+    _token: $("meta[name='csrf-token']").attr("content"),
+    selectedClinicId:localStorage.getItem('selectedClinicId')
    },
    success: function (response) {
     if (response.status) {
@@ -78,7 +146,9 @@
     method: 'POST',
     data: {
      date: gregorianDate,
-     _token: '{{ csrf_token() }}'
+     _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
     },
     success: function (response) {
      updateModalContent(response); // به‌روزرسانی محتوای مودال
@@ -222,6 +292,8 @@
                old_date: oldDate,
                new_date: gregorianDate,
                _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
              },
              success: function (response) {
                if (response.status) {
@@ -255,6 +327,10 @@
   $.ajax({
    url: "{{ route('appointments.count') }}",
    method: 'GET',
+   data:{
+     selectedClinicId: localStorage.getItem('selectedClinicId')
+
+   },
    success: function (response) {
     if (response.status) {
      $('.calendar-day').each(function () {
@@ -302,6 +378,10 @@
   $.ajax({
    url: "{{ route('appointments.count') }}",
    method: 'GET',
+   data:{
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
+   },
    success: function (response) {
     if (response.status) {
      $('#calendar-reschedule .calendar-day').each(function () {
@@ -323,6 +403,10 @@
   $.ajax({
    url: "{{ route('doctor.get_holidays') }}",
    method: 'GET',
+   data:{
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
+   },
    success: function (response) {
     if (response.status) {
      const holidays = response.holidays;
@@ -404,6 +488,10 @@
   $.ajax({
    url: "{{ route('doctor.get_holidays') }}",
    method: 'GET',
+   data:{
+     selectedClinicId: localStorage.getItem('selectedClinicId')
+
+   },
    success: function (response) {
     if (response.status) {
      const holidays = response.holidays;
@@ -425,6 +513,10 @@
   $.ajax({
    url: "{{ route('doctor.get_next_available_date') }}",
    method: 'GET',
+    data: {
+      selectedClinicId: localStorage.getItem('selectedClinicId')
+
+    },
    success: function (response) {
     if (response.status) {
      const nextAvailableDate = response.date;
@@ -444,7 +536,8 @@
         method: 'POST',
         data: {
          date: nextAvailableDate,
-         _token: '{{ csrf_token() }}'
+         _token: '{{ csrf_token() }}',
+         selectedClinicId:localStorage.getItem('selectedClinicId')
         },
         success: function (updateResponse) {
          if (updateResponse.status) {
@@ -481,6 +574,10 @@
   $.ajax({
    url: "{{ route('doctor.get_next_available_date') }}",
    method: 'GET',
+    data: {
+      selectedClinicId: localStorage.getItem('selectedClinicId')
+
+    },
    success: function (response) {
     if (response.status) {
      const nextAvailableDate = response.date; // تاریخ اولین نوبت خالی
@@ -503,6 +600,7 @@
          old_date: oldDate,
          new_date: nextAvailableDate,
          _token: '{{ csrf_token() }}',
+         selectedClinicId:localStorage.getItem('selectedClinicId')
         },
         success: function (updateResponse) {
          if (updateResponse.status) {
@@ -534,7 +632,7 @@
   $.ajax({
    url: "{{ route('doctor.get_default_schedule') }}",
    method: "GET",
-   data: { date: selectedDate },
+   data: { date: selectedDate ,selectedClinicId:localStorage.getItem('selectedClinicId')},
    success: function (response) {
     $("#workHoursContainer").empty();
 
@@ -619,7 +717,8 @@
       method: 'POST',
       data: {
        date: selectedDate,
-       _token: '{{ csrf_token() }}'
+       _token: '{{ csrf_token() }}',
+       selectedClinicId:localStorage.getItem('selectedClinicId')
       },
       success: function (response) {
        if (response.status) {
@@ -654,7 +753,8 @@
     data: {
      old_date: oldDate,
      new_date: moment(newDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'),
-     _token: '{{ csrf_token() }}'
+     _token: '{{ csrf_token() }}',
+     selectedClinicId:localStorage.getItem('selectedClinicId')
     },
     success: function (response) {
      if (response.status) {
@@ -724,7 +824,8 @@
         data: {
          old_date: selectedDate,
          new_date: moment(targetDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'), // تبدیل به فرمت میلادی
-         _token: '{{ csrf_token() }}'
+         _token: '{{ csrf_token() }}',
+         selectedClinicId:localStorage.getItem('selectedClinicId')
         },
         success: function (response) {
          if (response.status) {
@@ -798,7 +899,8 @@
     method: 'POST',
     data: {
      date: gregorianDate,
-     _token: '{{ csrf_token() }}'
+     _token: '{{ csrf_token() }}',
+     selectedClinicId:localStorage.getItem('selectedClinicId')
     },
     success: function (response) {
      // حالت اول: روز تعطیل
@@ -859,7 +961,9 @@
        method: 'POST',
        data: {
         date: selectedDate,
-        _token: '{{ csrf_token() }}'
+        _token: '{{ csrf_token() }}',
+     selectedClinicId: localStorage.getItem('selectedClinicId')
+
        },
        success: function (response) {
         if (response.status) {
@@ -909,7 +1013,9 @@
     method: "POST",
     data: {
      date: gregorianDate,
-     _token: '{{ csrf_token() }}'
+     _token: '{{ csrf_token() }}',
+     selectedClinicId: localStorage.getItem('selectedClinicId')
+
     },
     success: function (response) {
      if (response.is_holiday) {

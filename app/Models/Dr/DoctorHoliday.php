@@ -10,7 +10,7 @@ class DoctorHoliday extends Model
     use HasFactory;
 
     protected $table = 'doctor_holidays'; // نام جدول
-    protected $fillable = ['doctor_id', 'holiday_dates']; // ستون‌های قابل پر شدن
+    protected $fillable = ['doctor_id', 'holiday_dates','clinic_id']; // ستون‌های قابل پر شدن
     protected $casts = [
         'holiday_dates' => 'array', // تبدیل به آرایه
     ];

@@ -961,26 +961,28 @@ class ScheduleSettingController
   public function getAppointmentsCountPerDay(Request $request)
   {
     try {
+      // دریافت شناسه پزشک یا منشی
       $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-      $selectedClinicId = $request->input('selectedClinicId'); // دریافت selectedClinicId از درخواست
+      $selectedClinicId = $request->input('selectedClinicId'); // کلینیک انتخابی
 
-      // استخراج تعداد نوبت‌های هر روز
-      $appointmentsQuery = DB::table('appointments')
+      // استخراج تعداد نوبت‌های هر روز با شرط خاص برای 'default'
+      $appointments = DB::table('appointments')
         ->select(DB::raw('appointment_date, COUNT(*) as appointment_count'))
         ->where('doctor_id', $doctorId)
         ->where('status', 'scheduled')
-        ->whereNull('deleted_at'); // فیلتر برای نوبت‌های فعال
-
-      // اعمال فیلتر selectedClinicId اگر وجود داشته باشد و برابر 'default' نباشد
-      if ($selectedClinicId && $selectedClinicId !== 'default') {
-        $appointmentsQuery->where('clinic_id', $selectedClinicId);
-      }
-
-      $appointments = $appointmentsQuery
+        ->whereNull('deleted_at') // فیلتر برای نوبت‌های فعال
+        ->when($selectedClinicId === 'default', function ($query) use ($doctorId) {
+          // در صورت 'default' فقط نوبت‌های بدون کلینیک (clinic_id = NULL) مرتبط با پزشک
+          $query->whereNull('clinic_id')->where('doctor_id', $doctorId);
+        })
+        ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+          // در صورت ارسال کلینیک خاص
+          $query->where('clinic_id', $selectedClinicId);
+        })
         ->groupBy('appointment_date')
         ->get();
 
-      // ساختاردهی داده‌ها به فرمت دلخواه
+      // قالب‌بندی داده‌ها
       $data = $appointments->map(function ($item) {
         return [
           'appointment_date' => $item->appointment_date,
@@ -996,78 +998,97 @@ class ScheduleSettingController
       return response()->json([
         'status' => false,
         'message' => 'خطا در دریافت داده‌ها',
-        'error' => $e->getMessage(), // اضافه کردن خطا برای دیباگ بهتر
+        'error' => $e->getMessage(), // نمایش پیام خطا برای دیباگ بهتر
       ], 500);
     }
   }
+
+
   public function toggleHolidayStatus(Request $request)
   {
     $validated = $request->validate([
       'date' => 'required|date',
       'selectedClinicId' => 'nullable|string',
     ]);
+
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-    ;
     $selectedClinicId = $request->input('selectedClinicId');
-    // بازیابی یا ایجاد رکورد تعطیلات
-    $holidayRecord = DoctorHoliday::firstOrCreate(
-      ['doctor_id' => $doctorId],
-      ['holiday_dates' => json_encode([])] // مقدار پیش‌فرض آرایه خالی
-    );
-    if ($selectedClinicId && $selectedClinicId !== 'default') {
-      $holidayRecord->where('clinic_id', $selectedClinicId);
+
+    // بازیابی یا ایجاد رکورد تعطیلات با شرط کلینیک
+    $holidayRecordQuery = DoctorHoliday::where('doctor_id', $doctorId);
+
+    if ($selectedClinicId === 'default') {
+      $holidayRecordQuery->whereNull('clinic_id');
+    } elseif ($selectedClinicId && $selectedClinicId !== 'default') {
+      $holidayRecordQuery->where('clinic_id', $selectedClinicId);
     }
+
+    $holidayRecord = $holidayRecordQuery->firstOrCreate([
+      'doctor_id' => $doctorId,
+      'clinic_id' => ($selectedClinicId !== 'default' ? $selectedClinicId : null),
+    ], [
+      'holiday_dates' => json_encode([])
+    ]);
+
     // بررسی و تبدیل JSON به آرایه
     $holidayDates = json_decode($holidayRecord->holiday_dates, true);
-    // اطمینان از مقدار آرایه
     if (!is_array($holidayDates)) {
       $holidayDates = [];
     }
-    // بررسی وجود تاریخ
+
+    // بررسی وجود تاریخ و تغییر وضعیت
     if (in_array($validated['date'], $holidayDates)) {
-      // حذف تاریخ در صورت وجود
+      // حذف تاریخ از لیست تعطیلات
       $holidayDates = array_diff($holidayDates, [$validated['date']]);
       $message = 'این تاریخ از حالت تعطیلی خارج شد.';
       $isHoliday = false;
     } else {
-      // اضافه کردن تاریخ جدید
+      // اضافه کردن تاریخ به لیست تعطیلات
       $holidayDates[] = $validated['date'];
       $message = 'این تاریخ تعطیل شد.';
       $isHoliday = true;
 
-      $specialDay = SpecialDailySchedule::where('date', $validated['date'])->first();
-      if ($selectedClinicId && $selectedClinicId !== 'default') {
-        $specialDay->where('clinic_id', $selectedClinicId);
-      }
-      if ($specialDay) {
-        $specialDay->delete();
+      // حذف SpecialDailySchedule مرتبط با کلینیک
+      $specialDayQuery = SpecialDailySchedule::where('date', $validated['date']);
+
+      if ($selectedClinicId === 'default') {
+        $specialDayQuery->whereNull('clinic_id');
+      } elseif ($selectedClinicId && $selectedClinicId !== 'default') {
+        $specialDayQuery->where('clinic_id', $selectedClinicId);
       }
 
-
+      $specialDayQuery->delete();
     }
-    // به‌روزرسانی رکورد
+
+    // به‌روزرسانی رکورد تعطیلات
     $holidayRecord->update([
-      'holiday_dates' => json_encode(array_values($holidayDates)) // ذخیره به صورت JSON
+      'holiday_dates' => json_encode(array_values($holidayDates))
     ]);
+
     return response()->json([
       'status' => true,
       'is_holiday' => $isHoliday,
       'message' => $message,
-      'holiday_dates' => $holidayDates, // ارسال داده‌ها برای دیباگ
+      'holiday_dates' => $holidayDates,
     ]);
   }
+
   public function getHolidayDates(Request $request)
   {
+    // دریافت شناسه پزشک یا منشی
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-    $selectedClinicId = $request->input('selectedClinicId'); // دریافت selectedClinicId از درخواست
+    $selectedClinicId = $request->input('selectedClinicId'); // کلینیک انتخابی
 
-    // جستجوی تعطیلی‌های پزشک
-    $holidayQuery = DoctorHoliday::where('doctor_id', $doctorId);
-
-    // اعمال فیلتر selectedClinicId اگر وجود داشته باشد و برابر 'default' نباشد
-    if ($selectedClinicId && $selectedClinicId !== 'default') {
-      $holidayQuery->where('clinic_id', $selectedClinicId);
-    }
+    // جستجوی تعطیلی‌های پزشک با شرط‌های لازم
+    $holidayQuery = DoctorHoliday::where('doctor_id', $doctorId)
+      ->when($selectedClinicId === 'default', function ($query) use ($doctorId) {
+        // در صورت 'default' فقط تعطیلی‌های بدون کلینیک (clinic_id = NULL) بازگردانده شود
+        $query->whereNull('clinic_id')->where('doctor_id', $doctorId);
+      })
+      ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+        // در صورت ارسال کلینیک خاص
+        $query->where('clinic_id', $selectedClinicId);
+      });
 
     $holidayRecord = $holidayQuery->first();
     $holidays = [];
@@ -1080,35 +1101,42 @@ class ScheduleSettingController
 
     return response()->json([
       'status' => true,
-      'holidays' => $holidays
+      'holidays' => $holidays,
     ]);
   }
+
   public function getHolidayStatus(Request $request)
   {
     // اعتبارسنجی ورودی
     $validated = $request->validate([
       'date' => 'required|date',
-      'selectedClinicId' => 'nullable|string', // اضافه کردن فیلتر selectedClinicId
+      'selectedClinicId' => 'nullable|string', // فیلتر selectedClinicId
     ]);
 
+    // گرفتن شناسه دکتر
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
     $selectedClinicId = $request->input('selectedClinicId');
 
     // بررسی تعطیلی پزشک
-    $holidayRecord = DoctorHoliday::where('doctor_id', $doctorId)->first();
+    $holidayRecord = DoctorHoliday::where('doctor_id', $doctorId)
+      ->where(function ($query) use ($selectedClinicId) {
+        // اعمال فیلتر کلینیک اگر وارد شده باشد
+        if ($selectedClinicId && $selectedClinicId !== 'default') {
+          $query->where('clinic_id', $selectedClinicId);
+        }
+      })
+      ->first();
+
     $holidayDates = json_decode($holidayRecord->holiday_dates ?? '[]', true);
     $isHoliday = in_array($validated['date'], $holidayDates);
 
-    // گرفتن نوبت‌های پزشک در تاریخ مشخص
-    $appointmentsQuery = Appointment::where('doctor_id', $doctorId)
-      ->where('appointment_date', $validated['date']);
-
-    // اعمال فیلتر selectedClinicId اگر وجود داشته باشد و برابر 'default' نباشد
-    if ($selectedClinicId && $selectedClinicId !== 'default') {
-      $appointmentsQuery->where('clinic_id', $selectedClinicId);
-    }
-
-    $appointments = $appointmentsQuery->get();
+    // گرفتن نوبت‌های پزشک در تاریخ مشخص و کلینیک انتخاب‌شده
+    $appointments = Appointment::where('doctor_id', $doctorId)
+      ->where('appointment_date', $validated['date'])
+      ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+        $query->where('clinic_id', $selectedClinicId);
+      })
+      ->get();
 
     return response()->json([
       'status' => true,
@@ -1116,54 +1144,65 @@ class ScheduleSettingController
       'data' => $appointments
     ]);
   }
+
   public function cancelAppointments(Request $request)
   {
+    // اعتبارسنجی ورودی‌ها
     $validatedData = $request->validate([
       'date' => 'required|date',
       'selectedClinicId' => 'nullable|string',
     ]);
 
-    // دریافت تمام نوبت‌ها برای تاریخ مشخص
-    $appointments = Appointment::where('appointment_date', $validatedData['date'])->get();
     $selectedClinicId = $request->input('selectedClinicId');
-    if ($selectedClinicId && $selectedClinicId !== 'default') {
-      $appointments->where('clinic_id', $selectedClinicId);
-    }
+
+    // دریافت نوبت‌ها با اعمال فیلتر کلینیک
+    $appointmentsQuery = Appointment::where('appointment_date', $validatedData['date'])
+      ->when($selectedClinicId === 'default', function ($query) {
+        // اگر selectedClinicId برابر با 'default' باشد، فقط نوبت‌های بدون کلینیک را در نظر بگیرد
+        $query->whereNull('clinic_id');
+      })
+      ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+        // اگر selectedClinicId مشخص شده باشد و برابر 'default' نباشد
+        $query->where('clinic_id', $selectedClinicId);
+      });
+
+    $appointments = $appointmentsQuery->get();
+
+    // لغو نوبت‌ها (حذف نرم‌افزاری)
     foreach ($appointments as $appointment) {
       $appointment->status = 'cancelled';
-      $appointment->deleted_at = now(); // حذف نرم‌افزاری
+      $appointment->deleted_at = now();
       $appointment->save();
     }
 
     return response()->json([
       'status' => true,
       'message' => 'نوبت‌ها با موفقیت لغو شدند.',
+      'total_cancelled' => $appointments->count(),
     ]);
   }
 
+
   public function rescheduleAppointment(Request $request)
   {
-    // اعتبارسنجی ورودی
+    // اعتبارسنجی ورودی‌ها
     $validated = $request->validate([
       'old_date' => 'required|date', // تاریخ قبلی نوبت
       'new_date' => 'required|date', // تاریخ جدید نوبت
-      'selectedClinicId' => 'nullable|string', // اضافه کردن فیلتر selectedClinicId
+      'selectedClinicId' => 'nullable|string', // کلینیک انتخابی
     ]);
 
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
     $selectedClinicId = $request->input('selectedClinicId');
 
     try {
-      // پیدا کردن تمام نوبت‌های آن تاریخ
-      $appointmentsQuery = Appointment::where('doctor_id', $doctorId)
-        ->where('appointment_date', $validated['old_date']);
-
-      // اعمال فیلتر selectedClinicId اگر وجود داشته باشد و برابر 'default' نباشد
-      if ($selectedClinicId && $selectedClinicId !== 'default') {
-        $appointmentsQuery->where('clinic_id', $selectedClinicId);
-      }
-
-      $appointments = $appointmentsQuery->get();
+      // پیدا کردن تمام نوبت‌های آن تاریخ با فیلتر کلینیک
+      $appointments = Appointment::where('doctor_id', $doctorId)
+        ->where('appointment_date', $validated['old_date'])
+        ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+          $query->where('clinic_id', $selectedClinicId);
+        })
+        ->get();
 
       if ($appointments->isEmpty()) {
         return response()->json([
@@ -1173,42 +1212,62 @@ class ScheduleSettingController
       }
 
       // بررسی ساعات کاری پزشک برای تاریخ جدید
-      $selectedDate = Carbon::parse($validated['new_date']); // تبدیل تاریخ جدید به میلادی
+      $selectedDate = Carbon::parse($validated['new_date']);
       $dayOfWeek = strtolower($selectedDate->format('l'));
-      $workHours = DoctorWorkSchedule::where('day', $dayOfWeek)->first();
-      if (!$workHours || !$workHours->work_hours) {
+      // بررسی ساعات کاری پزشک برای تاریخ جدید
+      $workHours = DoctorWorkSchedule::where('doctor_id', $doctorId)
+        ->where('day', $dayOfWeek)
+        ->when($selectedClinicId === 'default', function ($query) {
+          $query->whereNull('clinic_id');
+        })
+        ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+          $query->where('clinic_id', $selectedClinicId);
+        })
+        ->first();
+
+      // دیباگ برای بررسی داده‌های بازگشتی از ساعات کاری
+      if (!$workHours) {
         return response()->json([
           'status' => false,
-          'message' => 'ساعات کاری برای این روز یافت نشد.',
+          'message' => 'ساعات کاری یافت نشد.',
+          'debug' => [
+            'doctor_id' => $doctorId,
+            'clinic_id' => $selectedClinicId,
+            'day' => $dayOfWeek,
+          ]
         ], 400);
       }
 
-      // لیست شماره‌های موبایل کاربران
+
+      // لیست شماره‌های موبایل کاربران برای ارسال پیامک
       $recipients = [];
 
       foreach ($appointments as $appointment) {
-        $oldDate = $appointment->appointment_date;
         $appointment->appointment_date = $validated['new_date'];
         $appointment->save();
 
-        // اضافه کردن شماره موبایل به لیست دریافت‌کنندگان پیامک
         if ($appointment->patient && $appointment->patient->mobile) {
           $recipients[] = $appointment->patient->mobile;
         }
       }
 
+      // تبدیل تاریخ‌ها به شمسی
       $oldDateJalali = \Morilog\Jalali\Jalalian::fromDateTime($validated['old_date'])->format('Y/m/d');
       $newDateJalali = \Morilog\Jalali\Jalalian::fromDateTime($validated['new_date'])->format('Y/m/d');
 
-      // ارسال پیامک به همه کاربران
+      // ارسال پیامک به کاربران
       if (!empty($recipients)) {
         $messageContent = "کاربر گرامی، نوبت شما از تاریخ {$oldDateJalali} به تاریخ {$newDateJalali} تغییر یافت.";
-
         foreach ($recipients as $recipient) {
-          $userFullName = User::where('mobile', $recipient)->first();
-          $userFullName = $userFullName->first_name . " " . $userFullName->last_name;
+          $user = User::where('mobile', $recipient)->first();
+          $userFullName = $user ? ($user->first_name . " " . $user->last_name) : "کاربر گرامی";
+
           $messagesService = new MessageService(
-            SmsService::create(100252, $recipient, [$userFullName, $oldDateJalali, $newDateJalali, 'به نوبه'])
+            SmsService::create(
+              100252,
+              $recipient,
+              [$userFullName, $oldDateJalali, $newDateJalali, 'به نوبه']
+            )
           );
           $messagesService->send();
         }
@@ -1227,56 +1286,6 @@ class ScheduleSettingController
       ], 500);
     }
   }
-
-  public function getNextAvailableDate(Request $request)
-  {
-    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-    $selectedClinicId = $request->input('selectedClinicId'); // دریافت selectedClinicId از درخواست
-
-    // دریافت تعطیلی‌های پزشک
-    $holidaysQuery = DoctorHoliday::where('doctor_id', $doctorId);
-
-    // اعمال فیلتر selectedClinicId اگر وجود داشته باشد و برابر 'default' نباشد
-    if ($selectedClinicId && $selectedClinicId !== 'default') {
-      $holidaysQuery->where('clinic_id', $selectedClinicId);
-    }
-
-    $holidays = $holidaysQuery->first();
-    $holidayDates = json_decode($holidays->holiday_dates ?? '[]', true);
-
-    $today = Carbon::now()->startOfDay();
-    $daysToCheck = DoctorAppointmentConfig::where('doctor_id', $doctorId)->value('calendar_days') ?? 30;
-
-    $datesToCheck = collect();
-    for ($i = 1; $i <= $daysToCheck; $i++) {
-      $date = $today->copy()->addDays($i)->format('Y-m-d');
-      $datesToCheck->push($date);
-    }
-
-    // پیدا کردن اولین تاریخ خالی
-    $nextAvailableDate = $datesToCheck->first(function ($date) use ($doctorId, $holidayDates, $selectedClinicId) {
-      // بررسی عدم وجود در لیست تعطیلی‌ها
-      if (in_array($date, $holidayDates)) {
-        return false;
-      }
-
-      // بررسی عدم وجود نوبت در تاریخ مورد نظر
-      $appointmentQuery = Appointment::where('doctor_id', $doctorId)
-        ->where('appointment_date', $date);
-
-      // اعمال فیلتر selectedClinicId اگر وجود داشته باشد و برابر 'default' نباشد
-      if ($selectedClinicId && $selectedClinicId !== 'default') {
-        $appointmentQuery->where('clinic_id', $selectedClinicId);
-      }
-
-      return !$appointmentQuery->exists();
-    });
-
-    return response()->json([
-      'status' => $nextAvailableDate ? true : false,
-      'date' => $nextAvailableDate ?? 'هیچ نوبت خالی یافت نشد.'
-    ]);
-  }
   public function updateFirstAvailableAppointment(Request $request)
   {
     // اعتبارسنجی ورودی
@@ -1290,14 +1299,17 @@ class ScheduleSettingController
     $selectedClinicId = $request->input('selectedClinicId'); // دریافت selectedClinicId از درخواست
 
     try {
-      // پیدا کردن تمام نوبت‌های اولین تاریخ ثبت‌شده
+      // پیدا کردن تمام نوبت‌های اولین تاریخ ثبت‌شده با فیلتر کلینیک
       $appointmentsQuery = Appointment::where('doctor_id', $doctorId)
-        ->where('appointment_date', $validated['old_date']);
-
-      // اعمال فیلتر selectedClinicId اگر وجود داشته باشد و برابر 'default' نباشد
-      if ($selectedClinicId && $selectedClinicId !== 'default') {
-        $appointmentsQuery->where('clinic_id', $selectedClinicId);
-      }
+        ->where('appointment_date', $validated['old_date'])
+        ->when($selectedClinicId === 'default', function ($query) {
+          // اگر selectedClinicId برابر با 'default' باشد، فقط نوبت‌های بدون کلینیک را در نظر بگیرد
+          $query->whereNull('clinic_id');
+        })
+        ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+          // در غیر این صورت، نوبت‌های مربوط به کلینیک مشخص‌شده را بررسی کند
+          $query->where('clinic_id', $selectedClinicId);
+        });
 
       $appointments = $appointmentsQuery->get();
 
@@ -1311,14 +1323,30 @@ class ScheduleSettingController
       // بررسی ساعات کاری پزشک برای تاریخ جدید
       $selectedDate = Carbon::parse($validated['new_date']); // تبدیل تاریخ جدید به میلادی
       $dayOfWeek = strtolower($selectedDate->format('l'));
-      $workHours = DoctorWorkSchedule::where('day', $dayOfWeek)->first();
+      // بررسی ساعات کاری پزشک برای تاریخ جدید
+      $workHours = DoctorWorkSchedule::where('doctor_id', $doctorId)
+        ->where('day', $dayOfWeek)
+        ->when($selectedClinicId === 'default', function ($query) {
+          $query->whereNull('clinic_id');
+        })
+        ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+          $query->where('clinic_id', $selectedClinicId);
+        })
+        ->first();
 
-      if (!$workHours || !$workHours->workhours) {
+      // دیباگ برای بررسی کوئری ساعات کاری
+      if (!$workHours) {
         return response()->json([
           'status' => false,
           'message' => 'ساعات کاری پزشک برای تاریخ جدید یافت نشد.',
+          'debug' => [
+            'doctor_id' => $doctorId,
+            'clinic_id' => $selectedClinicId,
+            'day' => $dayOfWeek,
+          ]
         ], 400);
       }
+
 
       // لیست شماره‌های موبایل کاربران
       $recipients = [];
@@ -1337,6 +1365,7 @@ class ScheduleSettingController
         }
       }
 
+      // تبدیل تاریخ‌ها به فرمت شمسی
       $oldDateJalali = \Morilog\Jalali\Jalalian::fromDateTime($validated['old_date'])->format('Y/m/d');
       $newDateJalali = \Morilog\Jalali\Jalalian::fromDateTime($validated['new_date'])->format('Y/m/d');
 
@@ -1345,8 +1374,9 @@ class ScheduleSettingController
         $messageContent = "کاربر گرامی، نوبت شما از تاریخ {$oldDateJalali} به تاریخ {$newDateJalali} تغییر یافت.";
 
         foreach ($recipients as $recipient) {
-          $userFullName = User::where('mobile', $recipient)->first();
-          $userFullName = $userFullName->first_name . " " . $userFullName->last_name;
+          $user = User::where('mobile', $recipient)->first();
+          $userFullName = $user ? $user->first_name . " " . $user->last_name : 'کاربر گرامی';
+
           $messagesService = new MessageService(
             SmsService::create(100252, $recipient, [$userFullName, $oldDateJalali, $newDateJalali, 'به نوبه'])
           );
@@ -1367,6 +1397,68 @@ class ScheduleSettingController
       ], 500);
     }
   }
+
+
+  public function getNextAvailableDate(Request $request)
+  {
+    // دریافت شناسه پزشک یا منشی
+    $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
+    $selectedClinicId = $request->input('selectedClinicId'); // کلینیک انتخابی
+
+    // دریافت تعطیلی‌های پزشک با توجه به کلینیک
+    $holidaysQuery = DoctorHoliday::where('doctor_id', $doctorId)
+      ->when($selectedClinicId === 'default', function ($query) use ($doctorId) {
+        // در صورت 'default' فقط تعطیلی‌های بدون کلینیک (clinic_id = NULL)
+        $query->whereNull('clinic_id');
+      })
+      ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+        // اگر کلینیک خاص ارسال شود
+        $query->where('clinic_id', $selectedClinicId);
+      });
+
+    $holidays = $holidaysQuery->first();
+    $holidayDates = json_decode($holidays->holiday_dates ?? '[]', true);
+
+    // تعداد روزهای قابل بررسی برای نوبت خالی
+    $today = Carbon::now()->startOfDay();
+    $daysToCheck = DoctorAppointmentConfig::where('doctor_id', $doctorId)->value('calendar_days') ?? 30;
+
+    // تولید لیست تاریخ‌ها برای بررسی
+    $datesToCheck = collect();
+    for ($i = 1; $i <= $daysToCheck; $i++) {
+      $date = $today->copy()->addDays($i)->format('Y-m-d');
+      $datesToCheck->push($date);
+    }
+
+    // پیدا کردن اولین تاریخ خالی
+    $nextAvailableDate = $datesToCheck->first(function ($date) use ($doctorId, $holidayDates, $selectedClinicId) {
+      // بررسی عدم وجود در لیست تعطیلی‌ها
+      if (in_array($date, $holidayDates)) {
+        return false;
+      }
+
+      // بررسی عدم وجود نوبت در تاریخ مورد نظر
+      $appointmentQuery = Appointment::where('doctor_id', $doctorId)
+        ->where('appointment_date', $date)
+        ->when($selectedClinicId === 'default', function ($query) {
+          // فقط نوبت‌های بدون کلینیک (clinic_id = NULL) بازگردانده شود
+          $query->whereNull('clinic_id');
+        })
+        ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+          // نوبت‌های کلینیک مشخص‌شده بازگردانده شود
+          $query->where('clinic_id', $selectedClinicId);
+        });
+
+      return !$appointmentQuery->exists();
+    });
+
+    return response()->json([
+      'status' => $nextAvailableDate ? true : false,
+      'date' => $nextAvailableDate ?? 'هیچ نوبت خالی یافت نشد.'
+    ]);
+  }
+
+
 
 
   public function getAppointmentsByDate(Request $request)
@@ -1398,53 +1490,99 @@ class ScheduleSettingController
   public function addHoliday(Request $request)
   {
     $validated = $request->validate([
-      'date' => 'required|date', // تاریخ به فرمت میلادی
+      'date' => 'required|date',
+      'selectedClinicId' => 'nullable|string',
     ]);
+
     try {
       $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-      ;
-      // بررسی وجود تعطیلی برای همان تاریخ
-      $existingHoliday = DoctorHoliday::where('doctor_id', $doctorId)
-        ->where('holiday_dates', $validated['date'])
-        ->first();
-      if ($existingHoliday) {
-        return response()->json(['status' => false, 'message' => 'این تاریخ قبلاً به عنوان تعطیل ثبت شده است.']);
+      $selectedClinicId = $request->input('selectedClinicId');
+
+      // بررسی وجود تعطیلی برای همان تاریخ و کلینیک
+      $existingHolidayQuery = DoctorHoliday::where('doctor_id', $doctorId)
+        ->whereJsonContains('holiday_dates', $validated['date']);
+
+      if ($selectedClinicId === 'default') {
+        $existingHolidayQuery->whereNull('clinic_id');
+      } elseif ($selectedClinicId && $selectedClinicId !== 'default') {
+        $existingHolidayQuery->where('clinic_id', $selectedClinicId);
       }
-      // ذخیره تعطیلی در جدول
+
+      $existingHoliday = $existingHolidayQuery->first();
+
+      if ($existingHoliday) {
+        return response()->json([
+          'status' => false,
+          'message' => 'این تاریخ قبلاً به عنوان تعطیل ثبت شده است.'
+        ]);
+      }
+
+      // ذخیره تعطیلی در جدول با کلینیک
       DoctorHoliday::create([
         'doctor_id' => $doctorId,
-        'holiday_dates' => $validated['date'],
+        'clinic_id' => ($selectedClinicId !== 'default' ? $selectedClinicId : null),
+        'holiday_dates' => json_encode([$validated['date']]),
       ]);
-      return response()->json(['status' => true, 'message' => 'روز موردنظر به‌عنوان تعطیل ثبت شد.']);
+
+      return response()->json([
+        'status' => true,
+        'message' => 'روز موردنظر به‌عنوان تعطیل ثبت شد.'
+      ]);
     } catch (\Exception $e) {
-      return response()->json(['status' => false, 'message' => 'خطا در ثبت تعطیلی.'], 500);
+      return response()->json([
+        'status' => false,
+        'message' => 'خطا در ثبت تعطیلی.',
+        'error' => $e->getMessage()
+      ], 500);
     }
   }
+
   public function toggleHoliday(Request $request)
   {
-
     $validated = $request->validate([
-      'date' => 'required|date', // تاریخ به فرمت میلادی
+      'date' => 'required|date',
+      'selectedClinicId' => 'nullable|string',
     ]);
 
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-    ;
-    $holidayRecord = DoctorHoliday::firstOrCreate(
-      ['doctor_id' => $doctorId],
-      ['holiday_dates' => json_encode([])]
-    );
+    $selectedClinicId = $request->input('selectedClinicId');
+
+    // بازیابی یا ایجاد رکورد تعطیلات با کلینیک
+    $holidayRecordQuery = DoctorHoliday::where('doctor_id', $doctorId);
+
+    if ($selectedClinicId === 'default') {
+      $holidayRecordQuery->whereNull('clinic_id');
+    } elseif ($selectedClinicId && $selectedClinicId !== 'default') {
+      $holidayRecordQuery->where('clinic_id', $selectedClinicId);
+    }
+
+    $holidayRecord = $holidayRecordQuery->firstOrCreate([
+      'doctor_id' => $doctorId,
+      'clinic_id' => ($selectedClinicId !== 'default' ? $selectedClinicId : null),
+    ], [
+      'holiday_dates' => json_encode([])
+    ]);
+
+    // تبدیل JSON به آرایه
     $holidayDates = json_decode($holidayRecord->holiday_dates, true) ?? [];
+
     if (in_array($validated['date'], $holidayDates)) {
+      // حذف تاریخ از تعطیلات
       $holidayDates = array_diff($holidayDates, [$validated['date']]);
       $message = 'این تاریخ از حالت تعطیلی خارج شد.';
       $isHoliday = false;
     } else {
+      // اضافه کردن تاریخ به تعطیلات
       $holidayDates[] = $validated['date'];
       $message = 'این تاریخ تعطیل شد.';
       $isHoliday = true;
     }
-    $holidayRecord->holiday_dates = json_encode(array_values($holidayDates));
-    $holidayRecord->save();
+
+    // به‌روزرسانی رکورد
+    $holidayRecord->update([
+      'holiday_dates' => json_encode(array_values($holidayDates))
+    ]);
+
     return response()->json([
       'status' => true,
       'is_holiday' => $isHoliday,
@@ -1452,12 +1590,24 @@ class ScheduleSettingController
       'holiday_dates' => $holidayDates,
     ]);
   }
+
   public function getHolidays(Request $request)
   {
     try {
       $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
-      ;
-      $holidays = DoctorHoliday::where('doctor_id', $doctorId)->get(['holiday_dates']);
+      $selectedClinicId = $request->input('selectedClinicId');
+
+      // دریافت تعطیلات با شرط کلینیک
+      $holidaysQuery = DoctorHoliday::where('doctor_id', $doctorId);
+
+      if ($selectedClinicId === 'default') {
+        $holidaysQuery->whereNull('clinic_id');
+      } elseif ($selectedClinicId && $selectedClinicId !== 'default') {
+        $holidaysQuery->where('clinic_id', $selectedClinicId);
+      }
+
+      $holidays = $holidaysQuery->get()->pluck('holiday_dates')->flatten()->toArray();
+
       return response()->json([
         'status' => true,
         'holidays' => $holidays,
@@ -1466,9 +1616,11 @@ class ScheduleSettingController
       return response()->json([
         'status' => false,
         'message' => 'خطا در دریافت داده‌ها.',
+        'error' => $e->getMessage()
       ], 500);
     }
   }
+
 
   public function destroy(Request $request)
   {
