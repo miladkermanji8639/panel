@@ -165,7 +165,9 @@
         source_day: sourceDay,
         target_days: targetDays,
         override: 0 ?? false,
-        _token: '{{ csrf_token() }}'
+        _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
       },
       success: function (response) {
         hideLoading();
@@ -213,7 +215,9 @@
                   source_day: sourceDay,
                   target_days: targetDays,
                   override: true,
-                  _token: '{{ csrf_token() }}'
+                  _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
                 },
                 success: function (response) {
                   response.target_days.forEach(function (day) {
@@ -254,6 +258,10 @@
     $.ajax({
       url: "{{ route('dr-get-work-schedule-counseling') }}",
       method: 'GET',
+      data:{
+        selectedClinicId: localStorage.getItem('selectedClinicId')
+
+      },
       success: function (response) {
         const schedule = response.workSchedules.find(schedule => schedule.day === day);
         if (schedule) {
@@ -363,6 +371,10 @@
     $.ajax({
       url: "{{ route('dr-get-work-schedule-counseling') }}",
       method: 'GET',
+      data:{
+        selectedClinicId: localStorage.getItem('selectedClinicId')
+
+      },
       success: function (response) {
         const daySchedule = response.workSchedules.find(schedule => schedule.day === day);
         if (daySchedule && daySchedule.slots) {
@@ -444,7 +456,9 @@
         end_time: endTime,
         max_appointments: maxAppointments,
         override: 0,
-        _token: '{{ csrf_token() }}'
+        _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
       },
       complete: function () {
         // در هر صورت فلگ را بازنشانی کنید
@@ -504,7 +518,9 @@
                   end_time: endTime,
                   max_appointments: maxAppointments,
                   override: 1,
-                  _token: '{{ csrf_token() }}'
+                  _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
                 },
                 complete: function () {
                   // بازنشانی فلگ
@@ -716,6 +732,10 @@
     $.ajax({
       url: "{{ route('dr-get-work-schedule-counseling') }}",
       method: 'GET',
+      data:{
+        selectedClinicId: localStorage.getItem('selectedClinicId')
+
+      },
       success: function (response) {
         loadWorkSchedule(response); // بارگذاری داده‌ها
       }
@@ -858,7 +878,9 @@
         day: day,
         start_time: start_time,
         end_time: end_time,
-        max_appointments: max_appointments
+        max_appointments: max_appointments,
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
       },
       success: function (response) {
         if (response.status && response.settings.length > 0) {
@@ -984,6 +1006,8 @@
               day: day,
               start_time: startTime,
               end_time: endTime,
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
             },
             success: function (response) {
               removeRowAndHandleState($row, $container, day);
@@ -1070,6 +1094,8 @@
         url: "{{ route('dr-save-work-schedule-counseling') }}",
         method: 'POST',
         data: JSON.stringify(data),
+    selectedClinicId: localStorage.getItem('selectedClinicId'),
+
         contentType: 'application/json',
         headers: {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1150,8 +1176,11 @@
           method: 'POST',
           data: {
             day: day,
+            
             is_working: isWorking, // استفاده از 0 یا 1
-            _token: '{{ csrf_token() }}'
+            _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
           },
           dataType: 'json',
           success: function (response) {
@@ -1206,7 +1235,9 @@
         method: 'POST',
         data: {
           auto_scheduling: isAutoSchedulingEnabled ? 1 : 0, // Explicit true/false conversion
-          _token: '{{ csrf_token() }}'
+          _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
         },
         dataType: 'json', // Explicitly set expected response type
         success: function (response) {
@@ -1298,6 +1329,10 @@
     $.ajax({
       url: "{{ route('dr-get-work-schedule-counseling') }}",
       method: 'GET',
+      data:{
+        selectedClinicId: localStorage.getItem('selectedClinicId')
+
+      },
       success: function (response) {
         $.each(response.workSchedules, function (index, schedule) {
           let day = schedule.day;
@@ -1474,7 +1509,9 @@
           start_time: startTime,
           end_time: endTime,
           max_appointments: parseInt(newValue),
-          _token: $('meta[name="csrf-token"]').attr('content')
+          _token: $('meta[name="csrf-token"]').attr('content'),
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
         },
         success: function (response) {
           if (response.status) {
@@ -1801,7 +1838,9 @@
         day: day,
         start_time: startTime,
         end_time: endTime,
-        max_appointments: maxAppointments
+        max_appointments: maxAppointments,
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
       },
       success: function (response) {
         if (response.status && response.settings) {
@@ -1920,7 +1959,9 @@
           workhours_identifier: workhours_identifier,
           day: $('#scheduleModal').data('day'),
           max_appointments: max_appointments,
-          _token: '{{ csrf_token() }}'
+          _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
         },
         success: function (response) {
           toastr.success('تنظیمات با موفقیت ذخیره شد');
@@ -1987,7 +2028,9 @@
               selected_day: selected_day,
               start_time: startTime,
               end_time: endTime,
-              _token: '{{ csrf_token() }}'
+              _token: '{{ csrf_token() }}',
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+
             },
             success: function (response) {
               // حذف ردیف تنظیمات
@@ -2024,142 +2067,3 @@
     });
   });
 </script>
-<div class="modal fade" id="scheduleModal" tabindex="-1" data-selected-day="" role="dialog"
-  aria-labelledby="scheduleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered my-modal-lg" role="document">
-    <div class="modal-content border-radius-6">
-      <div class="modal-header">
-        <h6 class="modal-title font-weight-bold" id="scheduleModalLabel">برنامه زمانبندی</h6>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="">
-          <div class="">
-            <label class="font-weight-bold text-dark">روزهای کاری</label>
-            <div class="mt-2 d-flex flex-wrap gap-10 justify-content-start my-768px-styles-day-and-times">
-              <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
-                  data-day="saturday">شنبه</span><span class=""></span>
-              </div>
-              <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
-                  data-day="sunday">یکشنبه</span><span class=""></span>
-              </div>
-              <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
-                  data-day="monday">دوشنبه</span><span class=""></span>
-              </div>
-              <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
-                  data-day="tuesday">سه‌شنبه</span><span class=""></span>
-              </div>
-              <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
-                  data-day="wednesday">چهارشنبه</span><span class=""></span>
-              </div>
-              <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
-                  data-day="thursday">پنج‌شنبه</span><span class=""></span>
-              </div>
-              <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
-                  data-day="friday">جمعه</span><span class=""></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="w-100 d-flex mt-4 gap-4 justify-content-center">
-          <div class="form-group position-relative timepicker-ui">
-            <label class="label-top-input-special-takhasos">شروع</label>
-            <input type="text" class="form-control  h-50 timepicker-ui-input text-center font-weight-bold font-size-13"
-              id="schedule-start" value="00:00">
-          </div>
-          <div class="form-group position-relative timepicker-ui">
-            <label class="label-top-input-special-takhasos">پایان</label>
-            <input type="text" class="form-control  h-50 timepicker-ui-input text-center font-weight-bold font-size-13"
-              id="schedule-end" value="23:59">
-          </div>
-        </div>
-        <div class="w-100 d-flex justify-content-end mt-3">
-          <button type="submit" class="btn btn-primary h-50 col-12 d-flex justify-content-center align-items-center"
-            id="saveSchedule">
-            <span class="button_text">ذخیره تغیرات</span>
-            <div class="loader"></div>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="checkboxModal" tabindex="-1" role="dialog" aria-labelledby="checkboxModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content border-radius-6">
-      <div class="modal-header">
-        <h6 class="modal-title font-weight-bold" id="checkboxModalLabel"> کپی ساعت کاری برای روز های : </h6>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="">
-          <div class="d-flex flex-wrap flex-column lh-2 align-items-start gap-4">
-            <x-my-check :isChecked="false" id="select-all-copy-modal" day="انتخاب همه" />
-            <x-my-check :isChecked="false" id="saturday-copy-modal" day="شنبه" />
-            <x-my-check :isChecked="false" id="sunday-copy-modal" day="یکشنبه" />
-            <x-my-check :isChecked="false" id="monday-copy-modal" day="دوشنبه" />
-            <x-my-check :isChecked="false" id="tuesday-copy-modal" day="سه‌شنبه" />
-            <x-my-check :isChecked="false" id="wednesday-copy-modal" day="چهارشنبه" />
-            <x-my-check :isChecked="false" id="thursday-copy-modal" day="پنج‌شنبه" />
-            <x-my-check :isChecked="false" id="friday-copy-modal" day="جمعه" />
-          </div>
-        </div>
-      </div>
-      <div class="w-100 d-flex justify-content-between p-3 gap-4">
-        <button type="submit" class="btn btn-primary h-50  d-flex justify-content-center align-items-center w-100"
-          id="saveSelection">
-          <span class="button_text">ذخیره تغیرات</span>
-          <div class="loader"></div>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="CalculatorModal" tabindex="-1" role="dialog" aria-labelledby="CalculatorModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content border-radius-6" id="calculate-modal">
-      <div class="modal-header">
-        <h6 class="modal-title font-weight-bold" id="checkboxModalLabel"> انتخاب تعداد نوبت یا زمان ویزیت: </h6>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="d-flex align-items-center">
-          <div class="d-flex flex-wrap flex-column  align-items-start gap-4 w-100">
-            <div class="d-flex align-items-center w-100">
-              <x-my-check :isChecked="false" id="count-label-modal" day="" />
-              <div class="input-group position-relative mx-2">
-                <label class="label-top-input-special-takhasos">نوبت ها </label>
-                <input type="text" value="" class="form-control   text-center h-50 border-radius-0"
-                  name="appointment-count">
-                <div class="input-group-append count-span-prepand-style"><span class="input-group-text px-2">نوبت</span>
-                </div>
-              </div>
-            </div>
-            <div class="d-flex align-items-center mt-4 w-100">
-              <x-my-check :isChecked="false" id="time-label-modal" day="" />
-              <div class="input-group position-relative mx-2">
-                <label class="label-top-input-special-takhasos"> هر نوبت </label>
-                <input type="text" value="" class="form-control   text-center h-50 border-radius-0" name="time-count">
-                <div class="input-group-append"><span class="input-group-text px-2">دقیقه</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="w-100 d-flex justify-content-end p-1 gap-4 mt-3">
-          <button type="submit" class="btn btn-primary h-50 col-12 d-flex justify-content-center align-items-center"
-            id="saveSelectionCalculator">
-            <span class="button_text">ذخیره تغیرات</span>
-            <div class="loader"></div>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>

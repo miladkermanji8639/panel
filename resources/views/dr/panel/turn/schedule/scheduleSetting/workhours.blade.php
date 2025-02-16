@@ -14,6 +14,7 @@
 @endsection
 
 @section('content')
+
 @section('bread-crumb-title', ' ساعت کاری من')
 <div class="w-100 d-flex justify-content-center" dir="ltr">
  <div class="auto-scheule-content-top">
@@ -28,8 +29,9 @@
      <div>
       <div class="input-group position-relative">
        <label class="label-top-input-special-takhasos"> تعداد روز های باز تقویم </label>
-       <input type="number" value="{{ $appointmentConfig->calendar_days ?? '' }}" class="form-control text-center h-50 border-radius-0"
-        name="calendar_days" placeholder="تعداد روز مورد نظر خود را وارد کنید">
+       <input type="number" value="{{ $appointmentConfig->calendar_days ?? '' }}"
+        class="form-control text-center h-50 border-radius-0" name="calendar_days"
+        placeholder="تعداد روز مورد نظر خود را وارد کنید">
        <div class="input-group-append count-span-prepand-style"><span class="input-group-text px-2">روز</span></div>
       </div>
      </div>
@@ -102,6 +104,146 @@
   </div>
  </div>
 </div>
+</div>
+<div class="modal fade" id="scheduleModal" tabindex="-1" data-selected-day="" role="dialog"
+ aria-labelledby="scheduleModalLabel" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered my-modal-lg" role="document">
+  <div class="modal-content border-radius-6">
+   <div class="modal-header">
+    <h6 class="modal-title font-weight-bold" id="scheduleModalLabel">برنامه زمانبندی</h6>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+     <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body">
+    <div class="">
+     <div class="">
+      <label class="font-weight-bold text-dark">روزهای کاری</label>
+      <div class="mt-2 d-flex flex-wrap gap-10 justify-content-start my-768px-styles-day-and-times">
+       <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
+         data-day="saturday">شنبه</span><span class=""></span>
+       </div>
+       <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
+         data-day="sunday">یکشنبه</span><span class=""></span>
+       </div>
+       <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
+         data-day="monday">دوشنبه</span><span class=""></span>
+       </div>
+       <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
+         data-day="tuesday">سه‌شنبه</span><span class=""></span>
+       </div>
+       <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
+         data-day="wednesday">چهارشنبه</span><span class=""></span>
+       </div>
+       <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
+         data-day="thursday">پنج‌شنبه</span><span class=""></span>
+       </div>
+       <div class="" tabindex="0" role="button"><span class="badge-time-styles-day"
+         data-day="friday">جمعه</span><span class=""></span></div>
+      </div>
+     </div>
+    </div>
+    <div class="w-100 d-flex mt-4 gap-4 justify-content-center">
+     <div class="form-group position-relative timepicker-ui">
+      <label class="label-top-input-special-takhasos">شروع</label>
+      <input type="text" class="form-control  h-50 timepicker-ui-input text-center font-weight-bold font-size-13"
+       id="schedule-start" value="00:00">
+     </div>
+     <div class="form-group position-relative timepicker-ui">
+      <label class="label-top-input-special-takhasos">پایان</label>
+      <input type="text" class="form-control  h-50 timepicker-ui-input text-center font-weight-bold font-size-13"
+       id="schedule-end" value="23:59">
+     </div>
+    </div>
+    <div class="w-100 d-flex justify-content-end mt-3">
+     <button type="submit" class="btn btn-primary h-50 col-12 d-flex justify-content-center align-items-center"
+      id="saveSchedule">
+      <span class="button_text">ذخیره تغیرات</span>
+      <div class="loader"></div>
+     </button>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="modal fade" id="checkboxModal" tabindex="-1" role="dialog" aria-labelledby="checkboxModalLabel"
+ aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content border-radius-6">
+   <div class="modal-header">
+    <h6 class="modal-title font-weight-bold" id="checkboxModalLabel"> کپی ساعت کاری برای روز های : </h6>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+     <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body">
+    <div class="">
+     <div class="d-flex flex-wrap flex-column lh-2 align-items-start gap-4">
+      <x-my-check :isChecked="false" id="select-all-copy-modal" day="انتخاب همه" />
+      <x-my-check :isChecked="false" id="saturday-copy-modal" day="شنبه" />
+      <x-my-check :isChecked="false" id="sunday-copy-modal" day="یکشنبه" />
+      <x-my-check :isChecked="false" id="monday-copy-modal" day="دوشنبه" />
+      <x-my-check :isChecked="false" id="tuesday-copy-modal" day="سه‌شنبه" />
+      <x-my-check :isChecked="false" id="wednesday-copy-modal" day="چهارشنبه" />
+      <x-my-check :isChecked="false" id="thursday-copy-modal" day="پنج‌شنبه" />
+      <x-my-check :isChecked="false" id="friday-copy-modal" day="جمعه" />
+     </div>
+    </div>
+   </div>
+   <div class="w-100 d-flex justify-content-between p-3 gap-4">
+    <button type="submit" class="btn btn-primary h-50  d-flex justify-content-center align-items-center w-100"
+     id="saveSelection">
+     <span class="button_text">ذخیره تغیرات</span>
+     <div class="loader"></div>
+    </button>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="modal fade" id="CalculatorModal" tabindex="-1" role="dialog" aria-labelledby="CalculatorModalLabel"
+ aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content border-radius-6" id="calculate-modal">
+   <div class="modal-header">
+    <h6 class="modal-title font-weight-bold" id="checkboxModalLabel"> انتخاب تعداد نوبت یا زمان ویزیت: </h6>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+     <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body">
+    <div class="d-flex align-items-center">
+     <div class="d-flex flex-wrap flex-column  align-items-start gap-4 w-100">
+      <div class="d-flex align-items-center w-100">
+       <x-my-check :isChecked="false" id="count-label-modal" day="" />
+       <div class="input-group position-relative mx-2">
+        <label class="label-top-input-special-takhasos">نوبت ها </label>
+        <input type="text" value="" class="form-control   text-center h-50 border-radius-0"
+         name="appointment-count">
+        <div class="input-group-append count-span-prepand-style"><span class="input-group-text px-2">نوبت</span>
+        </div>
+       </div>
+      </div>
+      <div class="d-flex align-items-center mt-4 w-100">
+       <x-my-check :isChecked="false" id="time-label-modal" day="" />
+       <div class="input-group position-relative mx-2">
+        <label class="label-top-input-special-takhasos"> هر نوبت </label>
+        <input type="text" value="" class="form-control   text-center h-50 border-radius-0"
+         name="time-count">
+        <div class="input-group-append"><span class="input-group-text px-2">دقیقه</span></div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="w-100 d-flex justify-content-end p-1 gap-4 mt-3">
+     <button type="submit" class="btn btn-primary h-50 col-12 d-flex justify-content-center align-items-center"
+      id="saveSelectionCalculator">
+      <span class="button_text">ذخیره تغیرات</span>
+      <div class="loader"></div>
+     </button>
+    </div>
+   </div>
+  </div>
+ </div>
 </div>
 @include('dr.panel.my-tools.workhours')
 @endsection
