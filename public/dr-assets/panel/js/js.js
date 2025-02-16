@@ -275,3 +275,9 @@ $('.discounts #discounts-field-2').on('click', function (e) {
 $('.discounts #discounts-field-1').on('click', function (e) {
  $('.discounts .dropdown-select').removeClass('is-active');
 });
+
+
+
+$('.option-card button').on('click', function (e) {
+  e.stopPropagation();
+})

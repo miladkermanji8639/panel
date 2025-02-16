@@ -15,6 +15,7 @@ class ManualAppointmentSetting extends Model
      */
     protected $fillable = [
         'doctor_id',
+        'clinic_id',
         'is_active',
         'duration_send_link',
         'duration_confirm_link',

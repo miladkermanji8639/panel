@@ -17,10 +17,15 @@ return new class extends Migration
                 ->constrained('doctors') // اتصال به جدول doctors
                 ->onDelete('cascade') // حذف تنظیمات در صورت حذف پزشک
                 ->comment('آی‌دی پزشک');
+            $table->unsignedBigInteger('clinic_id')->nullable()->comment('آی‌دی کلینیک');
+          
+
+
             $table->boolean('is_active')->default(1)->comment('فعال بودن تایید دو مرحله‌ای (1 = بلی, 0 = خیر)');
             $table->unsignedInteger('duration_send_link')->default(3)->comment('زمان ارسال لینک تایید به ساعت');
             $table->unsignedInteger('duration_confirm_link')->default(1)->comment('مدت اعتبار لینک تایید به ساعت');
             $table->timestamps(); // تاریخ ایجاد و بروزرسانی
+            $table->foreign('clinic_id')->references('id')->on('clinics')->onDelete('cascade');
         });
     }
 

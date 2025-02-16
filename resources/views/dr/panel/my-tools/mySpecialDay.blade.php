@@ -1,71 +1,71 @@
 <script>
-  $(document).ready(function () {
-      let dropdownOpen = false;
-      let selectedClinic = localStorage.getItem('selectedClinic');
-      let selectedClinicId = localStorage.getItem('selectedClinicId');
-      if (selectedClinic && selectedClinicId) {
-        $('.dropdown-label').text(selectedClinic);
-        $('.option-card').each(function () {
-          if ($(this).attr('data-id') === selectedClinicId) {
-            $('.option-card').removeClass('card-active');
-            $(this).addClass('card-active');
-          }
-        });
-      } else {
-        localStorage.setItem('selectedClinic', 'ویزیت آنلاین به نوبه');
-        localStorage.setItem('selectedClinicId', 'default');
-      }
+ $(document).ready(function() {
+  let dropdownOpen = false;
+  let selectedClinic = localStorage.getItem('selectedClinic');
+  let selectedClinicId = localStorage.getItem('selectedClinicId');
+  if (selectedClinic && selectedClinicId) {
+   $('.dropdown-label').text(selectedClinic);
+   $('.option-card').each(function() {
+    if ($(this).attr('data-id') === selectedClinicId) {
+     $('.option-card').removeClass('card-active');
+     $(this).addClass('card-active');
+    }
+   });
+  } else {
+   localStorage.setItem('selectedClinic', 'ویزیت آنلاین به نوبه');
+   localStorage.setItem('selectedClinicId', 'default');
+  }
 
-      function checkInactiveClinics() {
-        var hasInactiveClinics = $('.option-card[data-active="0"]').length > 0;
-        if (hasInactiveClinics) {
-          $('.dropdown-trigger').addClass('warning');
-        } else {
-          $('.dropdown-trigger').removeClass('warning');
-        }
-      }
-      checkInactiveClinics();
+  function checkInactiveClinics() {
+   var hasInactiveClinics = $('.option-card[data-active="0"]').length > 0;
+   if (hasInactiveClinics) {
+    $('.dropdown-trigger').addClass('warning');
+   } else {
+    $('.dropdown-trigger').removeClass('warning');
+   }
+  }
+  checkInactiveClinics();
 
-      $('.dropdown-trigger').on('click', function (event) {
-        event.stopPropagation();
-        dropdownOpen = !dropdownOpen;
-        $(this).toggleClass('border border-primary');
-        $('.my-dropdown-menu').toggleClass('d-none');
-        setTimeout(() => {
-          dropdownOpen = $('.my-dropdown-menu').is(':visible');
-        }, 100);
-      });
+  $('.dropdown-trigger').on('click', function(event) {
+   event.stopPropagation();
+   dropdownOpen = !dropdownOpen;
+   $(this).toggleClass('border border-primary');
+   $('.my-dropdown-menu').toggleClass('d-none');
+   setTimeout(() => {
+    dropdownOpen = $('.my-dropdown-menu').is(':visible');
+   }, 100);
+  });
 
-      $(document).on('click', function () {
-        if (dropdownOpen) {
-          $('.dropdown-trigger').removeClass('border border-primary');
-          $('.my-dropdown-menu').addClass('d-none');
-          dropdownOpen = false;
-        }
-      });
+  $(document).on('click', function() {
+   if (dropdownOpen) {
+    $('.dropdown-trigger').removeClass('border border-primary');
+    $('.my-dropdown-menu').addClass('d-none');
+    dropdownOpen = false;
+   }
+  });
 
-      $('.my-dropdown-menu').on('click', function (event) {
-        event.stopPropagation();
-      });
+  $('.my-dropdown-menu').on('click', function(event) {
+   event.stopPropagation();
+  });
 
-      $('.option-card').on('click', function () {
-        var selectedText = $(this).find('.font-weight-bold.d-block.fs-15').text().trim();
-        var selectedId = $(this).attr('data-id');
-        $('.option-card').removeClass('card-active');
-        $(this).addClass('card-active');
-        $('.dropdown-label').text(selectedText);
+  $('.option-card').on('click', function() {
+   var selectedText = $(this).find('.font-weight-bold.d-block.fs-15').text().trim();
+   var selectedId = $(this).attr('data-id');
+   $('.option-card').removeClass('card-active');
+   $(this).addClass('card-active');
+   $('.dropdown-label').text(selectedText);
 
-        localStorage.setItem('selectedClinic', selectedText);
-        localStorage.setItem('selectedClinicId', selectedId);
-        checkInactiveClinics();
-        $('.dropdown-trigger').removeClass('border border-primary');
-        $('.my-dropdown-menu').addClass('d-none');
-        dropdownOpen = false;
+   localStorage.setItem('selectedClinic', selectedText);
+   localStorage.setItem('selectedClinicId', selectedId);
+   checkInactiveClinics();
+   $('.dropdown-trigger').removeClass('border border-primary');
+   $('.my-dropdown-menu').addClass('d-none');
+   dropdownOpen = false;
 
-        // ریلود صفحه با پارامتر جدید
-        window.location.href = window.location.pathname + "?selectedClinicId=" + selectedId;
-      });
-    });
+   // ریلود صفحه با پارامتر جدید
+   window.location.href = window.location.pathname + "?selectedClinicId=" + selectedId;
+  });
+ });
  let selectedDay = null;
 
  function generateCalendar(year, month) {
@@ -91,12 +91,13 @@
   loadAppointmentsCount();
   loadHolidayStyles();
  }
+
  function updateWorkhours() {
   let selectedDate = $("#selectedDate").val();
 
   let workHours = [];
 
-  $(".work-hour-slot").each(function () {
+  $(".work-hour-slot").each(function() {
    let start = $(this).find(".work-start-time").val();
    let end = $(this).find(".work-end-time").val();
    let maxAppointments = $(this).find(".work-max-appointments").val();
@@ -115,23 +116,24 @@
     date: $("#selectedDate").val(),
     work_hours: JSON.stringify(workHours),
     _token: $("meta[name='csrf-token']").attr("content"),
-    selectedClinicId:localStorage.getItem('selectedClinicId')
+    selectedClinicId: localStorage.getItem('selectedClinicId')
    },
-   success: function (response) {
+   success: function(response) {
     if (response.status) {
      Swal.fire("موفقیت", "ساعات کاری بروزرسانی شد.", "success");
     } else {
      Swal.fire("خطا", "بروزرسانی انجام نشد!", "error");
     }
    },
-   error: function () {
+   error: function() {
     Swal.fire("خطا", "مشکلی در ذخیره تغییرات وجود دارد.", "error");
    }
   });
 
  }
+
  function attachDayClickEvents() {
-  $('.calendar-day').not('.empty').off('click').on('click', function () {
+  $('.calendar-day').not('.empty').off('click').on('click', function() {
    const selectedDayElement = $(this);
    const persianDate = selectedDayElement.data('date');
    const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
@@ -147,13 +149,13 @@
     data: {
      date: gregorianDate,
      _token: '{{ csrf_token() }}',
-    selectedClinicId: localStorage.getItem('selectedClinicId')
+     selectedClinicId: localStorage.getItem('selectedClinicId')
 
     },
-    success: function (response) {
+    success: function(response) {
      updateModalContent(response); // به‌روزرسانی محتوای مودال
     },
-    error: function () {
+    error: function() {
      Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
     }
    });
@@ -179,10 +181,10 @@
   }
   yearSelect.val(currentYear);
   monthSelect.val(currentMonth);
-  yearSelect.change(function () {
+  yearSelect.change(function() {
    generateCalendar(yearSelect.val(), monthSelect.val());
   });
-  monthSelect.change(function () {
+  monthSelect.change(function() {
    generateCalendar(yearSelect.val(), monthSelect.val());
   });
  }
@@ -208,10 +210,10 @@
   yearSelect.val(currentYear);
   monthSelect.val(currentMonth);
   // تغییرات سال و ماه
-  yearSelect.off('change').on('change', function () {
+  yearSelect.off('change').on('change', function() {
    generateRescheduleCalendar(yearSelect.val(), monthSelect.val());
   });
-  monthSelect.off('change').on('change', function () {
+  monthSelect.off('change').on('change', function() {
    generateRescheduleCalendar(yearSelect.val(), monthSelect.val());
   });
  }
@@ -246,77 +248,77 @@
  }
 
  function attachRescheduleDayClickEvents() {
- $('#calendar-reschedule .calendar-day').not('.empty').click(function () {
-     const selectedDate = $(this).data('date');
-     const gregorianDate = moment(selectedDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
-     const today = moment().format('YYYY-MM-DD');
-     const isHoliday = $(this).hasClass('holiday');
+  $('#calendar-reschedule .calendar-day').not('.empty').click(function() {
+   const selectedDate = $(this).data('date');
+   const gregorianDate = moment(selectedDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
+   const today = moment().format('YYYY-MM-DD');
+   const isHoliday = $(this).hasClass('holiday');
 
-     $('#calendar-reschedule .calendar-day').removeClass('active');
-     $(this).addClass('active');
+   $('#calendar-reschedule .calendar-day').removeClass('active');
+   $(this).addClass('active');
 
-     const hasAppointment = $(this).find('.my-badge-success').length > 0;
+   const hasAppointment = $(this).find('.my-badge-success').length > 0;
 
-     if (gregorianDate < today) {
-       Swal.fire('خطا', 'نمی‌توانید نوبت‌ها را به تاریخ‌های گذشته منتقل کنید.', 'error');
-     } else if (isHoliday) {
-       Swal.fire('خطا', 'این روز تعطیل است و امکان جابجایی نوبت به این روز وجود ندارد.', 'error');
-     } else if (hasAppointment) {
-       Swal.fire('خطا', 'این روز دارای نوبت فعال است و امکان جابجایی نوبت به این روز وجود ندارد.', 'error');
-     } else {
-       Swal.fire({
-         title: 'تایید جابجایی نوبت',
-         text: `آیا می‌خواهید نوبت‌ها به تاریخ ${moment(selectedDate, 'jYYYY-jMM-jDD').locale('fa').format('jD jMMMM jYYYY')} منتقل شوند؟`,
-         icon: 'question',
-         showCancelButton: true,
-         confirmButtonText: 'بله، جابجا کن',
-         cancelButtonText: 'لغو',
-       }).then((result) => {
-         if (result.isConfirmed) {
-           let oldDate = $('#dateModal').data('selectedDate'); // مقدار از `dateModal`
+   if (gregorianDate < today) {
+    Swal.fire('خطا', 'نمی‌توانید نوبت‌ها را به تاریخ‌های گذشته منتقل کنید.', 'error');
+   } else if (isHoliday) {
+    Swal.fire('خطا', 'این روز تعطیل است و امکان جابجایی نوبت به این روز وجود ندارد.', 'error');
+   } else if (hasAppointment) {
+    Swal.fire('خطا', 'این روز دارای نوبت فعال است و امکان جابجایی نوبت به این روز وجود ندارد.', 'error');
+   } else {
+    Swal.fire({
+     title: 'تایید جابجایی نوبت',
+     text: `آیا می‌خواهید نوبت‌ها به تاریخ ${moment(selectedDate, 'jYYYY-jMM-jDD').locale('fa').format('jD jMMMM jYYYY')} منتقل شوند؟`,
+     icon: 'question',
+     showCancelButton: true,
+     confirmButtonText: 'بله، جابجا کن',
+     cancelButtonText: 'لغو',
+    }).then((result) => {
+     if (result.isConfirmed) {
+      let oldDate = $('#dateModal').data('selectedDate'); // مقدار از `dateModal`
 
-           if (!oldDate) {
-             // اگر `dateModal` مقدار نداشت، از `rescheduleModal` بگیر
-             oldDate = $("#rescheduleModal").data("old-date");
-           }
+      if (!oldDate) {
+       // اگر `dateModal` مقدار نداشت، از `rescheduleModal` بگیر
+       oldDate = $("#rescheduleModal").data("old-date");
+      }
 
-           if (!oldDate) {
-             Swal.fire("خطا", "تاریخ نوبت قبلی یافت نشد!", "error");
-             return;
-           }
+      if (!oldDate) {
+       Swal.fire("خطا", "تاریخ نوبت قبلی یافت نشد!", "error");
+       return;
+      }
 
-           $.ajax({
-             url: "{{ route('doctor.reschedule_appointment') }}",
-             method: 'POST',
-             data: {
-               old_date: oldDate,
-               new_date: gregorianDate,
-               _token: '{{ csrf_token() }}',
-    selectedClinicId: localStorage.getItem('selectedClinicId')
+      $.ajax({
+       url: "{{ route('doctor.reschedule_appointment') }}",
+       method: 'POST',
+       data: {
+        old_date: oldDate,
+        new_date: gregorianDate,
+        _token: '{{ csrf_token() }}',
+        selectedClinicId: localStorage.getItem('selectedClinicId')
 
-             },
-             success: function (response) {
-               if (response.status) {
-                 Swal.fire('موفقیت', response.message, 'success');
-                 loadAppointmentsCount(); // بروزرسانی نوبت‌ها
-                 loadHolidayStyles(); // بروزرسانی استایل تعطیلات
-               } else {
-                 Swal.fire('خطا', response.message, 'error');
-               }
-             },
-             error: function (xhr) {
-               let errorMessage = 'مشکلی در ارتباط با سرور رخ داده است.';
-               if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message) {
-                 errorMessage = xhr.responseJSON.message; // دریافت پیام خطای سرور
-               }
+       },
+       success: function(response) {
+        if (response.status) {
+         Swal.fire('موفقیت', response.message, 'success');
+         loadAppointmentsCount(); // بروزرسانی نوبت‌ها
+         loadHolidayStyles(); // بروزرسانی استایل تعطیلات
+        } else {
+         Swal.fire('خطا', response.message, 'error');
+        }
+       },
+       error: function(xhr) {
+        let errorMessage = 'مشکلی در ارتباط با سرور رخ داده است.';
+        if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message) {
+         errorMessage = xhr.responseJSON.message; // دریافت پیام خطای سرور
+        }
 
-               Swal.fire('خطا', errorMessage, 'error');
-             }
-           });
-         }
-       });
+        Swal.fire('خطا', errorMessage, 'error');
+       }
+      });
      }
-   });
+    });
+   }
+  });
 
  }
 
@@ -327,13 +329,13 @@
   $.ajax({
    url: "{{ route('appointments.count') }}",
    method: 'GET',
-   data:{
-     selectedClinicId: localStorage.getItem('selectedClinicId')
+   data: {
+    selectedClinicId: localStorage.getItem('selectedClinicId')
 
    },
-   success: function (response) {
+   success: function(response) {
     if (response.status) {
-     $('.calendar-day').each(function () {
+     $('.calendar-day').each(function() {
       const persianDate = $(this).data('date');
       const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
       const appointment = response.data.find(a => a.appointment_date === gregorianDate);
@@ -378,13 +380,13 @@
   $.ajax({
    url: "{{ route('appointments.count') }}",
    method: 'GET',
-   data:{
+   data: {
     selectedClinicId: localStorage.getItem('selectedClinicId')
 
    },
-   success: function (response) {
+   success: function(response) {
     if (response.status) {
-     $('#calendar-reschedule .calendar-day').each(function () {
+     $('#calendar-reschedule .calendar-day').each(function() {
       const persianDate = $(this).data('date');
       const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
       const appointment = response.data.find(a => a.appointment_date === gregorianDate);
@@ -403,14 +405,14 @@
   $.ajax({
    url: "{{ route('doctor.get_holidays') }}",
    method: 'GET',
-   data:{
+   data: {
     selectedClinicId: localStorage.getItem('selectedClinicId')
 
    },
-   success: function (response) {
+   success: function(response) {
     if (response.status) {
      const holidays = response.holidays;
-     $('#calendar-reschedule .calendar-day').each(function () {
+     $('#calendar-reschedule .calendar-day').each(function() {
       const persianDate = $(this).data('date');
       const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
       if (holidays.includes(gregorianDate)) {
@@ -488,14 +490,14 @@
   $.ajax({
    url: "{{ route('doctor.get_holidays') }}",
    method: 'GET',
-   data:{
-     selectedClinicId: localStorage.getItem('selectedClinicId')
+   data: {
+    selectedClinicId: localStorage.getItem('selectedClinicId')
 
    },
-   success: function (response) {
+   success: function(response) {
     if (response.status) {
      const holidays = response.holidays;
-     $('.calendar-day').each(function () {
+     $('.calendar-day').each(function() {
       const persianDate = $(this).data('date');
       const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
       if (holidays.includes(gregorianDate)) {
@@ -513,11 +515,11 @@
   $.ajax({
    url: "{{ route('doctor.get_next_available_date') }}",
    method: 'GET',
-    data: {
-      selectedClinicId: localStorage.getItem('selectedClinicId')
+   data: {
+    selectedClinicId: localStorage.getItem('selectedClinicId')
 
-    },
-   success: function (response) {
+   },
+   success: function(response) {
     if (response.status) {
      const nextAvailableDate = response.date;
 
@@ -537,9 +539,9 @@
         data: {
          date: nextAvailableDate,
          _token: '{{ csrf_token() }}',
-         selectedClinicId:localStorage.getItem('selectedClinicId')
+         selectedClinicId: localStorage.getItem('selectedClinicId')
         },
-        success: function (updateResponse) {
+        success: function(updateResponse) {
          if (updateResponse.status) {
           Swal.fire({
            title: 'موفقیت',
@@ -554,7 +556,7 @@
           Swal.fire('خطا', updateResponse.message, 'error');
          }
         },
-        error: function (xhr) {
+        error: function(xhr) {
 
          Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
         }
@@ -565,20 +567,20 @@
      Swal.fire('اطلاع', response.message, 'info');
     }
    },
-   error: function () {
+   error: function() {
     Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
    }
   });
  }
- $('#goToFirstAvailable').on('click', function () {
+ $('#goToFirstAvailable').on('click', function() {
   $.ajax({
    url: "{{ route('doctor.get_next_available_date') }}",
    method: 'GET',
-    data: {
-      selectedClinicId: localStorage.getItem('selectedClinicId')
+   data: {
+    selectedClinicId: localStorage.getItem('selectedClinicId')
 
-    },
-   success: function (response) {
+   },
+   success: function(response) {
     if (response.status) {
      const nextAvailableDate = response.date; // تاریخ اولین نوبت خالی
      const oldDate = $('#dateModal').data('selectedDate'); // تاریخ قبلی از مودال اولیه
@@ -600,9 +602,9 @@
          old_date: oldDate,
          new_date: nextAvailableDate,
          _token: '{{ csrf_token() }}',
-         selectedClinicId:localStorage.getItem('selectedClinicId')
+         selectedClinicId: localStorage.getItem('selectedClinicId')
         },
-        success: function (updateResponse) {
+        success: function(updateResponse) {
          if (updateResponse.status) {
           Swal.fire('موفقیت', updateResponse.message, 'success');
           // بروزرسانی تقویم
@@ -610,7 +612,7 @@
           loadHolidayStyles();
          }
         },
-        error: function (xhr) {
+        error: function(xhr) {
 
          Swal.fire('خطا', xhr.responseJSON.message, 'error');
         },
@@ -621,7 +623,7 @@
      Swal.fire('اطلاع', response.message, 'info');
     }
    },
-   error: function () {
+   error: function() {
     Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
    },
   });
@@ -632,8 +634,11 @@
   $.ajax({
    url: "{{ route('doctor.get_default_schedule') }}",
    method: "GET",
-   data: { date: selectedDate ,selectedClinicId:localStorage.getItem('selectedClinicId')},
-   success: function (response) {
+   data: {
+    date: selectedDate,
+    selectedClinicId: localStorage.getItem('selectedClinicId')
+   },
+   success: function(response) {
     $("#workHoursContainer").empty();
 
     if (response.status && response.work_hours.length > 0) {
@@ -663,21 +668,22 @@
 
      $("#updateWorkHours").show();
     } else {
-     $("#workHoursContainer").append(`<p class="text-center text-danger font-weight-bold">هیچ ساعات کاری برای این روز تعریف نشده است.</p>`);
+     $("#workHoursContainer").append(
+      `<p class="text-center text-danger font-weight-bold">هیچ ساعات کاری برای این روز تعریف نشده است.</p>`);
      $("#updateWorkHours").hide();
     }
    },
-   error: function () {
+   error: function() {
     Swal.fire("خطا", "مشکلی در دریافت ساعات کاری وجود دارد.", "error");
    }
   });
  }
 
 
- $(document).ready(function () {
+ $(document).ready(function() {
 
   loadAppointmentsCount();
-  $('#prev-month').click(function () {
+  $('#prev-month').click(function() {
    const yearSelect = $('#year');
    const monthSelect = $('#month');
    const currentMonth = parseInt(monthSelect.val());
@@ -688,7 +694,7 @@
     monthSelect.val(currentMonth - 1).change();
    }
   });
-  $('#next-month').click(function () {
+  $('#next-month').click(function() {
    const yearSelect = $('#year');
    const monthSelect = $('#month');
    const currentMonth = parseInt(monthSelect.val());
@@ -701,7 +707,7 @@
   });
   populateSelectBoxes();
   generateCalendar(moment().jYear(), moment().jMonth() + 1);
-  $(document).on('click', '.cancle-btn-appointment', function () {
+  $(document).on('click', '.cancle-btn-appointment', function() {
    const selectedDate = $('#dateModal').data('selectedDate');
    Swal.fire({
     title: 'آیا مطمئن هستید؟',
@@ -718,9 +724,9 @@
       data: {
        date: selectedDate,
        _token: '{{ csrf_token() }}',
-       selectedClinicId:localStorage.getItem('selectedClinicId')
+       selectedClinicId: localStorage.getItem('selectedClinicId')
       },
-      success: function (response) {
+      success: function(response) {
        if (response.status) {
         Swal.fire('موفقیت', response.message, 'success');
         $('#dateModal').modal('hide'); // بستن مودال
@@ -729,7 +735,7 @@
         Swal.fire('خطا', response.message, 'error');
        }
       },
-      error: function () {
+      error: function() {
        Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
       }
      });
@@ -738,7 +744,7 @@
   });
 
   // Modal for Appointment Reschedule
-  $(document).on('click', '#confirmReschedule', function () {
+  $(document).on('click', '#confirmReschedule', function() {
    const oldDate = $('#dateModal').data('selectedDate');
    const newDate = $('#calendar-reschedule .calendar-day.active').data('date');
 
@@ -754,9 +760,9 @@
      old_date: oldDate,
      new_date: moment(newDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'),
      _token: '{{ csrf_token() }}',
-     selectedClinicId:localStorage.getItem('selectedClinicId')
+     selectedClinicId: localStorage.getItem('selectedClinicId')
     },
-    success: function (response) {
+    success: function(response) {
      if (response.status) {
       Swal.fire('موفقیت', response.message, 'success');
       $('#rescheduleModal').modal('hide');
@@ -766,13 +772,13 @@
       Swal.fire('خطا', response.message, 'error');
      }
     },
-    error: function () {
+    error: function() {
      Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
     }
    });
   });
 
-  $(document).on('click', '.btn-reschedule', function () {
+  $(document).on('click', '.btn-reschedule', function() {
    const selectedDate = $('#dateModal').data('selectedDate');
    $('#rescheduleModal').modal('show'); // باز کردن مودال جابجایی نوبت‌ها
 
@@ -784,7 +790,7 @@
    populateRescheduleSelectBoxes();
   });
 
-  $('.btn-reschedule').on('click', function () {
+  $('.btn-reschedule').on('click', function() {
 
 
    $('#rescheduleModal').modal('show');
@@ -798,7 +804,7 @@
    // تولید تقویم جابجایی با همان داده‌های اصلی
    generateCalendar(year, month);
    // اضافه کردن رویداد کلیک برای روزهای تقویم جابجایی
-   $('#calendar-reschedule .calendar-day').not('.empty').click(function () {
+   $('#calendar-reschedule .calendar-day').not('.empty').click(function() {
     const targetDate = $(this).data('date');
     const isHoliday = $(this).hasClass('holiday');
     const hasAppointment = $(this).find('.my-badge-success').length > 0;
@@ -825,9 +831,9 @@
          old_date: selectedDate,
          new_date: moment(targetDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'), // تبدیل به فرمت میلادی
          _token: '{{ csrf_token() }}',
-         selectedClinicId:localStorage.getItem('selectedClinicId')
+         selectedClinicId: localStorage.getItem('selectedClinicId')
         },
-        success: function (response) {
+        success: function(response) {
          if (response.status) {
           Swal.fire('موفقیت', 'نوبت‌ها با موفقیت جابجا شدند.', 'success');
           $('#rescheduleModal').modal('hide');
@@ -839,7 +845,7 @@
           Swal.fire('خطا', response.message, 'error');
          }
         },
-        error: function (xhr) {
+        error: function(xhr) {
          // پیام خطای سفارشی
          let errorMessage = 'مشکلی در ارتباط با سرور رخ داده است.';
 
@@ -857,7 +863,7 @@
     }
    });
   });
-  $('#prev-month-reschedule, #next-month-reschedule').off('click').on('click', function () {
+  $('#prev-month-reschedule, #next-month-reschedule').off('click').on('click', function() {
    const yearSelect = $('#year-reschedule');
    const monthSelect = $('#month-reschedule');
    const currentMonth = parseInt(monthSelect.val());
@@ -882,7 +888,7 @@
    yearSelect.val(newYear);
   });
 
-  $('.calendar-day').not('.empty').on('click', function () {
+  $('.calendar-day').not('.empty').on('click', function() {
    const selectedDayElement = $(this);
    const persianDate = selectedDayElement.data('date');
    const gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD');
@@ -900,9 +906,9 @@
     data: {
      date: gregorianDate,
      _token: '{{ csrf_token() }}',
-     selectedClinicId:localStorage.getItem('selectedClinicId')
+     selectedClinicId: localStorage.getItem('selectedClinicId')
     },
-    success: function (response) {
+    success: function(response) {
      // حالت اول: روز تعطیل
      if (response.is_holiday) {
       $('.not-appointment').removeClass('d-none');
@@ -946,13 +952,13 @@
             </div>
           `);
      }
-     $(document).on('click', '.close-modal', function () {
+     $(document).on('click', '.close-modal', function() {
       $('#dateModal').modal('hide');
      });
 
      // اضافه کردن event listener برای دکمه‌ها
      $(document).off('click', '#confirmHolidayButton, #confirmUnHolidayButton');
-     $(document).on('click', '#confirmHolidayButton, #confirmUnHolidayButton', function () {
+     $(document).on('click', '#confirmHolidayButton, #confirmUnHolidayButton', function() {
       const selectedDate = $('#dateModal').data('selectedDate');
       const selectedDayElement = $('#dateModal').data('selectedDayElement');
 
@@ -962,10 +968,10 @@
        data: {
         date: selectedDate,
         _token: '{{ csrf_token() }}',
-     selectedClinicId: localStorage.getItem('selectedClinicId')
+        selectedClinicId: localStorage.getItem('selectedClinicId')
 
        },
-       success: function (response) {
+       success: function(response) {
         if (response.status) {
          if (response.is_holiday) {
           selectedDayElement.addClass('holiday');
@@ -982,14 +988,14 @@
          Swal.fire('خطا', response.message, 'error');
         }
        },
-       error: function () {
+       error: function() {
         Swal.fire('خطا', 'مشکلی در ارتباط با سرور رخ داده است.', 'error');
        }
       });
      });
 
     },
-    error: function () {
+    error: function() {
      Swal.fire('خطا', 'مشکلی در ارتباط با سرور وجود دارد.', 'error');
     }
    });
@@ -1000,8 +1006,8 @@
   // فراخوانی هنگام بارگذاری صفحه
   loadHolidayStyles();
  });
- $(document).ready(function () {
-  $(".calendar-day").on("click", function () {
+ $(document).ready(function() {
+  $(".calendar-day").on("click", function() {
    let persianDate = $(this).data("date"); // دریافت تاریخ شمسی
    let gregorianDate = moment(persianDate, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'); // تبدیل به میلادی
    $("#selectedDate").val(gregorianDate); // ذخیره تاریخ میلادی در فیلد مخفی
@@ -1017,7 +1023,7 @@
      selectedClinicId: localStorage.getItem('selectedClinicId')
 
     },
-    success: function (response) {
+    success: function(response) {
      if (response.is_holiday) {
       // اگر روز تعطیل بود، فقط پیام تعطیلی را نمایش بدهد
       $(".not-appointment").removeClass("d-none");

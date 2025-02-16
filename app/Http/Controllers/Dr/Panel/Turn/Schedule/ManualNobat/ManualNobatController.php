@@ -18,9 +18,20 @@ class ManualNobatController
   public function index(Request $request)
   {
     try {
-      $appointments = ManualAppointment::with('user')->get();
+      $selectedClinicId = $request->input('selectedClinicId');
 
-      // بررسی نوع درخواست
+      $appointments = ManualAppointment::with('user')
+        ->when($selectedClinicId === 'default', function ($query) {
+          // نوبت‌هایی که کلینیک ندارند (clinic_id = NULL)
+          $query->whereNull('clinic_id');
+        })
+        ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+          // نوبت‌های مربوط به کلینیک مشخص‌شده
+          $query->where('clinic_id', $selectedClinicId);
+        })
+        ->get();
+
+      // بررسی نوع درخواست (AJAX یا عادی)
       if ($request->ajax()) {
         return response()->json([
           'success' => true,
@@ -31,33 +42,57 @@ class ManualNobatController
       return view('dr.panel.turn.schedule.manual_nobat.index', compact('appointments'));
     } catch (\Exception $e) {
       Log::error('Error in fetching appointments: ' . $e->getMessage());
+
       if ($request->ajax()) {
         return response()->json([
           'success' => false,
           'message' => 'خطا در بازیابی نوبت‌ها!',
         ], 500);
       }
+
       return abort(500, 'خطا در بازیابی اطلاعات!');
     }
   }
-  public function showSettings()
+
+  public function showSettings(Request $request)
   {
-    $settings = ManualAppointmentSetting::where('doctor_id', auth('doctor')->id() ?? auth('secretary')->id())->first();
+    $doctorId = auth('doctor')->id() ?? auth('secretary')->id();
+    $selectedClinicId = $request->input('selectedClinicId', 'default');
+
+    // جستجوی تنظیمات با در نظر گرفتن کلینیک
+    $settings = ManualAppointmentSetting::where('doctor_id', $doctorId)
+      ->when($selectedClinicId === 'default', function ($query) {
+        $query->whereNull('clinic_id');
+      })
+      ->when($selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+        $query->where('clinic_id', $selectedClinicId);
+      })
+      ->first();
 
     return view('dr.panel.turn.schedule.manual_nobat.manual-nobat-setting', compact('settings'));
   }
+
   public function saveSettings(Request $request)
   {
-    
+    // اعتبارسنجی ورودی‌ها
     $request->validate([
       'status' => 'required|boolean',
       'duration_send_link' => 'required|integer|min:1',
       'duration_confirm_link' => 'required|integer|min:1',
+      'selectedClinicId' => 'nullable|string', // اضافه کردن کلینیک آیدی
     ]);
 
     try {
+      // گرفتن آیدی پزشک یا منشی
+      $doctorId = auth('doctor')->id() ?? auth('secretary')->id();
+      $selectedClinicId = $request->input('selectedClinicId');
+
+      // ذخیره یا به‌روزرسانی تنظیمات نوبت‌دهی دستی
       ManualAppointmentSetting::updateOrCreate(
-        ['doctor_id' => auth('doctor')->id() ?? auth('secretary')->id()],
+        [
+          'doctor_id' => $doctorId,
+          'clinic_id' => $selectedClinicId === 'default' ? null : $selectedClinicId,
+        ],
         [
           'is_active' => $request->status,
           'duration_send_link' => $request->duration_send_link,
@@ -67,9 +102,14 @@ class ManualNobatController
 
       return response()->json(['success' => true, 'message' => 'تنظیمات با موفقیت ذخیره شد.']);
     } catch (\Exception $e) {
-      return response()->json(['success' => false, 'message' => 'خطا در ذخیره تنظیمات.'], 500);
+      return response()->json([
+        'success' => false,
+        'message' => 'خطا در ذخیره تنظیمات.',
+        'error' => $e->getMessage(),
+      ], 500);
     }
   }
+
 
 
 
@@ -94,6 +134,8 @@ class ManualNobatController
   }
 
 
+
+
   /**
    * Show the form for creating a new resource.
    */
@@ -113,20 +155,44 @@ class ManualNobatController
       'appointment_date' => 'required|date',
       'appointment_time' => 'required|date_format:H:i',
       'description' => 'nullable|string|max:1000',
+      'selectedClinicId' => 'nullable', // اعتبارسنجی کلینیک آیدی
     ]);
 
     try {
+      // تبدیل تاریخ شمسی به میلادی
       $gregorianDate = CalendarUtils::createDatetimeFromFormat('Y/m/d', $request->appointment_date)->format('Y-m-d');
       $validatedData['appointment_date'] = $gregorianDate;
-      // بررسی نوبت تکراری
+
+      // افزودن کلینیک آیدی به داده‌ها اگر موجود باشد
+      if ($request->has('selectedClinicId') && $request->selectedClinicId !== 'default') {
+        $validatedData['clinic_id'] = $request->selectedClinicId;
+      } else {
+        $validatedData['clinic_id'] = null; // اگر دیفالت باشد، مقدار نال بماند
+      }
+
+      // بررسی نوبت تکراری برای هر کلینیک به صورت جداگانه
       $existingAppointment = ManualAppointment::where('user_id', $validatedData['user_id'])
-        ->first();
-        Log::info($existingAppointment);
+        ->where('appointment_date', $gregorianDate)
+        ->where('appointment_time', $validatedData['appointment_time'])
+        ->where(function ($query) use ($validatedData) {
+          // اگر کلینیک خاص ارسال شده باشد، برای همان کلینیک بررسی شود
+          if (!empty($validatedData['clinic_id'])) {
+            $query->where('clinic_id', $validatedData['clinic_id']);
+          } else {
+            // اگر selectedClinicId برابر با 'default' باشد، کلینیک نال باشد
+            $query->whereNull('clinic_id');
+          }
+        })
+        ->exists();
+
+      // لاگ برای دیباگ
+      Log::info('Existing Appointment Check:', ['exists' => $existingAppointment]);
 
       if ($existingAppointment) {
         return response()->json(['success' => false, 'message' => 'نوبت تکراری است.'], 400);
       }
 
+      // ثبت نوبت جدید
       ManualAppointment::create($validatedData);
 
       return response()->json(['success' => true, 'message' => 'نوبت با موفقیت ثبت شد.']);
@@ -135,6 +201,8 @@ class ManualNobatController
       return response()->json(['success' => false, 'message' => 'خطا در ثبت نوبت.'], 500);
     }
   }
+
+
 
 
   public function storeWithUser(Request $request)
@@ -147,12 +215,16 @@ class ManualNobatController
       'appointment_date' => 'required|date',
       'appointment_time' => 'required|date_format:H:i',
       'description' => 'nullable|string|max:1000',
+      'selectedClinicId' => 'nullable|string', // اضافه کردن فیلد کلینیک
     ]);
+
     try {
+      // تبدیل تاریخ جلالی به میلادی
       $gregorianDate = CalendarUtils::createDatetimeFromFormat('Y/m/d', $request->appointment_date)->format('Y-m-d');
       $validatedData['appointment_date'] = $gregorianDate;
 
       DB::beginTransaction();
+
       // ایجاد کاربر
       $user = User::create([
         'first_name' => $validatedData['first_name'],
@@ -160,10 +232,12 @@ class ManualNobatController
         'mobile' => $validatedData['mobile'],
         'national_code' => $validatedData['national_code'],
       ]);
-      // ایجاد نوبت
+
+      // ایجاد نوبت با کلینیک انتخابی
       $appointment = ManualAppointment::create([
         'user_id' => $user->id,
         'doctor_id' => auth('doctor')->id() ?? auth('secretary')->id(),
+        'clinic_id' => $validatedData['selectedClinicId'] === 'default' ? null : $validatedData['selectedClinicId'],
         'appointment_date' => $validatedData['appointment_date'],
         'appointment_time' => $validatedData['appointment_time'],
         'description' => $validatedData['description'],
@@ -171,8 +245,8 @@ class ManualNobatController
 
       DB::commit();
 
-      // بازگرداندن داده‌های نوبت همراه با کاربر
-      $appointment->load('user'); // بارگذاری اطلاعات مرتبط با کاربر
+      // بارگذاری اطلاعات مرتبط با کاربر
+      $appointment->load('user');
 
       return response()->json(['data' => $appointment], 201);
     } catch (\Exception $e) {
@@ -181,6 +255,7 @@ class ManualNobatController
       return response()->json(['error' => 'خطا در ذخیره اطلاعات!'], 500);
     }
   }
+
 
 
 
@@ -197,10 +272,20 @@ class ManualNobatController
   /**
    * Show the form for editing the specified resource.
    */
-  public function edit($id)
+  public function edit($id, Request $request)
   {
     try {
-      $appointment = ManualAppointment::with('user')->findOrFail($id);
+      $selectedClinicId = $request->input('selectedClinicId');
+
+      $appointment = ManualAppointment::with('user')
+        ->when($selectedClinicId === 'default', function ($query) {
+          $query->whereNull('clinic_id');
+        })
+        ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+          $query->where('clinic_id', $selectedClinicId);
+        })
+        ->findOrFail($id);
+
       return response()->json(['success' => true, 'data' => $appointment]);
     } catch (\Exception $e) {
       Log::error('Error in edit: ' . $e->getMessage());
@@ -218,10 +303,15 @@ class ManualNobatController
       'appointment_date' => 'required|date',
       'appointment_time' => 'required|date_format:H:i',
       'description' => 'nullable|string|max:1000',
+      'selectedClinicId' => 'nullable|string', // افزودن کلینیک آیدی
     ]);
 
     try {
-      $appointment = ManualAppointment::findOrFail($id);
+      $appointment = ManualAppointment::when(
+        $validatedData['selectedClinicId'] === 'default',
+        fn($query) => $query->whereNull('clinic_id'),
+        fn($query) => $query->where('clinic_id', $validatedData['selectedClinicId'])
+      )->findOrFail($id);
 
       // به‌روزرسانی اطلاعات کاربر مرتبط
       $appointment->user->update([
@@ -233,6 +323,7 @@ class ManualNobatController
 
       // به‌روزرسانی اطلاعات نوبت
       $appointment->update([
+        'clinic_id' => $validatedData['selectedClinicId'] === 'default' ? null : $validatedData['selectedClinicId'],
         'appointment_date' => CalendarUtils::createDatetimeFromFormat('Y/m/d', $request->appointment_date)->format('Y-m-d'),
         'appointment_time' => $validatedData['appointment_time'],
         'description' => $validatedData['description'],
@@ -249,11 +340,19 @@ class ManualNobatController
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy($id)
+  public function destroy($id, Request $request)
   {
-    Log::info($id);
     try {
-      $appointment = ManualAppointment::findOrFail($id);
+      $selectedClinicId = $request->input('selectedClinicId');
+
+      // جستجوی نوبت بر اساس کلینیک
+      $appointment = ManualAppointment::when(
+        $selectedClinicId === 'default',
+        fn($query) => $query->whereNull('clinic_id'),
+        fn($query) => $query->where('clinic_id', $selectedClinicId)
+      )
+        ->findOrFail($id);
+
       $appointment->delete();
 
       return response()->json(['success' => true, 'message' => 'نوبت با موفقیت حذف شد!']);
@@ -262,5 +361,6 @@ class ManualNobatController
       return response()->json(['success' => false, 'message' => 'خطا در حذف نوبت!'], 500);
     }
   }
+
 
 }

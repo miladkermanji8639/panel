@@ -195,6 +195,7 @@ class AppointmentController
             'user_mobile' => 'nullable|string',
             'user_name' => 'nullable|string',
             'user_national_id' => 'nullable|string',
+            'selectedClinicId' => 'nullable|string',
         ]);
 
         // دریافت ورودی‌ها
@@ -202,6 +203,7 @@ class AppointmentController
         $userMobile = $request->input('user_mobile');
         $userName = $request->input('user_name');
         $userNationalId = $request->input('user_national_id');
+        $selectedClinicId = $request->input('selectedClinicId');
         $doctorId = auth('doctor')->user()->id;
 
         // تبدیل تاریخ جلالی به میلادی
@@ -234,6 +236,14 @@ class AppointmentController
         // جستجو در دیتابیس
         $appointments = Appointment::with('patient')
             ->where('doctor_id', $doctorId)
+            ->when($selectedClinicId === 'default', function ($query) {
+                // فقط نوبت‌هایی که کلینیک ندارند
+                return $query->whereNull('clinic_id');
+            })
+            ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
+                // فقط نوبت‌های کلینیک انتخاب‌شده
+                return $query->where('clinic_id', $selectedClinicId);
+            })
             ->when($gregorianDate, function ($query) use ($gregorianDate) {
                 return $query->where('appointment_date', $gregorianDate);
             })
@@ -266,6 +276,7 @@ class AppointmentController
             'total' => $appointments->total(),
         ]);
     }
+
     public function updateStatus(Request $request, $id)
     {
         // اعتبارسنجی ورودی
