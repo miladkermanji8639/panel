@@ -12,6 +12,7 @@ class Secretary extends Authenticatable
 
     protected $fillable = [
         'doctor_id',
+        'clinic_id',
         'first_name',
         'last_name',
         'email',
