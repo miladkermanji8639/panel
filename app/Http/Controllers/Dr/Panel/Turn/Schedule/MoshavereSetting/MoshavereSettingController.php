@@ -16,12 +16,14 @@ class MoshavereSettingController
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->user()->doctor_id;
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
+
     // بررسی یا ایجاد تنظیمات مشاوره آنلاین
     $appointmentConfig = DoctorCounselingConfig::firstOrCreate(
-      ['doctor_id' => $doctorId],
+      ['doctor_id' => $doctorId, 'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null],
       [
         'auto_scheduling' => true,
         'calendar_days' => 30,
@@ -33,27 +35,41 @@ class MoshavereSettingController
       'appointmentConfig' => $appointmentConfig,
     ]);
   }
+
   /**
    * Show the form for creating a new resource.
    */
 
-  public function workhours()
+  public function workhours(Request $request)
   {
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
+
     $appointmentConfig = DoctorCounselingConfig::firstOrCreate(
-      ['doctor_id' => $doctorId],
+      ['doctor_id' => $doctorId, 'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null],
       [
         'auto_scheduling' => true,
         'online_consultation' => false,
         'holiday_availability' => false
       ]
     );
-    $workSchedules = DoctorCounselingWorkSchedule::where('doctor_id', $doctorId)->get();
+
+    $workSchedules = DoctorCounselingWorkSchedule::where('doctor_id', $doctorId)
+      ->where(function ($query) use ($selectedClinicId) {
+        if ($selectedClinicId !== 'default') {
+          $query->where('clinic_id', $selectedClinicId);
+        } else {
+          $query->whereNull('clinic_id');
+        }
+      })
+      ->get();
+
     return view("dr.panel.turn.schedule.scheduleSetting.workhours", [
       'appointmentConfig' => $appointmentConfig,
       'workSchedules' => $workSchedules
     ]);
   }
+
   public function copyWorkHours(Request $request)
   {
     $override = filter_var($request->input('override', false), FILTER_VALIDATE_BOOLEAN);
@@ -63,11 +79,20 @@ class MoshavereSettingController
       'override' => 'nullable|in:0,1,true,false'
     ]);
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
+
     DB::beginTransaction();
     try {
       // دریافت ساعات کاری روز مبدأ
       $sourceWorkSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
         ->where('day', $validated['source_day'])
+        ->where(function ($query) use ($selectedClinicId) {
+          if ($selectedClinicId !== 'default') {
+            $query->where('clinic_id', $selectedClinicId);
+          } else {
+            $query->whereNull('clinic_id');
+          }
+        })
         ->first();
       if (!$sourceWorkSchedule || empty($sourceWorkSchedule->work_hours)) {
         return response()->json([
@@ -82,6 +107,7 @@ class MoshavereSettingController
           [
             'doctor_id' => $doctor->id,
             'day' => $targetDay,
+            'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null,
           ],
           [
             'is_working' => true,
@@ -136,6 +162,7 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   public function copySingleSlot(Request $request)
   {
     $validated = $request->validate([
@@ -147,10 +174,18 @@ class MoshavereSettingController
     ]);
     $override = filter_var($request->input('override', false), FILTER_VALIDATE_BOOLEAN);
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
     DB::beginTransaction();
     try {
       $sourceWorkSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
         ->where('day', $validated['source_day'])
+        ->where(function ($query) use ($selectedClinicId) {
+          if ($selectedClinicId !== 'default') {
+            $query->where('clinic_id', $selectedClinicId);
+          } else {
+            $query->whereNull('clinic_id');
+          }
+        })
         ->first();
       if (!$sourceWorkSchedule || empty($sourceWorkSchedule->work_hours)) {
         return response()->json([
@@ -174,6 +209,7 @@ class MoshavereSettingController
           [
             'doctor_id' => $doctor->id,
             'day' => $targetDay,
+            'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null,
           ],
           [
             'is_working' => true,
@@ -227,6 +263,7 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   // تابع کمکی برای تبدیل روز به فارسی
   private function getDayNameInPersian($day)
   {
@@ -247,13 +284,23 @@ class MoshavereSettingController
       'day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday'
     ]);
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
+
     $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
       ->where('day', $validated['day'])
+      ->where(function ($query) use ($selectedClinicId) {
+        if ($selectedClinicId !== 'default') {
+          $query->where('clinic_id', $selectedClinicId);
+        } else {
+          $query->whereNull('clinic_id');
+        }
+      })
       ->first();
     // بررسی اینکه آیا ساعات کاری به صورت JSON ذخیره شده است و مقدار دارد
     $hasSlots = $workSchedule && !empty(json_decode($workSchedule->work_hours, true));
     return response()->json(['hasSlots' => $hasSlots]);
   }
+
   public function saveTimeSlot(Request $request)
   {
     $validated = $request->validate([
@@ -264,10 +311,15 @@ class MoshavereSettingController
     ]);
 
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
 
     try {
       $workSchedule = DoctorCounselingWorkSchedule::firstOrCreate(
-        ['doctor_id' => $doctor->id, 'day' => $validated['day']],
+        [
+          'doctor_id' => $doctor->id,
+          'day' => $validated['day'],
+          'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null
+        ],
         ['is_working' => true, 'work_hours' => "[]"] // مقداردهی با رشته‌ی `[]`
       );
 
@@ -275,7 +327,6 @@ class MoshavereSettingController
       $existingWorkHours = is_string($workSchedule->work_hours) && !empty($workSchedule->work_hours)
         ? json_decode($workSchedule->work_hours, true)
         : [];
-
 
       foreach ($existingWorkHours as $hour) {
         $existingStart = Carbon::createFromFormat('H:i', $hour['start']);
@@ -327,19 +378,23 @@ class MoshavereSettingController
     }
   }
 
+
   public function updateWorkDayStatus(Request $request)
   {
     $validated = $request->validate([
       'day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
       'is_working' => 'required|in:0,1,true,false'
     ]);
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
+
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
       $isWorking = filter_var($validated['is_working'], FILTER_VALIDATE_BOOLEAN);
       $workSchedule = DoctorCounselingWorkSchedule::updateOrCreate(
         [
           'doctor_id' => $doctor->id,
-          'day' => $validated['day']
+          'day' => $validated['day'],
+          'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null
         ],
         [
           'is_working' => $isWorking
@@ -357,6 +412,7 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   public function updateAutoScheduling(Request $request)
   {
     $validated = $request->validate([
@@ -365,12 +421,16 @@ class MoshavereSettingController
         'in:0,1,true,false', // Explicitly allow these values
       ],
     ]);
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
     // Convert to strict boolean
     $autoScheduling = filter_var($validated['auto_scheduling'], FILTER_VALIDATE_BOOLEAN);
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
       $appointmentConfig = DoctorCounselingConfig::updateOrCreate(
-        ['doctor_id' => $doctor->id],
+        [
+          'doctor_id' => $doctor->id,
+          'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null
+        ],
         ['auto_scheduling' => $autoScheduling]
       );
       return response()->json([
@@ -389,8 +449,10 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   public function saveAppointmentSettings(Request $request)
   {
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
     $validated = $request->validate([
       'day' => 'required|in:saturday,sunday,monday,tuesday,wednesday,thursday,friday',
       'start_time' => 'required|date_format:H:i',
@@ -409,6 +471,13 @@ class MoshavereSettingController
         // تنظیمات موجود برای روز
         $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
           ->where('day', $validated['day'])
+          ->where(function ($query) use ($selectedClinicId) {
+            if ($selectedClinicId !== 'default') {
+              $query->where('clinic_id', $selectedClinicId);
+            } else {
+              $query->whereNull('clinic_id');
+            }
+          })
           ->first();
         // بازیابی تنظیمات قبلی به صورت آرایه
         $existingSettings = [];
@@ -446,7 +515,8 @@ class MoshavereSettingController
         DoctorCounselingWorkSchedule::updateOrCreate(
           [
             'doctor_id' => $doctor->id,
-            'day' => $validated['day']
+            'day' => $validated['day'],
+            'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null
           ],
           [
             'is_working' => true,
@@ -467,6 +537,7 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   private function calculateMaxAppointments($startTime, $endTime)
   {
     try {
@@ -486,6 +557,7 @@ class MoshavereSettingController
   public function getAppointmentSettings(Request $request)
   {
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
 
     // دریافت `id` از درخواست
     $id = $request->id;
@@ -493,6 +565,13 @@ class MoshavereSettingController
     // بازیابی تنظیمات نوبت‌دهی برای پزشک
     $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
       ->where('day', $request->day)
+      ->where(function ($query) use ($selectedClinicId) {
+        if ($selectedClinicId !== 'default') {
+          $query->where('clinic_id', $selectedClinicId);
+        } else {
+          $query->whereNull('clinic_id');
+        }
+      })
       ->first();
     if ($workSchedule && $workSchedule->appointment_settings) {
       $settings = json_decode($workSchedule->appointment_settings, true);
@@ -514,8 +593,10 @@ class MoshavereSettingController
       'status' => false,
     ]);
   }
+
   public function saveWorkSchedule(Request $request)
   {
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
     $validatedData = $request->validate([
       'auto_scheduling' => 'boolean',
       'calendar_days' => 'nullable|integer|min:1|max:365',
@@ -532,10 +613,21 @@ class MoshavereSettingController
     try {
       $doctor = Auth::guard('doctor')->user();
       // حذف تنظیمات قبلی
-      DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)->delete();
+      DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
+        ->where(function ($query) use ($selectedClinicId) {
+          if ($selectedClinicId !== 'default') {
+            $query->where('clinic_id', $selectedClinicId);
+          } else {
+            $query->whereNull('clinic_id');
+          }
+        })
+        ->delete();
       // ذخیره تنظیمات کلی
       $counselingConfig = DoctorCounselingConfig::updateOrCreate(
-        ['doctor_id' => $doctor->id],
+        [
+          'doctor_id' => $doctor->id,
+          'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null
+        ],
         [
           'auto_scheduling' => $validatedData['auto_scheduling'] ?? false,
           'calendar_days' => $request->input('calendar_days'),
@@ -553,11 +645,11 @@ class MoshavereSettingController
         $workSchedule = DoctorCounselingWorkSchedule::create([
           'doctor_id' => $doctor->id,
           'day' => $day,
+          'clinic_id' => $selectedClinicId !== 'default' ? $selectedClinicId : null,
           'is_working' => $dayConfig['is_working'] ?? false,
           'work_hours' => $dayConfig['work_hours'] ?? null,
           'appointment_settings' => json_encode($dayConfig['appointment_settings'] ?? []),
         ]);
-
       }
       DB::commit();
       return response()->json([
@@ -582,10 +674,13 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
+
   public function getAllDaysSettings(Request $request)
   {
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+      $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
       // دریافت داده‌های ارسال‌شده از درخواست
       $inputDay = $request->input('day');
       $inputStartTime = $request->input('start_time');
@@ -595,6 +690,13 @@ class MoshavereSettingController
       $workSchedules = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
         ->when($inputDay, function ($query) use ($inputDay) {
           $query->where('day', $inputDay);
+        })
+        ->where(function ($query) use ($selectedClinicId) {
+          if ($selectedClinicId !== 'default') {
+            $query->where('clinic_id', $selectedClinicId);
+          } else {
+            $query->whereNull('clinic_id');
+          }
         })
         ->get();
       $filteredSettings = $workSchedules->map(function ($schedule) use ($inputStartTime, $inputEndTime, $inputMaxAppointments) {
@@ -638,6 +740,7 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   public function deleteScheduleSetting(Request $request)
   {
     $validated = $request->validate([
@@ -646,11 +749,20 @@ class MoshavereSettingController
       'start_time' => 'required|date_format:H:i',
       'end_time' => 'required|date_format:H:i',
     ]);
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
+
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
       // دریافت رکورد مربوط به ساعات کاری پزشک در روز انتخاب‌شده
       $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
         ->where('day', $validated['day'])
+        ->where(function ($query) use ($selectedClinicId) {
+          if ($selectedClinicId !== 'default') {
+            $query->where('clinic_id', $selectedClinicId);
+          } else {
+            $query->whereNull('clinic_id');
+          }
+        })
         ->first();
       if (!$workSchedule) {
         return response()->json([
@@ -694,6 +806,7 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   /**
    * تعیین نوع ساعات کاری بر اساس زمان
    */
@@ -715,15 +828,25 @@ class MoshavereSettingController
   /**
    * بازیابی تنظیمات ساعات کاری
    */
-  public function getWorkSchedule()
+  public function getWorkSchedule(Request $request)
   {
     $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
+
     $workSchedules = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
-      ->get(); // حذف `with('slots')`
+      ->where(function ($query) use ($selectedClinicId) {
+        if ($selectedClinicId !== 'default') {
+          $query->where('clinic_id', $selectedClinicId);
+        } else {
+          $query->whereNull('clinic_id');
+        }
+      })
+      ->get();
     return response()->json([
       'workSchedules' => $workSchedules
     ]);
   }
+
   // متدهای موجود در کنترلر اصلی
 
 
@@ -731,6 +854,7 @@ class MoshavereSettingController
   {
     try {
       $doctor = Auth::guard('doctor')->user() ?? Auth::guard('secretary')->user();
+      $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
 
       // اعتبارسنجی داده‌های ورودی
       $validated = $request->validate([
@@ -742,6 +866,13 @@ class MoshavereSettingController
       // دریافت رکورد ساعات کاری برای پزشک و روز مورد نظر
       $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctor->id)
         ->where('day', $validated['day'])
+        ->where(function ($query) use ($selectedClinicId) {
+          if ($selectedClinicId !== 'default') {
+            $query->where('clinic_id', $selectedClinicId);
+          } else {
+            $query->whereNull('clinic_id');
+          }
+        })
         ->first();
 
       if (!$workSchedule) {
@@ -796,7 +927,7 @@ class MoshavereSettingController
       }
 
       return response()->json([
-        'message' => ' بازه زمانی با موفقیت حذف شد',
+        'message' => 'بازه زمانی با موفقیت حذف شد',
         'status' => true
       ]);
     } catch (\Exception $e) {
@@ -807,13 +938,23 @@ class MoshavereSettingController
       ], 500);
     }
   }
+
   public function getDefaultSchedule(Request $request)
   {
     $doctorId = Auth::guard('doctor')->id(); // دریافت شناسه پزشک لاگین شده
     $dayOfWeek = $request->input('day_of_week'); // دریافت شماره روز هفته
+    $selectedClinicId = $request->query('selectedClinicId', $request->input('selectedClinicId', 'default'));
+
     // بررسی وجود برنامه کاری برای این روز
     $workSchedule = DoctorCounselingWorkSchedule::where('doctor_id', $doctorId)
       ->where('day', $dayOfWeek) // بررسی روز هفته
+      ->where(function ($query) use ($selectedClinicId) {
+        if ($selectedClinicId !== 'default') {
+          $query->where('clinic_id', $selectedClinicId);
+        } else {
+          $query->whereNull('clinic_id');
+        }
+      })
       ->first();
     if ($workSchedule && !empty($workSchedule->work_hours)) {
       return response()->json([
@@ -827,4 +968,5 @@ class MoshavereSettingController
       ]);
     }
   }
+
 }
