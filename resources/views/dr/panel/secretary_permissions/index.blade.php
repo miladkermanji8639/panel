@@ -31,20 +31,20 @@
          <td>
           <div class="form-check w-100 my-check-wrapper" style="text-align: right">
            @foreach ($permissions as $permissionKey => $permissionData)
-            <div class="mb-2">
+            <div class="mb-2 d-flex align-items-center">
              <input type="checkbox" class="form-check-input parent-permission update-permissions substituted"
               data-secretary-id="{{ $secretary->id }}" value="{{ $permissionKey }}"
               {{ in_array($permissionKey, $savedPermissions) ? 'checked' : '' }}>
-             <label class="form-check-label font-weight-bold">{{ $permissionData['title'] }}</label>
+             <label class="form-check-label font-weight-bold mx-1">{{ $permissionData['title'] }}</label>
             </div>
             @if (!empty($permissionData['routes']))
              <div class="ml-3">
               @foreach ($permissionData['routes'] as $routeKey => $routeTitle)
-               <div class="">
+               <div class="d-flex align-items-center">
                 <input type="checkbox" class="form-check-input child-permission update-permissions substituted"
                  data-secretary-id="{{ $secretary->id }}" data-parent="{{ $permissionKey }}"
                  value="{{ $routeKey }}" {{ in_array($routeKey, $savedPermissions) ? 'checked' : '' }}>
-                <label class="form-check-label">{{ $routeTitle }}</label>
+                <label class="form-check-label mx-1">{{ $routeTitle }}</label>
                </div>
               @endforeach
              </div>

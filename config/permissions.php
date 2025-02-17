@@ -4,7 +4,7 @@ return [
     'dashboard' => [
         'title' => 'داشبورد',
         'icon' => 'i-dashboard', // کلاس آیکون برای داشبورد
-        'routes' => ['dr-panel'],
+        'routes' => ['dr-panel' => 'داشبورد'],
     ],
     'appointments' => [
         'title' => 'نوبت‌دهی',
@@ -106,7 +106,7 @@ return [
         'title' => 'آمار و نمودار',
         'icon' => 'i-transactions', // کلاس آیکون برای آمار
         'routes' => [
-            'dr-my-performance-chart'
+            'dr-my-performance-chart' =>'آمار و نمودار'
         ],
     ],
 ];
