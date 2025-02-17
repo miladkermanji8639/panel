@@ -84,7 +84,7 @@ class SecretaryManagementController
         ]);
 
         try {
-            // 👇 اینجا اطلاعات را به جدول ذخیره می‌کنیم
+            // 👇 ذخیره اطلاعات منشی در جدول `secretaries`
             $secretary = Secretary::create([
                 'doctor_id' => $doctorId,
                 'clinic_id' => $clinicId,
@@ -96,7 +96,46 @@ class SecretaryManagementController
                 'password' => Hash::make($request->password),
             ]);
 
-            // بعد از ذخیره، منشی‌های فعلی را برمی‌گردانیم
+            // 👇 ذخیره دسترسی‌های پیش‌فرض برای منشی جدید در جدول `secretary_permissions`
+            \App\Models\Dr\SecretaryPermission::create([
+                'doctor_id' => $doctorId,
+                'secretary_id' => $secretary->id,
+                'clinic_id' => $clinicId,
+                'permissions' => json_encode([
+                    "dashboard",
+                    "0",
+                    "appointments",
+                    "dr-appointments",
+                    "dr-workhours",
+                    "dr-mySpecialDays",
+                    "dr-manual_nobat_setting",
+                    "dr-manual_nobat",
+                    "dr-scheduleSetting",
+                    "consult",
+                    "dr-moshavere_setting",
+                    "dr-moshavere_waiting",
+                    "consult-term.index",
+                    "dr-mySpecialDays-counseling",
+                    "prescription",
+                    "prescription.index",
+                    "providers.index",
+                    "favorite.templates.index",
+                    "templates.favorite.service.index",
+                    "patient_records",
+                    "dr-patient-records",
+                    "clinic_management",
+                    "dr-clinic-management",
+                    "dr-office-gallery",
+                    "dr-office-medicalDoc",
+                    "insurance",
+                    "0",
+                    "messages",
+                    "dr-panel-tickets"
+                ]),
+                'has_access' => true,
+            ]);
+
+            // برگرداندن منشی‌های فعلی
             $secretaries = Secretary::where('doctor_id', $doctorId)
                 ->where(function ($query) use ($clinicId) {
                     if ($clinicId) {
@@ -107,17 +146,18 @@ class SecretaryManagementController
                 })->get();
 
             return response()->json([
-                'message' => 'منشی با موفقیت ثبت شد.',
+                'message' => 'منشی با موفقیت ثبت شد و دسترسی‌های پیش‌فرض اضافه شدند.',
                 'secretary' => $secretary,
                 'secretaries' => $secretaries,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'خطا در ثبت منشی!',
+                'message' => 'خطا در ثبت منشی یا دسترسی‌ها!',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
 
 

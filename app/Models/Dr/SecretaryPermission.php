@@ -9,7 +9,7 @@ class SecretaryPermission extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['doctor_id', 'secretary_id', 'permissions', 'has_access'];
+    protected $fillable = ['doctor_id', 'secretary_id','clinic_id', 'permissions', 'has_access'];
 
     protected $casts = [
         'permissions' => 'array', // این فیلد به صورت JSON ذخیره می‌شود

@@ -25,6 +25,7 @@ return [
             'dr-moshavere_setting' => 'برنامه‌ریزی مشاوره',
             'dr-moshavere_waiting' => 'گزارش مشاوره‌ها',
             'consult-term.index' => 'قوانین مشاوره',
+            'dr-mySpecialDays-counseling' => 'روزهای خاص مشاوره',
         ],
     ],
     'prescription' => [

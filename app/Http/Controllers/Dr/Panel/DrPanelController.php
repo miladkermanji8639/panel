@@ -16,7 +16,7 @@ class DrPanelController
   public function index()
   {
     $today = Carbon::today();
-    $doctorId = Auth::guard('doctor')->user()->id; // گرفتن ID پزشک لاگین‌شده
+    $doctorId = Auth::guard('doctor')->user()->id ?? Auth::guard('secretary')->user()->doctor_id; // گرفتن ID پزشک لاگین‌شده
     // تعداد بیماران امروز فقط برای این پزشک
     $totalPatientsToday = Appointment::where('doctor_id', $doctorId)
       ->whereDate('appointment_date', $today)
