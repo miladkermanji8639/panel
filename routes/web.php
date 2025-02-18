@@ -587,6 +587,8 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
         Route::get('activation/consult/messengers', [ConsultRulesController::class, 'messengers'])->middleware('secretary.permission:consult')->name('activation.consult.messengers');
         Route::get('my-performance/', [MyPerformanceController::class, 'index'])->middleware('secretary.permission:statistics')->name('dr-my-performance');
         Route::get('my-performance/doctor-chart', [MyPerformanceController::class, 'chart'])->middleware('secretary.permission:statistics')->name('dr-my-performance-chart');
+        Route::get('my-performance/chart-data', [MyPerformanceController::class, 'getChartData'])
+            ->name('dr-my-performance-chart-data');
 
         Route::group(['prefix' => 'secretary'], function () {
             Route::get('/', [SecretaryManagementController::class, 'index'])->middleware('secretary.permission:secretary_management')->name('dr-secretary-management');

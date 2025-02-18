@@ -3,8 +3,9 @@
 namespace App\Models;
 
 
-use Laravel\Sanctum\HasApiTokens;
+use App\Models\Dr\Appointment;
 
+use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -76,7 +77,10 @@ class User extends Authenticatable
     {
         return "$this->first_name . $this->last_name";
     }
-
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
 
 //    public function ticketAdmin(){
 //        return $this->hasOne(TicketAdmin::class);

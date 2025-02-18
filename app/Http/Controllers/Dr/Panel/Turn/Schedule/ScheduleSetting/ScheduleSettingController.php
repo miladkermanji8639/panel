@@ -1117,11 +1117,14 @@ class ScheduleSettingController
     $doctorId = Auth::guard('doctor')->id() ?? Auth::guard('secretary')->id();
     $selectedClinicId = $request->input('selectedClinicId');
 
-    // بررسی تعطیلی پزشک
+    /**
+     * 🟡 بخش ۱: بررسی تعطیلی پزشک با شرط کلینیک
+     */
     $holidayRecord = DoctorHoliday::where('doctor_id', $doctorId)
       ->where(function ($query) use ($selectedClinicId) {
-        // اعمال فیلتر کلینیک اگر وارد شده باشد
-        if ($selectedClinicId && $selectedClinicId !== 'default') {
+        if ($selectedClinicId === 'default') {
+          $query->whereNull('clinic_id');
+        } elseif ($selectedClinicId) {
           $query->where('clinic_id', $selectedClinicId);
         }
       })
@@ -1130,20 +1133,30 @@ class ScheduleSettingController
     $holidayDates = json_decode($holidayRecord->holiday_dates ?? '[]', true);
     $isHoliday = in_array($validated['date'], $holidayDates);
 
-    // گرفتن نوبت‌های پزشک در تاریخ مشخص و کلینیک انتخاب‌شده
+    /**
+     * 🟡 بخش ۲: بررسی نوبت‌های پزشک با شرط کلینیک
+     */
     $appointments = Appointment::where('doctor_id', $doctorId)
       ->where('appointment_date', $validated['date'])
-      ->when($selectedClinicId && $selectedClinicId !== 'default', function ($query) use ($selectedClinicId) {
-        $query->where('clinic_id', $selectedClinicId);
+      ->where(function ($query) use ($selectedClinicId) {
+        if ($selectedClinicId === 'default') {
+          $query->whereNull('clinic_id');
+        } elseif ($selectedClinicId) {
+          $query->where('clinic_id', $selectedClinicId);
+        }
       })
       ->get();
 
+    /**
+     * 🟡 بخش ۳: ارسال پاسخ به‌صورت JSON
+     */
     return response()->json([
       'status' => true,
       'is_holiday' => $isHoliday,
-      'data' => $appointments
+      'data' => $appointments,
     ]);
   }
+
 
   public function cancelAppointments(Request $request)
   {
