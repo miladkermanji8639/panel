@@ -27,6 +27,19 @@ return new class extends Migration
             $table->text('avatar')->nullable();
             $table->text('address')->nullable();
             $table->integer('permission')->default('1');
+            $table->boolean('static_password_enabled')->default(false)->comment('آیا رمز عبور ثابت فعال است؟');
+            $table->string('two_factor_secret')->nullable();
+            $table->boolean('two_factor_secret_enabled')->default(false)->comment('آیا رمز عبور دومرحله‌ای فعال است؟');
+            $table->timestamp('two_factor_confirmed_at')->nullable();
+            $table->string('slug')->unique()->nullable();
+            $table->text('bio')->nullable();
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_verified')->default(false);
+            $table->boolean('profile_completed')->default(false);
+            $table->timestamp('mobile_verified_at')->nullable();
+            $table->timestamp('last_login_at')->nullable();
+            $table->softDeletes(); // قابلیت حذف نرم (soft delete)
 
             $table->rememberToken();
             $table->timestamps();

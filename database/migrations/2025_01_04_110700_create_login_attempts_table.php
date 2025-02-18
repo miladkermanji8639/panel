@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('doctor_id')->nullable();
             $table->unsignedBigInteger('secratary_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('manager_id')->nullable();
             $table->string('mobile')->index();
             $table->integer('attempts')->default(0);
             $table->timestamp('last_attempt_at')->nullable();
@@ -36,6 +37,10 @@ return new class extends Migration {
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
+                ->onDelete('cascade');
+            $table->foreign('manager_id')
+                ->references('id')
+                ->on('managers')
                 ->onDelete('cascade');
         });
     }

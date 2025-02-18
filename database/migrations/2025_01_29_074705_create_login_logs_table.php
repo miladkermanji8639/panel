@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable(); // برای کاربران عادی
             $table->unsignedBigInteger('doctor_id')->nullable(); // برای دکترها
             $table->unsignedBigInteger('secretary_id')->nullable(); // برای منشی‌ها
+            $table->unsignedBigInteger('manager_id')->nullable(); // برای منشی‌ها
             $table->string('user_type'); // 'doctor', 'secretary', 'user'
             $table->timestamp('login_at')->nullable(); // زمان ورود
             $table->timestamp('logout_at')->nullable(); // زمان خروج

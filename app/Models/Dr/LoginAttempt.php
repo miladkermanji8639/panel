@@ -12,6 +12,8 @@ class LoginAttempt extends Model
 
  protected $fillable = [
   'doctor_id',
+  'secretary_id',
+  'manager_id',
   'mobile',
   'attempts',
   'last_attempt_at',

@@ -16,6 +16,7 @@ class LoginLog extends Model
         'user_id',
         'doctor_id',
         'secretary_id',
+        'manager_id',
         'user_type',
         'login_at',
         'logout_at',

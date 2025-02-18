@@ -617,7 +617,7 @@ $navbarDetached = ($navbarDetached ?? '');
 
               <li>
                 <a class="dropdown-item logout"
-                   href="{{ route('auth-logout-basic') }}">
+                   href="{{ route('admin.auth.logout') }}">
                   <i class='ti ti-logout me-2'></i>
                   <span class="align-middle">خروج از حساب</span>
                 </a>

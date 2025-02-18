@@ -6,13 +6,14 @@ use App\Models\Dr\LoginAttempt;
 
 class LoginAttemptsService
 {
-  public function incrementLoginAttempt($userId, $mobile, $doctorId = null, $secretaryId = null)
+  public function incrementLoginAttempt($userId, $mobile, $doctorId = null, $secretaryId = null, $managerId = null)
   {
     $attempt = LoginAttempt::firstOrCreate(
       ['mobile' => $mobile],
       [
-        'doctor_id' => $doctorId,
-        'secratary_id' => $secretaryId,
+        'doctor_id' => $doctorId ?: null,
+        'secratary_id' => $secretaryId ?: null,
+        'manager_id' => $managerId ?: null,
         'attempts' => 0,
         'last_attempt_at' => null,
         'lockout_until' => null
@@ -24,25 +25,23 @@ class LoginAttemptsService
       return false;
     }
 
-    // به‌روزرسانی دکتر یا منشی در رکورد موجود
-    $attempt->doctor_id = $doctorId;
-    $attempt->secratary_id = $secretaryId;
+    // به‌روزرسانی مقادیر
+    $attempt->doctor_id = $doctorId ?: null;
+    $attempt->secratary_id = $secretaryId ?: null;
+    $attempt->manager_id = $managerId ?: null;
 
     // افزایش تعداد تلاش‌ها
     $attempt->attempts++;
     $attempt->last_attempt_at = now();
 
-    // اگر تعداد تلاش‌ها از حد مجاز بیشتر شد
     if ($attempt->attempts >= 3) {
-      // محاسبه زمان قفل با افزایش تصاعدی
       $lockDuration = match ($attempt->attempts) {
-        3 => 5,    // 5 دقیقه
-        4 => 30,   // 30 دقیقه
-        5 => 60,   // 60 دقیقه
-        6 => 120,  // 120 دقیقه
-        default => 240 // از 6 به بعد 240 دقیقه
+        3 => 5,
+        4 => 30,
+        5 => 60,
+        6 => 120,
+        default => 240
       };
-
       $attempt->lockout_until = now()->addMinutes($lockDuration);
     }
 
@@ -50,6 +49,7 @@ class LoginAttemptsService
 
     return $attempt;
   }
+
 
   public function resetLoginAttempts($mobile)
  {

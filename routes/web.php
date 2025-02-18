@@ -116,21 +116,29 @@ use App\Http\Controllers\Admin\Hospitals\HospitalsManagement\DoctorsOfHospital\D
 use App\Http\Controllers\Dr\Panel\Turn\Schedule\MoshavereSetting\MoshavereSettingController as DrMoshavereSettingController;
 //manager login routes
 /* login manager routes */
-Route::prefix('admin/auth')->group(function () {
-    Route::get('login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
-    Route::post('login-basic', [LoginBasic::class, 'login'])->name('auth-login-basic-signin');
-    Route::get('logout-basic', [LoginBasic::class, 'logout'])->name('auth-logout-basic');
-    Route::get('login-cover', [LoginCover::class, 'index'])->name('auth-login-cover');
-    Route::get('register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
-    Route::get('register-cover', [RegisterCover::class, 'index'])->name('auth-register-cover');
-    Route::get('register-multisteps', [RegisterMultiSteps::class, 'index'])->name('auth-register-multisteps');
-    Route::get('verify-email-basic', [VerifyEmailBasic::class, 'index'])->name('auth-verify-email-basic');
-    Route::get('verify-email-cover', [VerifyEmailCover::class, 'index'])->name('auth-verify-email-cover');
-    Route::get('reset-password-basic', [ResetPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
-    Route::get('reset-password-cover', [ResetPasswordCover::class, 'index'])->name('auth-reset-password-cover');
-    Route::get('forgot-password-cover', [ForgotPasswordCover::class, 'index'])->name('auth-forgot-password-cover');
-    Route::get('two-steps-basic', [TwoStepsBasic::class, 'index'])->name('auth-two-steps-basic');
-    Route::get('two-steps-cover', [TwoStepsCover::class, 'index'])->name('auth-two-steps-cover');
+Route::prefix('admin-panel/')->group(function () {
+    /* login routes */
+    Route::get('login', [LoginBasic::class, 'loginRegisterForm'])->name('admin.auth.login-register-form');
+
+    Route::get('login-user-pass', [LoginBasic::class, 'loginUserPassForm'])->name('admin.auth.login-user-pass-form');
+
+    Route::get('admin-two-factor', [LoginBasic::class, 'twoFactorForm'])->name('admin-two-factor');
+
+    Route::post('admin-two-factor-store', [LoginBasic::class, 'twoFactorFormCheck'])->name('admin-two-factor-store');
+
+    Route::post('admin-login-with-mobile-pass', [LoginBasic::class, 'loginWithMobilePass'])->name('admin-login-with-mobile-pass');
+
+    Route::post('/login-register', [LoginBasic::class, 'loginRegister'])->name('admin.auth.login-register');
+
+    Route::get('login-confirm/{token}', [LoginBasic::class, 'loginConfirmForm'])->name('admin.auth.login-confirm-form');
+
+    Route::post('/login-confirm/{token}', [LoginBasic::class, 'loginConfirm'])->name('admin.auth.login-confirm');
+
+    Route::get('/login-resend-otp/{token}', [LoginBasic::class, 'loginResendOtp'])->name('admin.auth.login-resend-otp');
+
+    Route::get('/logout', [LoginBasic::class, 'logout'])->name('admin.auth.logout');
+    /* login routes */
+
 });
 /* end login manager routes */
 //  manager  routes

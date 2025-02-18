@@ -20,7 +20,7 @@ class manager
         if (!Auth::guard('manager')->check()) {
             
 
-            return redirect()->route('auth-login-basic');
+            return redirect()->route('admin.auth.login-register-form');
         }
         return $next($request);
     }
