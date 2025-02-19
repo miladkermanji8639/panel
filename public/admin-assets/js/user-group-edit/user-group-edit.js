@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+/* document.addEventListener('DOMContentLoaded', function () {
  const setActiveTab = (tabId) => {
   const tabs = ['r1', 'r2'];
   tabs.forEach((tab) => {
@@ -29,3 +29,4 @@ document.addEventListener('DOMContentLoaded', function () {
    setActiveTab('r2');
   });
 });
+ */

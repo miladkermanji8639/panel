@@ -21,7 +21,7 @@
 <div class="content-wrapper">
 
     <!-- Content -->
-    <div class="flex-grow-1 container-p-y container-fluid">
+    <div class="flex-grow-1  container-fluid">
 
 
         <div class="d-flex justify-content-between">

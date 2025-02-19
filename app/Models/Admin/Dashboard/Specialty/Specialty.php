@@ -19,7 +19,7 @@ class Specialty extends Model
         ];
 
     }
-    protected $table = 'specialty';
+    protected $table = 'specialties';
     protected $guarded = 'id';
 
 }
