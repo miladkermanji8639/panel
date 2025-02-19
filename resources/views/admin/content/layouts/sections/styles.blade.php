@@ -6,8 +6,8 @@
 @yield('vendor-style')
 <!-- Page Styles -->
 @yield('page-style')
+
 <link rel="stylesheet" href="{{ asset('admin-assets/css/choosen/choosen.min.css') }}">
-<script src="{{ asset('dr-assets/panel/js/sweetalert2/sweetalert2.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/toastr/toastr.min.css') }}">
 <style>
       .h-50{

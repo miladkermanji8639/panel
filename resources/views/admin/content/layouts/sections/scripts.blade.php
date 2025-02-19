@@ -19,10 +19,10 @@
 <script src="{{ asset('admin-assets/js/dashboard/dashboard-setting.js') }}"></script>
 <script src="{{ asset('admin-assets/js/users-edit/users-edit.js') }}"></script>
 <script src="{{ asset('admin-assets/js/user-group-edit/user-group-edit.js') }}"></script>
-<script src="{{ asset('admin-assets/js/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('dr-assets/panel/js/jquery-3.4.1.min.js') }}"></script>
 <script src="{{ asset('dr-assets/js/select2/select2.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('dr-assets/panel/js/sweetalert2/sweetalert2.js') }}"></script>
+
 <script type="text/javascript">
  $("#nameid").select2({
   placeholder: "Select a Name",

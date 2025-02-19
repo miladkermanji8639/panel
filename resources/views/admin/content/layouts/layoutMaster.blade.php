@@ -1,3 +1,6 @@
+<script src="{{ asset('admin-assets/js/jquery/jquery.min.js') }}"></script>
+
+
 @isset($pageConfigs)
 {!! Helper::updatePageConfig($pageConfigs) !!}
 @endisset
@@ -6,9 +9,9 @@ $configData = Helper::appClasses();
 @endphp
 
 @isset($configData["layout"])
-@include((( $configData["layout"] === 'horizontal') ? 'admin.content.layouts.horizontalLayout' :
-(( $configData["layout"] === 'blank') ? 'admin.content.layouts.blankLayout' :
-(($configData["layout"] === 'front') ? 'admin.content.layouts.layoutFront' : 'admin.content.layouts.contentNavbarLayout') )))
+@include((($configData["layout"] === 'horizontal') ? 'admin.content.layouts.horizontalLayout' :
+  (($configData["layout"] === 'blank') ? 'admin.content.layouts.blankLayout' :
+   (($configData["layout"] === 'front') ? 'admin.content.layouts.layoutFront' : 'admin.content.layouts.contentNavbarLayout'))))
 @endisset
 
 

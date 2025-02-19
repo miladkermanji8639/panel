@@ -7,6 +7,7 @@
  @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
 @endsection
 @section('page-script')
+
  @vite(['resources/assets/js/dashboards-crm.js'])
 @endsection
 @section('content')
@@ -120,43 +121,45 @@
   {{-- ajax search --}}
   @include('admin.content.my-tools.ajax-search', ['route_name' => 'admin.Dashboard.cities.search-zone'])
   {{-- ajax search --}}
-  <script type="text/javascript">
-   // change status code
-   function changeStatus(id) {
-    var element = $("#" + id)
-    var url = element.attr('data-url')
-    var elementValue = !element.prop('active');
-    $.ajax({
-     url: url,
-     type: "GET",
-     success: function(response) {
-      if (response.status) {
-       if (response.active) {
-        element.prop('active', true);
-        element.html('فعال')
-        element.removeClass('badge bg-label-danger')
-        element.addClass('badge bg-label-success')
-        toastr.success(' وضعیت استان با موفقیت فعال شد')
-       } else {
-        element.prop('active', false);
-        element.html('غیر فعال')
-        element.removeClass('badge bg-label-success')
-        element.addClass('badge bg-label-danger')
-        toastr.success(' وضعیت استان با موفقیت غیر فعال شد')
-       }
-      } else {
-       element.prop('active', elementValue);
-       toastr.error('هنگام ویرایش مشکلی بوجود امده است')
-      }
-     },
-     error: function() {
-      element.prop('active', elementValue);
-      toastr.error('ارتباط برقرار نشد')
-     }
-    });
-   }
-   // end change status code
-  </script>
+
+
   <div class="content-backdrop fade"></div>
  </div>
+ <script>
+  // change status code
+  function changeStatus(id) {
+   var element = $("#" + id)
+   var url = element.attr('data-url')
+   var elementValue = !element.prop('active');
+   $.ajax({
+    url: url,
+    type: "GET",
+    success: function(response) {
+     if (response.status) {
+      if (response.active) {
+       element.prop('active', true);
+       element.html('فعال')
+       element.removeClass('badge bg-label-danger')
+       element.addClass('badge bg-label-success')
+       toastr.success(' وضعیت استان با موفقیت فعال شد')
+      } else {
+       element.prop('active', false);
+       element.html('غیر فعال')
+       element.removeClass('badge bg-label-success')
+       element.addClass('badge bg-label-danger')
+       toastr.success(' وضعیت استان با موفقیت غیر فعال شد')
+      }
+     } else {
+      element.prop('active', elementValue);
+      toastr.error('هنگام ویرایش مشکلی بوجود امده است')
+     }
+    },
+    error: function() {
+     element.prop('active', elementValue);
+     toastr.error('ارتباط برقرار نشد')
+    }
+   });
+  }
+ </script>
+
 @endsection
