@@ -4,7 +4,7 @@
   "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
   "This file is @generated automatically"
  ],
- "content-hash": "1b4fe0e01a708f7c41e2435d755eb081",
+ "content-hash": "91f3ae3244c8380db1668db5bee864e5",
  "packages": [
   {
    "name": "bacon/bacon-qr-code",
@@ -2392,6 +2392,70 @@
     "source": "https://github.com/thephpleague/uri-interfaces/tree/7.5.0"
    },
    "time": "2024-12-08T08:18:47+00:00"
+  },
+  {
+   "name": "livewire/livewire",
+   "version": "v3.5.20",
+   "dist": {
+    "type": "zip",
+    "url": "https://mirrors.cloud.tencent.com/repository/composer/livewire/livewire/v3.5.20/livewire-livewire-v3.5.20.zip",
+    "reference": "509f2258c51741f6d06deb65d4437654520694e6",
+    "shasum": ""
+   },
+   "require": {
+    "illuminate/database": "^10.0|^11.0|^12.0",
+    "illuminate/routing": "^10.0|^11.0|^12.0",
+    "illuminate/support": "^10.0|^11.0|^12.0",
+    "illuminate/validation": "^10.0|^11.0|^12.0",
+    "laravel/prompts": "^0.1.24|^0.2|^0.3",
+    "league/mime-type-detection": "^1.9",
+    "php": "^8.1",
+    "symfony/console": "^6.0|^7.0",
+    "symfony/http-kernel": "^6.2|^7.0"
+   },
+   "require-dev": {
+    "calebporzio/sushi": "^2.1",
+    "laravel/framework": "^10.15.0|^11.0|^12.0",
+    "mockery/mockery": "^1.3.1",
+    "orchestra/testbench": "^8.21.0|^9.0|^10.0",
+    "orchestra/testbench-dusk": "^8.24|^9.1|^10.0",
+    "phpunit/phpunit": "^10.4|^11.5",
+    "psy/psysh": "^0.11.22|^0.12"
+   },
+   "type": "library",
+   "extra": {
+    "laravel": {
+     "aliases": {
+      "Livewire": "Livewire\\Livewire"
+     },
+     "providers": [
+      "Livewire\\LivewireServiceProvider"
+     ]
+    }
+   },
+   "autoload": {
+    "files": [
+     "src/helpers.php"
+    ],
+    "psr-4": {
+     "Livewire\\": "src/"
+    }
+   },
+   "license": [
+    "MIT"
+   ],
+   "authors": [
+    {
+     "name": "Caleb Porzio",
+     "email": "calebporzio@gmail.com"
+    }
+   ],
+   "description": "A front-end framework for Laravel.",
+   "support": {
+    "issues": "https://github.com/livewire/livewire/issues",
+    "source": "https://github.com/livewire/livewire/tree/v3.5.20"
+   },
+   "time": "2025-02-13T21:05:24+00:00"
   },
   {
    "name": "mobiledetect/mobiledetectlib",

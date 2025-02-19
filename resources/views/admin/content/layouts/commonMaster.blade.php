@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 @php
 $menuFixed = ($configData['layout'] === 'vertical') ? ($menuFixed ?? '') : (($configData['layout'] === 'front') ? '' :
-$configData['headerType']);
+      $configData['headerType']);
 $navbarType = ($configData['layout'] === 'vertical') ? ($configData['navbarType'] ?? '') : (($configData['layout'] ===
-'front') ? 'layout-navbar-fixed': '');
+      'front') ? 'layout-navbar-fixed' : '');
 $isFront = ($isFront ?? '') == true ? 'Front' : '';
 $contentLayout = (isset($container) ? (($container === 'container-xxl') ? "layout-compact" : "layout-wide") : "");
 @endphp
@@ -53,11 +53,10 @@ $contentLayout = (isset($container) ? (($container === 'container-xxl') ? "layou
   
 
 
-
+@livewireStyles
 </head>
 
 <body>
-
 
   <!-- Layout Content -->
   @yield('layoutContent')
@@ -75,8 +74,9 @@ $contentLayout = (isset($container) ? (($container === 'container-xxl') ? "layou
 {{-- sweet alert --}}
 @include('admin.content.alerts.sweetalert.success')
 @include('admin.content.alerts.sweetalert.error')
-@include('admin.content.alerts.sweetalert.delete-confirm',['className'=>'delete'])
+@include('admin.content.alerts.sweetalert.delete-confirm', ['className' => 'delete'])
 {{-- sweet alert --}}
+@livewireScripts
 </body>
 
 </html>

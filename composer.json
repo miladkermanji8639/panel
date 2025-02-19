@@ -16,6 +16,7 @@
   "laravel/jetstream": "^5.0",
   "laravel/sanctum": "^4.0",
   "laravel/tinker": "^2.8",
+  "livewire/livewire": "^3.5",
   "morilog/jalali": "^3.4",
   "nwidart/laravel-modules": "^11.1",
   "predis/predis": "^2.3",
