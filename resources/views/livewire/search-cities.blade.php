@@ -1,7 +1,7 @@
 <div>
     <div class="card-header d-flex justify-content-between">
         <div class="d-flex align-items-center">
-<input type="search" class="form-control h-50 w-100 me-2" placeholder="جستجو شهر" wire:model="search"
+<input type="search" class="form-control  w-100 me-2" placeholder="جستجو شهر" wire:model="search"
     wire:keyup="searchUpdated">
 
 
@@ -9,10 +9,11 @@
                 
 
         </div>
-        <button class="btn btn-danger" wire:click="confirmDelete"
-            wire:loading.attr="disabled" id="deleteButton" :disabled="@json(empty($selectedRows))">
-            <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
-        </button>
+    <button class="btn btn-danger" wire:click="confirmDelete" wire:loading.attr="disabled" id="deleteButton"
+        x-bind:disabled="{{ count($selectedRows) === 0 }}">
+        <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
+    </button>
+
     </div>
 
     <div class="table-responsive text-nowrap">

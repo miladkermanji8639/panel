@@ -8,6 +8,9 @@ class CheckCompleteProfile
 {
   public function handle($request, Closure $next)
   {
+    if ($request->expectsJson() || $request->is('livewire/*')) {
+      return $next($request);
+    }
     $doctor = Auth::guard('doctor')->user();
 
     // Check if the user is authenticated and if the profile is not completed
