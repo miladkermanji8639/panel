@@ -8,14 +8,20 @@ use App\Models\Admin\Dashboard\Cities\Zone;
 
 class SearchZones extends Component
 {
-    use WithPagination; // صفحه‌بندی را فعال می‌کند
+    use WithPagination;
 
-    public $search = ''; // مقدار جستجو
-    protected $paginationTheme = 'bootstrap'; // تنظیم صفحه‌بندی
+    public $search = '';
+    public $selectedRows = []; // آرایه‌ای برای ذخیره ردیف‌های انتخاب‌شده
+    public $selectAll = false;
+    protected $listeners = [
+        'updateDeleteButton' => 'refreshDeleteButton',
+        'doDeleteSelected' => 'deleteSelected' // تست اجرای متد
+    ];
+    protected $paginationTheme = 'bootstrap';
 
     public function updatingSearch()
     {
-        $this->resetPage(); // ریست کردن صفحه هنگام تغییر مقدار جستجو
+        $this->resetPage();
     }
 
     public function render()
@@ -26,11 +32,6 @@ class SearchZones extends Component
 
         return view('livewire.search-zones', compact('cities'));
     }
-    public function searchUpdated()
-    {
-        $this->resetPage(); // صفحه را ریست می‌کند
-    }
-
 
     public function toggleStatus($id)
     {
@@ -38,8 +39,52 @@ class SearchZones extends Component
         $city->status = $city->status == 1 ? 0 : 1;
         $city->save();
 
-        // ارسال پیام برای نمایش در Toastr
-        $this->dispatch('show-toastr', type: $city->status == 1 ? 'success' : 'warning', message: 'وضعیت استان با موفقیت بروزرسانی شد.');
+        $this->dispatch('show-toastr', type: $city->status == 1 ? 'success' : 'warning', message: 'وضعیت استان بروزرسانی شد.');
+    }
+
+    // ✅ متد حذف گروهی
+    public function refreshDeleteButton()
+    {
+        $this->dispatch('refreshDeleteButton', hasSelectedRows: count($this->selectedRows) > 0);
+    }
+
+
+
+    public function confirmDelete()
+    {
+        if (count($this->selectedRows) > 0) {
+            $this->dispatch('show-delete-confirmation');
+        }
+    }
+
+    public function deleteSelected()
+    {
+        if (count($this->selectedRows) > 0) {
+            Zone::whereIn('id', $this->selectedRows)->delete();
+            $this->selectedRows = [];
+            $this->selectAll = false;
+            $this->dispatch('refreshDeleteButton', hasSelectedRows: false);
+            $this->dispatch('show-toastr', type: 'success', message: 'استان‌های انتخاب‌شده با موفقیت حذف شدند.');
+        }
+    }
+
+
+
+
+    // ✅ مدیریت انتخاب همه
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->selectedRows = Zone::where('level', '1')->pluck('id')->toArray();
+        } else {
+            $this->selectedRows = [];
+        }
+        $this->dispatch('refreshDeleteButton', hasSelectedRows: count($this->selectedRows) > 0);
+    }
+
+    public function updatedSelectedRows()
+    {
+        $this->dispatch('refreshDeleteButton');
     }
 
 

@@ -8,48 +8,53 @@ use App\Models\Admin\Dashboard\Cities\Zone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-class CitiesController extends Controller {
+class CitiesController extends Controller
+{
     /**
-    * Display a listing of the resource.
-    */
+     * Display a listing of the resource.
+     */
 
-    public function index() {
-        $cities = Zone::where( 'level', '1' )->paginate( 10 );
+    public function index()
+    {
+        $cities = Zone::where('level', '1')->paginate(10);
 
-        return view( 'admin.content.dashboard.cities.index', compact( 'cities' ) );
+        return view('admin.content.dashboard.cities.index', compact('cities'));
     }
 
     /**
-    * Show the form for creating a new resource.
-    */
+     * Show the form for creating a new resource.
+     */
 
-    public function create() {
+    public function create()
+    {
 
-        $cities = Zone::where( 'level', '1' )->get();
+        $cities = Zone::where('level', '1')->get();
 
-        return view( 'admin.content.dashboard.cities.create', compact( 'cities' ) );
+        return view('admin.content.dashboard.cities.create', compact('cities'));
 
     }
 
-    public function createCity() {
-        $cities = Zone::where( 'level', '1' )->get();
+    public function createCity()
+    {
+        $cities = Zone::where('level', '1')->get();
 
-        return view( 'admin.content.dashboard.cities.create-city', compact( 'cities' ) );
+        return view('admin.content.dashboard.cities.create-city', compact('cities'));
 
     }
 
     /**
-    * Store a newly created resource in storage.
-    */
+     * Store a newly created resource in storage.
+     */
 
-    public function store( ZoneRequest $request ) {
+    public function store(ZoneRequest $request)
+    {
         $zone = new Zone;
-        $zone->name = $request->input( 'name' );
-        $zone->parent_id = $request->input( 'parent_id' );
-        $zone->price_shipping = $request->input( 'price_shipping' );
+        $zone->name = $request->input('name');
+        $zone->parent_id = $request->input('parent_id');
+        $zone->price_shipping = $request->input('price_shipping');
         $zone->save();
-        if ( $zone ) {
-            return redirect()->route( 'admin.Dashboard.cities.index' )->with( 'swal-success', ' استان  جدید شما با موفقیت اضافه شد' );
+        if ($zone) {
+            return redirect()->route('admin.Dashboard.cities.index')->with('swal-success', ' استان  جدید شما با موفقیت اضافه شد');
 
         } else {
             return redirect()->back();
@@ -57,14 +62,15 @@ class CitiesController extends Controller {
 
     }
 
-    public function storeCity( ZoneRequest $request ) {
+    public function storeCity(ZoneRequest $request)
+    {
         $zone = new Zone;
-        $zone->name = $request->input( 'name' );
-        $zone->parent_id = $request->input( 'parent_id' );
-        $zone->price_shipping = $request->input( 'price_shipping' );
+        $zone->name = $request->input('name');
+        $zone->parent_id = $request->input('parent_id');
+        $zone->price_shipping = $request->input('price_shipping');
         $zone->save();
-        if ( $zone ) {
-            return redirect()->route( 'admin.Dashboard.cities.show', $zone->parent_id )->with( 'swal-success', ' شهر  جدید شما با موفقیت اضافه شد' );
+        if ($zone) {
+            return redirect()->route('admin.Dashboard.cities.show', $zone->parent_id)->with('swal-success', ' شهر  جدید شما با موفقیت اضافه شد');
 
         } else {
             return redirect()->back();
@@ -73,158 +79,95 @@ class CitiesController extends Controller {
     }
 
     /**
-    * Display the specified resource.
-    */
+     * Display the specified resource.
+     */
 
-    public function show( Request $request, string $id ) {
+    public function show(Request $request, string $id)
+    {
 
         //    dd( $citiesSearch );
-        $citiesSearch = Zone::where( 'name', 'LIKE', '%' . $request->search . '%' )->get();
+        $citiesSearch = Zone::where('name', 'LIKE', '%' . $request->search . '%')->get();
 
-        if ( $request->ajax() ) {
 
-            $output = '';
+        $cityName = Zone::where('id', $id)->get();
 
-            if ( $citiesSearch ) {
+        $cities = Zone::where('parent_id', $id)->paginate(10);
 
-                foreach ( $citiesSearch as $city ) {
-
-                    $output .= '<tr>' .
-                    '<td class="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all" rowspan="1" colspan="1" style="width: 18px;" data-col="1" aria-label=""><input type="checkbox" class="form-check-input"></td>' .
-                    '<td>' . $city->id . '</td>' .
-                    '<td>' . $city->name . '</td>' .
-                    '<td>' .
-                    '<span id="' . $city->id . '" title="برای فعال یا غیر فعالسازی وضعیت کلیک کنید" onclick="changeStatus(' . $city->id . ')" data-url="' . route( 'admin.Dashboard.cities.status-city', $city->id ) . '" class="cursor-pointer badge bg-label-' . ( $city->status == 1 ? 'success' : 'danger' ) . ' me-1" ' . ( $city->status === 1 ? 'active' : 'deactive' ) . '>' .
-                    ( $city->status === 0 ? 'غیر فعال' : 'فعال' ) .
-                    '</span>' .
-                    '</td>' .
-                    '<td>' .
-                    '<div class="dropdown">' .
-                    '<button class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" type="button">' .
-                    '<i class="ti ti-dots-vertical"></i>' .
-                    '</button>' .
-                    '<div class="dropdown-menu">' .
-                    '<a class="dropdown-item" onclick="location.href=\'' . url('admin/dashboard/cities/edit-city/' . $city->id) . '\'" href="javascript:void(0);">' .
-                    '<i class="ti ti-pencil me-1"></i> ویرایش' .
-                    '</a>' .
-                    '<form method="POST" class="" action="' . url( 'admin/dashboard/cities/delete-city/' . $city->id ) . '">' .
-                    csrf_field() .
-                    method_field( 'DELETE' ) .
-                    '<button type="submit" class="dropdown-item delete" id="delete">' .
-                    '<i class="ti ti-trash me-1"></i> حذف' .
-                    '</button>' .
-                    '</form>' .
-                    '</div>' .
-                    '</div>' .
-                    '</td>' .
-                    '</tr>';
-
-                }
-                return $output;
-
-            }
-        }
-        $cityName = Zone::where( 'id', $id )->get();
-
-        $cities = Zone::where( 'parent_id', $id )->paginate( 10 );
-
-        return view( 'admin.content.dashboard.cities.show', compact( [ 'cities', 'cityName' ] ) );
+        return view('admin.content.dashboard.cities.show', compact(['cities', 'cityName']));
 
     }
 
     /**
-    * Show the form for editing the specified resource.
-    */
+     * Show the form for editing the specified resource.
+     */
     // public function edit( string $id )
 
-    public function edit( string $id ) {
+    public function edit(string $id)
+    {
 
-        $city = Zone::where( 'id', $id )->first();
-        return view( 'admin.content.dashboard.cities.edit', compact( 'city' ) );
-
-    }
-
-    public function editCity( string $id ) {
-        $cities = Zone::where( 'level', '1' )->get();
-
-        $cityy = Zone::where( 'id', $id )->first();
-        return view( 'admin.content.dashboard.cities.edit-city', compact( [ 'cityy', 'cities' ] ) );
+        $city = Zone::where('id', $id)->first();
+        return view('admin.content.dashboard.cities.edit', compact('city'));
 
     }
 
-    /**
-    * Update the specified resource in storage.
-    */
+    public function editCity(string $id)
+    {
+        $cities = Zone::where('level', '1')->get();
 
-    public function update( ZoneRequest $request, string $id ) {
-
-        $item = Zone::find( $id );
-        $item->name = $request->input( 'name' );
-        $item->parent_id = $request->input( 'level' );
-        $item->price_shipping = $request->input( 'price_shipping' );
-        $item->save();
-        return redirect()->route( 'admin.Dashboard.cities.index' )->with( 'swal-success', 'ویرایش استان با موفقیت انجام شد' );
-
-    }
-
-    public function updateCity( ZoneRequest $request, string $id ) {
-
-        $item = Zone::find( $id );
-        $item->name = $request->input( 'name' );
-        $item->parent_id = $request->input( 'level' );
-        $item->price_shipping = $request->input( 'price_shipping' );
-        $item->save();
-        return redirect()->route( 'admin.Dashboard.cities.show', $item->parent_id )->with( 'swal-success', 'ویرایش شهر با موفقیت انجام شد' );
+        $cityy = Zone::where('id', $id)->first();
+        return view('admin.content.dashboard.cities.edit-city', compact(['cityy', 'cities']));
 
     }
 
     /**
-    * Remove the specified resource from storage.
-    */
+     * Update the specified resource in storage.
+     */
 
-    public function destroy( string $id ) {
-        $item = Zone::find( $id );
+    public function update(ZoneRequest $request, string $id)
+    {
+
+        $item = Zone::find($id);
+        $item->name = $request->input('name');
+        $item->parent_id = $request->input('level');
+        $item->price_shipping = $request->input('price_shipping');
+        $item->save();
+        return redirect()->route('admin.Dashboard.cities.index')->with('swal-success', 'ویرایش استان با موفقیت انجام شد');
+
+    }
+
+    public function updateCity(ZoneRequest $request, string $id)
+    {
+
+        $item = Zone::find($id);
+        $item->name = $request->input('name');
+        $item->parent_id = $request->input('level');
+        $item->price_shipping = $request->input('price_shipping');
+        $item->save();
+        return redirect()->route('admin.Dashboard.cities.show', $item->parent_id)->with('swal-success', 'ویرایش شهر با موفقیت انجام شد');
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+
+    public function destroy(string $id)
+    {
+        $item = Zone::find($id);
         $item->delete();
-        return redirect()->route( 'admin.Dashboard.cities.index' )->with( 'swal-success', 'حذف استان با موفقیت انجام شد' );
+        return redirect()->route('admin.Dashboard.cities.index')->with('swal-success', 'حذف استان با موفقیت انجام شد');
 
     }
 
-    public function destroyCity( string $id ) {
-        $item = Zone::find( $id );
+    public function destroyCity(string $id)
+    {
+        $item = Zone::find($id);
         $item->delete();
-        return redirect()->route( 'admin.Dashboard.cities.show', $item->parent_id )->with( 'swal-success', 'حذف شهر با موفقیت انجام شد' );
-
-    }
-
-    public function status( Zone $zone ) {
-
-        $zone->status = $zone->status == 0 ? 1 : 0;
-        $result = $zone->save();
-        if ( $result ) {
-            if ( $zone->status == 0 ) {
-                return response()->json( [ 'status' => true, 'active' => false ] );
-            } else {
-                return response()->json( [ 'status' => true, 'active' => true ] );
-            }
-        } else {
-            return response()->json( [ 'status' => false ] );
-        }
-
-    }
-
-    public function statusCity( Zone $zone ) {
-
-        $zone->status = $zone->status == 0 ? 1 : 0;
-        $result = $zone->save();
-        if ( $result ) {
-            if ( $zone->status == 0 ) {
-                return response()->json( [ 'status' => true, 'active' => false ] );
-            } else {
-                return response()->json( [ 'status' => true, 'active' => true ] );
-            }
-        } else {
-            return response()->json( [ 'status' => false ] );
-        }
+        return redirect()->route('admin.Dashboard.cities.show', $item->parent_id)->with('swal-success', 'حذف شهر با موفقیت انجام شد');
 
     }
 }
+
+
+
+

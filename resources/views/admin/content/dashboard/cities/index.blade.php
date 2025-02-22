@@ -9,6 +9,7 @@
 @section('page-script')
 
  @vite(['resources/assets/js/dashboards-crm.js'])
+ 
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -31,22 +32,7 @@
 
      <div class="content-backdrop fade"></div>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      Livewire.on('show-toastr', (data) => {
-      toastr.options = {
-        progressBar: true,
-        positionClass: "toast-top-right", // نمایش در سمت راست بالا
-        timeOut: 3000 // زمان نمایش
-      };
+  
 
-      if (data.type === 'success') {
-        toastr.success(data.message);
-      } else {
-        toastr.warning(data.message);
-      }
-      });
-    });
-    </script>
 
 @endsection
