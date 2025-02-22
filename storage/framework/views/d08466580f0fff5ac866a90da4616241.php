@@ -1,0 +1,1 @@
+<?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/layouts/sections/footer/footer.blade.php ENDPATH**/ ?>

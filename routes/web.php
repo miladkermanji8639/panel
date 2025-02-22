@@ -187,7 +187,17 @@ Route::prefix('admin')
             Route::prefix('membershipfee/')->group(function () {
                 Route::get('/', [MembershipfeeController::class, 'index'])->name('admin.Dashboard.membershipfee.index');
                 Route::get('/create', [MembershipfeeController::class, 'create'])->name('admin.Dashboard.membershipfee.create');
-                Route::get('/edit', [MembershipfeeController::class, 'edit'])->name('admin.Dashboard.membershipfee.edit');
+                Route::get('/edit/{id}', function ($id) {
+                    return view('admin.content.dashboard.membershipfee.edit', ['membershipFeeId' => $id]);
+                })->name('admin.Dashboard.membershipfee.edit');
+
+            });
+            Route::prefix('usershipfee/')->group(function () {
+                Route::get('/', [UserShipfeeController::class, 'index'])->name('admin.Dashboard.usershipfee.index');
+                Route::get('/create', [UserShipfeeController::class, 'create'])->name('admin.Dashboard.usershipfee.create');
+                Route::get('/edit/{id}', function ($id) {
+                    return view('admin.content.dashboard.usershipfee.edit', ['membershipFeeId' => $id]);
+                })->name('admin.Dashboard.usershipfee.edit');
             });
             Route::prefix('menu/')->group(function () {
                 Route::get('/', [MenuController::class, 'index'])->name('admin.Dashboard.menu.index');
@@ -201,11 +211,6 @@ Route::prefix('admin')
             });
             Route::prefix('holiday/')->group(function () {
                 Route::get('/', [HolidayController::class, 'index'])->name('admin.Dashboard.holiday.index');
-            });
-            Route::prefix('usershipfee/')->group(function () {
-                Route::get('/', [UserShipfeeController::class, 'index'])->name('admin.Dashboard.usershipfee.index');
-                Route::get('/create', [UserShipfeeController::class, 'create'])->name('admin.Dashboard.usershipfee.create');
-                Route::get('/edit', [UserShipfeeController::class, 'edit'])->name('admin.Dashboard.usershipfee.edit');
             });
             Route::prefix('amar/')->group(function () {
                 Route::get('/', [AmarController::class, 'index'])->name('admin.Dashboard.amar.index');

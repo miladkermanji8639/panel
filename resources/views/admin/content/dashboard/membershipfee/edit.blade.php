@@ -15,16 +15,16 @@
 @endsection
 
 @section('content')
- <div class="app-content-body">
+   <div class="app-content-body">
 
-  <div class="bg-white-only lter b-b wrapper-md clrfix">
+    <div class="bg-white-only lter b-b wrapper-md clrfix">
 
-   <h1 class="m-n font-thin h3">بسته ها</h1>
+     <h1 class="m-n font-thin h3">بسته ها</h1>
 
 
-  </div>
+    </div>
   <div class="wrapper-md">
-   <livewire:usership-fee-edit :membershipFeeId="$membershipFeeId" />
+    <livewire:membership-fee-edit :membershipFeeId="$membershipFeeId" />
   </div>
- </div>
+   </div>
 @endsection
