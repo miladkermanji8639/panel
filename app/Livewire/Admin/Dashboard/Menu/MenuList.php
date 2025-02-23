@@ -35,13 +35,30 @@ class MenuList extends Component
     public function deleteSelected()
     {
         if (count($this->selectedRows) > 0) {
+            $menus = Menu::whereIn('id', $this->selectedRows)->get();
+
+            foreach ($menus as $menu) {
+                // بررسی و حذف فایل آیکون اگر وجود داشته باشد
+                if ($menu->icon && file_exists(storage_path('app/public/uploads/menu/icons/' . basename($menu->icon)))) {
+                    unlink(storage_path('app/public/uploads/menu/icons/' . basename($menu->icon)));
+                }
+            }
+
+            // حذف منوها از دیتابیس
             Menu::whereIn('id', $this->selectedRows)->delete();
+
+            // ریست کردن انتخاب‌ها
             $this->selectedRows = [];
             $this->selectAll = false;
+
+            // ارسال رویداد برای غیرفعال کردن دکمه حذف
             $this->dispatch('refreshDeleteButton', hasSelectedRows: false);
-            $this->dispatch('show-toastr', type: 'success', message: 'منو های انتخاب‌شده با موفقیت حذف شدند.');
+
+            // ارسال پیام موفقیت
+            $this->dispatch('show-toastr', type: 'success', message: 'منوهای انتخاب‌شده با موفقیت حذف شدند.');
         }
     }
+
     public function toggleStatus($id)
     {
         $city = Menu::find($id);

@@ -42,34 +42,38 @@
      @foreach ($menus as $index => $menu)
       <tr>
        <td><input type="checkbox" class="form-check-input" wire:model="selectedRows" value="{{ $menu->id }}"
-         x-on:change="$wire.dispatch('updateDeleteButton')"></td>
+       x-on:change="$wire.dispatch('updateDeleteButton')"></td>
        <td>{{ $index + 1 }}</td>
        <td>{{ $menu->name }}</td>
        <td>{{ $menu->url }}</td>
-       <td>{{ $menu->icon }}</td>
+      <td>
+      <img src="{{ $menu->icon ? asset('storage/' . $menu->icon) : asset('default-icon.png') }}" alt="آیکون منو"
+        class="img-thumbnail" style="width: 40px; height: 40px; border-radius: 8px;">
+      </td>
+
        <td>{{ $menu->position }}</td>
        <td>{{ $menu->parent ? $menu->parent->name : 'دسته اصلی' }}</td>
        <td>{{ $menu->order }}</td>
        <td>
-        <span wire:click="toggleStatus({{ $menu->id }})"
-         class="badge bg-label-{{ $menu->status == 1 ? 'success' : 'danger' }} cursor-pointer">
-         {{ $menu->status == 1 ? 'فعال' : 'غیر فعال' }}
-        </span>
+      <span wire:click="toggleStatus({{ $menu->id }})"
+       class="badge bg-label-{{ $menu->status == 1 ? 'success' : 'danger' }} cursor-pointer">
+       {{ $menu->status == 1 ? 'فعال' : 'غیر فعال' }}
+      </span>
        </td>
        <td>
-        <div class="dropdown">
-         <button class="btn p-0" data-bs-toggle="dropdown">
-          <i class="ti ti-dots-vertical"></i>
-         </button>
-         <div class="dropdown-menu">
-          <a class="dropdown-item" href="{{ route('admin.Dashboard.menu.edit', ['id' => $menu->id]) }}">
-           <i class="ti ti-pencil"></i> ویرایش
-          </a>
-         </div>
-        </div>
+      <div class="dropdown">
+       <button class="btn p-0" data-bs-toggle="dropdown">
+        <i class="ti ti-dots-vertical"></i>
+       </button>
+       <div class="dropdown-menu">
+        <a class="dropdown-item" href="{{ route('admin.Dashboard.menu.edit', ['id' => $menu->id]) }}">
+         <i class="ti ti-pencil"></i> ویرایش
+        </a>
+       </div>
+      </div>
        </td>
       </tr>
-     @endforeach
+   @endforeach
     </tbody>
   </table>
   </div>

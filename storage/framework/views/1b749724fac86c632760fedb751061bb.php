@@ -42,35 +42,39 @@
      <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $menus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
       <tr>
        <td><input type="checkbox" class="form-check-input" wire:model="selectedRows" value="<?php echo e($menu->id); ?>"
-         x-on:change="$wire.dispatch('updateDeleteButton')"></td>
+       x-on:change="$wire.dispatch('updateDeleteButton')"></td>
        <td><?php echo e($index + 1); ?></td>
        <td><?php echo e($menu->name); ?></td>
        <td><?php echo e($menu->url); ?></td>
-       <td><?php echo e($menu->icon); ?></td>
+      <td>
+      <img src="<?php echo e($menu->icon ? asset('storage/' . $menu->icon) : asset('default-icon.png')); ?>" alt="آیکون منو"
+        class="img-thumbnail" style="width: 40px; height: 40px; border-radius: 8px;">
+      </td>
+
        <td><?php echo e($menu->position); ?></td>
        <td><?php echo e($menu->parent ? $menu->parent->name : 'دسته اصلی'); ?></td>
        <td><?php echo e($menu->order); ?></td>
        <td>
-        <span wire:click="toggleStatus(<?php echo e($menu->id); ?>)"
-         class="badge bg-label-<?php echo e($menu->status == 1 ? 'success' : 'danger'); ?> cursor-pointer">
-         <?php echo e($menu->status == 1 ? 'فعال' : 'غیر فعال'); ?>
+      <span wire:click="toggleStatus(<?php echo e($menu->id); ?>)"
+       class="badge bg-label-<?php echo e($menu->status == 1 ? 'success' : 'danger'); ?> cursor-pointer">
+       <?php echo e($menu->status == 1 ? 'فعال' : 'غیر فعال'); ?>
 
-        </span>
+      </span>
        </td>
        <td>
-        <div class="dropdown">
-         <button class="btn p-0" data-bs-toggle="dropdown">
-          <i class="ti ti-dots-vertical"></i>
-         </button>
-         <div class="dropdown-menu">
-          <a class="dropdown-item" href="<?php echo e(route('admin.Dashboard.menu.edit', ['id' => $menu->id])); ?>">
-           <i class="ti ti-pencil"></i> ویرایش
-          </a>
-         </div>
-        </div>
+      <div class="dropdown">
+       <button class="btn p-0" data-bs-toggle="dropdown">
+        <i class="ti ti-dots-vertical"></i>
+       </button>
+       <div class="dropdown-menu">
+        <a class="dropdown-item" href="<?php echo e(route('admin.Dashboard.menu.edit', ['id' => $menu->id])); ?>">
+         <i class="ti ti-pencil"></i> ویرایش
+        </a>
+       </div>
+      </div>
        </td>
       </tr>
-     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
     </tbody>
   </table>
   </div>
