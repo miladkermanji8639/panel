@@ -8,7 +8,7 @@ class CheckCompleteProfile
 {
   public function handle($request, Closure $next)
   {
-    if ($request->expectsJson() || $request->is('livewire/*')) {
+    if ($request->expectsJson() || $request->is('livewire/*') || $request->is('admin/*') || $request->is('admin-panel/*') || $request->routeIs('dr.auth.login-register-form') || $request->routeIs('dr.auth.login-user-pass-form') || $request->routeIs('dr-two-factor') || $request->routeIs('dr-two-factor-store') || $request->routeIs('dr-login-with-mobile-pass') || $request->routeIs('dr.auth.login-register') || $request->routeIs('dr.auth.login-confirm-form') || $request->routeIs('dr.auth.login-confirm') || $request->routeIs('dr.auth.login-resend-otp')) {
       return $next($request);
     }
     $doctor = Auth::guard('doctor')->user();

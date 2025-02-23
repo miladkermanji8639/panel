@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 @php
 $menuFixed =
-      $configData['layout'] === 'vertical'
-      ? $menuFixed ?? ''
-      : ($configData['layout'] === 'front'
-            ? ''
-            : $configData['headerType']);
+    $configData['layout'] === 'vertical'
+    ? $menuFixed ?? ''
+    : ($configData['layout'] === 'front'
+        ? ''
+        : $configData['headerType']);
 $navbarType =
-      $configData['layout'] === 'vertical'
-      ? $configData['navbarType'] ?? ''
-      : ($configData['layout'] === 'front'
-            ? 'layout-navbar-fixed'
-            : '');
+    $configData['layout'] === 'vertical'
+    ? $configData['navbarType'] ?? ''
+    : ($configData['layout'] === 'front'
+        ? 'layout-navbar-fixed'
+        : '');
 $isFront = ($isFront ?? '') == true ? 'Front' : '';
 $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-compact' : 'layout-wide') : '';
 @endphp
@@ -53,6 +53,7 @@ $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-c
 
 
 
+
  @livewireStyles
 </head>
 
@@ -77,6 +78,7 @@ $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-c
  @include('admin.content.alerts.sweetalert.delete-confirm', ['className' => 'delete'])
  {{-- sweet alert --}}
  @livewireScripts
+ 
  <script>
   document.addEventListener("DOMContentLoaded", function() {
    Livewire.on('refreshDeleteButton', (data) => {

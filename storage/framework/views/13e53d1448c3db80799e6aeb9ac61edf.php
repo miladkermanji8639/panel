@@ -72,13 +72,6 @@
           <a class="dropdown-item" href="<?php echo e(url('admin/dashboard/cities/edit/' . $city->id)); ?>">
           <i class="ti ti-pencil me-1"></i> ویرایش
           </a>
-          <form method="POST" action="<?php echo e(url('admin/dashboard/cities/delete/' . $city->id)); ?>">
-          <?php echo csrf_field(); ?>
-          <?php echo method_field('DELETE'); ?>
-          <button type="submit" class="dropdown-item delete">
-          <i class="ti ti-trash me-1"></i> حذف
-          </button>
-          </form>
           </div>
         </div>
         </td>
