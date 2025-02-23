@@ -16,7 +16,6 @@
 <?php echo app('Illuminate\Foundation\Vite')([
   'resources/assets/vendor/libs/fullcalendar/fullcalendar.js',
   'resources/assets/vendor/libs/@form-validation/popular.js',
-  'resources/assets/vendor/libs/@form-validation/bootstrap5.js',
   'resources/assets/vendor/libs/@form-validation/auto-focus.js',
   'resources/assets/vendor/libs/select2/select2.js',
   'resources/assets/vendor/libs/jdate/jdate.min.js',
