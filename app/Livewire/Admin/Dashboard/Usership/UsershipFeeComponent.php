@@ -1,5 +1,5 @@
 <?php
-namespace App\Livewire;
+namespace App\Livewire\Admin\Dashboard\Usership;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -61,7 +61,7 @@ class UsershipFeeComponent extends Component
     public function render()
     {
         $fees = MembershipFee::where('name', 'like', '%' . $this->search . '%')->where('user_type','normal')->paginate(10);
-        return view('livewire.usership-fee-component', compact('fees'));
+        return view('livewire.admin.dashboard.usership.usership-fee-component', compact('fees'));
     }
     public function searchUpdated()
     {

@@ -1,7 +1,6 @@
 @extends('admin.content.layouts/layoutMaster')
 
-<blade
-       section|(%26%2339%3Btitle%26%2339%3B%2C%20%26%2339%3B%D8%A7%D9%81%D8%B2%D9%88%D8%AF%D9%86%20%D8%AA%D8%AE%D8%B5%D8%B5%20%D8%AC%D8%AF%DB%8C%D8%AF%20%20%20%26%2339%3B)%0D />
+
 
 @section('vendor-style')
 @vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])

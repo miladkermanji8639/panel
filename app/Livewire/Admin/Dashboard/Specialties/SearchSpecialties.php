@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Admin\Dashboard\Specialties;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -61,6 +61,6 @@ class SearchSpecialties extends Component
         \Log::info("جستجوی تخصص: " . $this->search);
 
         $specialties = Specialty::where('name', 'like', '%' . $this->search . '%')->paginate(10);
-        return view('livewire.search-specialties', compact('specialties'));
+        return view('livewire.admin.dashboard.specialties.search-specialties', compact('specialties'));
     }
 }

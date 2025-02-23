@@ -36,7 +36,7 @@
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('search-specialties');
+[$__name, $__params] = $__split('admin.dashboard.specialties.search-specialties');
 
 $__html = app('livewire')->mount($__name, $__params, 'lw-3477508786-0', $__slots ?? [], get_defined_vars());
 

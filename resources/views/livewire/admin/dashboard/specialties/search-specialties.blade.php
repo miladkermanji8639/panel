@@ -4,6 +4,9 @@
             <input type="search" class="form-control  w-100 me-2" placeholder="جستجو تخصص" wire:model="search"
                 wire:keyup="searchUpdated">
         </div>
+            <a href="{{ route('admin.Dashboard.specialty.create') }}" class="btn btn-primary">
+                <i class="ti ti-plus"></i> افزودن تخصص جدید
+            </a>
     <button class="btn btn-danger" wire:click="confirmDelete" wire:loading.attr="disabled" id="deleteButton"
         x-bind:disabled="{{ count($selectedRows) === 0 }}">
         <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
@@ -54,13 +57,6 @@
                                 <a class="dropdown-item" href="{{ url('admin/dashboard/specialty/edit/' . $specialty->id) }}">
                                     <i class="ti ti-pencil me-1"></i> ویرایش
                                 </a>
-                                <form method="POST" action="{{ url('admin/dashboard/specialty/delete/' . $specialty->id) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="dropdown-item delete">
-                                        <i class="ti ti-trash me-1"></i> حذف
-                                    </button>
-                                </form>
                             </div>
                         </div>
                     </td>

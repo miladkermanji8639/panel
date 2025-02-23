@@ -26,7 +26,7 @@
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('search-zones');
+[$__name, $__params] = $__split('admin.dashboard.cities.search-zones');
 
 $__html = app('livewire')->mount($__name, $__params, 'lw-3010430860-0', $__slots ?? [], get_defined_vars());
 

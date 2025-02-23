@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Admin\Dashboard\Membership;
 
 use Livewire\Component;
 use App\Models\Admin\MembershipFee;
@@ -50,7 +50,7 @@ class MembershipFeeEdit extends Component
 
     public function render()
     {
-        return view('livewire.membership-fee-edit');
+        return view('livewire.admin.dashboard.membership.membership-fee-edit');
     }
 }
 

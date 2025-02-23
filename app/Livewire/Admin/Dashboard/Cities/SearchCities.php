@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Admin\Dashboard\Cities;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -77,14 +77,13 @@ class SearchCities extends Component
             })
             ->paginate(10);
 
-        return view('livewire.search-cities', compact('cities'));
+        return view('livewire.admin.dashboard.cities.search-cities', compact('cities'));
     }
 
 
-
+ 
     public function updatedSearch($value)
     {
-        \Log::info("Updated Search: " . $value);
     }
 
 

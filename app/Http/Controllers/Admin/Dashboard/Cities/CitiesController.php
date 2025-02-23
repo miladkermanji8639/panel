@@ -68,6 +68,7 @@ class CitiesController extends Controller
         $zone->name = $request->input('name');
         $zone->parent_id = $request->input('parent_id');
         $zone->price_shipping = $request->input('price_shipping');
+        $zone->level = 2;
         $zone->save();
         if ($zone) {
             return redirect()->route('admin.Dashboard.cities.show', $zone->parent_id)->with('swal-success', ' شهر  جدید شما با موفقیت اضافه شد');

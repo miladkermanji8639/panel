@@ -23,7 +23,7 @@
       <div class="card-header">
        <h5 class="card-title mb-0">لیست استانها</h5>
       </div>
-      @livewire('search-zones')
+      @livewire('admin.dashboard.cities.search-zones')
 
     </div>
      </div>

@@ -170,7 +170,9 @@ Route::prefix('admin')
             Route::prefix('specialty/')->group(function () {
                 Route::get('/', [SpecialtyController::class, 'index'])->name('admin.Dashboard.specialty.index');
                 Route::get('/create-specialty', [SpecialtyController::class, 'createSpecialty'])->name('admin.Dashboard.specialty.create-specialty');
-                Route::get('/create', [SpecialtyController::class, 'create'])->name('admin.Dashboard.specialty.create');
+                Route::get('/create', function () {
+                    return view('admin.content.dashboard.specialty.create');
+                })->name('admin.Dashboard.specialty.create');
                 Route::post('/store', [SpecialtyController::class, 'store'])->name('admin.Dashboard.specialty.store');
                 Route::post('/store-specialty', [SpecialtyController::class, 'storeSpecialty'])->name('admin.Dashboard.specialty.store-specialty');
                 Route::get('/edit/{id}', [SpecialtyController::class, 'edit'])->name('admin.Dashboard.specialty.edit');

@@ -1,22 +1,20 @@
-@extends('admin.content.layouts/layoutMaster')
+<?php $__env->startSection('title', 'شهرها '); ?>
 
-@section('title', 'شهرها ')
+<?php $__env->startSection('vendor-style'); ?>
+<?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apex-charts.scss']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('vendor-style')
-@vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
-@endsection
+<?php $__env->startSection('vendor-script'); ?>
+<?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apexcharts.js']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('vendor-script')
-@vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
-@endsection
+<?php $__env->startSection('page-script'); ?>
+<?php echo app('Illuminate\Foundation\Vite')(['resources/assets/js/dashboards-crm.js']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('page-script')
-@vite(['resources/assets/js/dashboards-crm.js'])
-@endsection
 
-{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> --}}
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <div class="content-wrapper">
 
@@ -27,12 +25,13 @@
                 <div>
                     <h4 class="py-3 mb-4">
                         <span class="text-muted fw-light">ناحیه ها /</span>
-                        لیست شهرهای استان {{ $cityName[0]->name }}
+                        لیست شهرهای استان <?php echo e($cityName[0]->name); ?>
+
                     </h4>
                 </div>
 
                 <div>
-                    <a href="{{ route('admin.Dashboard.cities.index') }}"
+                    <a href="<?php echo e(route('admin.Dashboard.cities.index')); ?>"
                        class="btn btn-warning">بازگشت</a>
                 </div>
             </div>
@@ -41,15 +40,30 @@
                     <h5 class="card-title mb-0">لیست شهرها</h5>
                 </div>
 
-            @livewire('admin.dashboard.cities.search-cities', ['provinceId' => $cityName[0]->id])
+            <?php
+$__split = function ($name, $params = []) {
+    return [$name, $params];
+};
+[$__name, $__params] = $__split('admin.dashboard.cities.search-cities', ['provinceId' => $cityName[0]->id]);
+
+$__html = app('livewire')->mount($__name, $__params, 'lw-3152225252-0', $__slots ?? [], get_defined_vars());
+
+echo $__html;
+
+unset($__html);
+unset($__name);
+unset($__params);
+unset($__split);
+if (isset($__slots)) unset($__slots);
+?>
 
             </div>
 
 
         </div>
-        {{-- ajax search --}}
+        
 
-        {{-- ajax search --}}
+        
 
 
         <script type="text/javascript">
@@ -133,5 +147,6 @@
         <!-- / Footer -->
         <div class="content-backdrop fade"></div>
     </div>
-    {{-- @include('admin.content.alerts.sweetalert.delete-confirm',['className'=>'delete']) --}}
-@endsection
+    
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/dashboard/cities/show.blade.php ENDPATH**/ ?>

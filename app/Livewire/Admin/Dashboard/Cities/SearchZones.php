@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Admin\Dashboard\Cities;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -30,7 +30,7 @@ class SearchZones extends Component
             ->where('name', 'like', '%' . $this->search . '%')
             ->paginate(10);
 
-        return view('livewire.search-zones', compact('cities'));
+        return view('livewire.admin.dashboard.cities.search-zones', compact('cities'));
     }
 
     public function toggleStatus($id)
@@ -86,7 +86,10 @@ class SearchZones extends Component
     {
         $this->dispatch('refreshDeleteButton');
     }
-
+    public function searchUpdated()
+    {
+        $this->resetPage(); // هنگام تغییر مقدار جستجو، صفحه را ریست می‌کند
+    }
 
 
 }

@@ -34,7 +34,7 @@
     <div class="card-header">
      <h5 class="card-title mb-0">لیست تخصص‌ها</h5>
     </div>
-    @livewire('search-specialties')
+    @livewire('admin.dashboard.specialties.search-specialties')
    </div>
 
 

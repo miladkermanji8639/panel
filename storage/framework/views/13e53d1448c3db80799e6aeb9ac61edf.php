@@ -1,16 +1,19 @@
 <div>
   <div class="card-header d-flex border-top rounded-0 flex-wrap py-2 justify-content-between w-100">
     <div class="d-flex align-items-center">
-      <input type="search" class="form-control h-50 w-100 me-2" placeholder="جستجو استان" wire:model="search"
+      <input type="search" class="form-control  w-100 me-2" placeholder="جستجو استان" wire:model="search"
         wire:keyup="searchUpdated">
     </div>
+     <a href="<?php echo e(route('admin.Dashboard.cities.create')); ?>" class="btn btn-primary">
+            <i class="ti ti-plus"></i> افزودن  استان
+        </a>
     <div>
 <button class="btn btn-danger"
     wire:click="confirmDelete"
     wire:loading.attr="disabled"
     wire:target="deleteSelected"
     id="deleteButton"
-    :disabled="{{ count($selectedRows) == 0 ? 'true' : 'false' }}">
+    :disabled="<?php echo e(count($selectedRows) == 0 ? 'true' : 'false'); ?>">
     <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
 </button>
 
@@ -40,20 +43,21 @@
         </tr>
       </thead>
       <tbody>
-        @foreach ($cities as $city)
+        <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $cities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $city): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <tr>
         <td>
-        <input type="checkbox" class="form-check-input" wire:model="selectedRows" value="{{ $city->id }}"
+        <input type="checkbox" class="form-check-input" wire:model="selectedRows" value="<?php echo e($city->id); ?>"
         x-on:change="$wire.dispatch('updateDeleteButton')">
 
 
         </td>
-        <td>{{ $city->id }}</td>
-        <td>{{ $city->name }}</td>
+        <td><?php echo e($city->id); ?></td>
+        <td><?php echo e($city->name); ?></td>
         <td>
-        <span wire:click="toggleStatus({{ $city->id }})"
-          class="badge bg-label-{{ $city->status == 1 ? 'success' : 'danger' }} cursor-pointer">
-          {{ $city->status == 1 ? 'فعال' : 'غیر فعال' }}
+        <span wire:click="toggleStatus(<?php echo e($city->id); ?>)"
+          class="badge bg-label-<?php echo e($city->status == 1 ? 'success' : 'danger'); ?> cursor-pointer">
+          <?php echo e($city->status == 1 ? 'فعال' : 'غیر فعال'); ?>
+
         </span>
         </td>
         <td>
@@ -62,15 +66,15 @@
           <i class="ti ti-dots-vertical"></i>
           </button>
           <div class="dropdown-menu">
-          <a class="dropdown-item" href="{{ url('admin/dashboard/cities/show/' . $city->id) }}">
+          <a class="dropdown-item" href="<?php echo e(url('admin/dashboard/cities/show/' . $city->id)); ?>">
           <i class="ti ti-eye me-1"></i> شهرستان
           </a>
-          <a class="dropdown-item" href="{{ url('admin/dashboard/cities/edit/' . $city->id) }}">
+          <a class="dropdown-item" href="<?php echo e(url('admin/dashboard/cities/edit/' . $city->id)); ?>">
           <i class="ti ti-pencil me-1"></i> ویرایش
           </a>
-          <form method="POST" action="{{ url('admin/dashboard/cities/delete/' . $city->id) }}">
-          @csrf
-          @method('DELETE')
+          <form method="POST" action="<?php echo e(url('admin/dashboard/cities/delete/' . $city->id)); ?>">
+          <?php echo csrf_field(); ?>
+          <?php echo method_field('DELETE'); ?>
           <button type="submit" class="dropdown-item delete">
           <i class="ti ti-trash me-1"></i> حذف
           </button>
@@ -79,14 +83,16 @@
         </div>
         </td>
         </tr>
-    @endforeach
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
       </tbody>
     </table>
   </div>
 
   <div class="row mx-2 mt-4">
     <div class="col-sm-12 col-md-6">
-      {{ $cities->links('pagination::bootstrap-5') }}
+      <?php echo e($cities->links('pagination::bootstrap-5')); ?>
+
     </div>
   </div>
 </div>
+<?php /**PATH D:\MyProjects\Benobe\panel\resources\views/livewire/admin/dashboard/cities/search-zones.blade.php ENDPATH**/ ?>

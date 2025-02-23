@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Admin\Dashboard\Membership;
 
 use Livewire\Component;
 use App\Models\Admin\MembershipFee;
 
-class UsershipFeeForm extends Component
+class MembershipFeeForm extends Component
 {
     public $name, $days, $price, $sort;
     public $successMessage = '';
@@ -26,7 +26,7 @@ class UsershipFeeForm extends Component
             'days' => $this->days,
             'price' => $this->price,
             'sort' => $this->sort,
-            'user_type' => 'normal',
+            'user_type' => 'doctor',
         ]);
 
         // پاک کردن فرم پس از ذخیره‌سازی
@@ -38,6 +38,7 @@ class UsershipFeeForm extends Component
 
     public function render()
     {
-        return view('livewire.usership-fee-form');
+        return view('livewire.admin.dashboard.membership.membership-fee-form');
     }
 }
+

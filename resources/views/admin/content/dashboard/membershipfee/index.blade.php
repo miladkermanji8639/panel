@@ -31,7 +31,7 @@
   </div>
   
   <div class="card-datatable table-responsive">
-    @livewire('membership-fee-component')
+    @livewire('admin.dashboard.membership.membership-fee-component')
   </div>
   </div>
 
