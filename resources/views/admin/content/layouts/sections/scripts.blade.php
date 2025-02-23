@@ -22,6 +22,7 @@
 <script src="{{ asset('dr-assets/js/select2/select2.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
 <script src="{{ asset('dr-assets/panel/js/sweetalert2/sweetalert2.js') }}"></script>
+<script src="{{ asset('dr-asset/panel/js/tom-select.complete.min.js') }}"></script>
 
 <script type="text/javascript">
  $("#nameid").select2({

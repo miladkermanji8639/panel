@@ -11,6 +11,7 @@
 
 <link rel="stylesheet" href="<?php echo e(asset('admin-assets/css/choosen/choosen.min.css')); ?>">
 <link rel="stylesheet" href="<?php echo e(asset('dr-assets/panel/css/toastr/toastr.min.css')); ?>">
+<link rel="stylesheet" href="<?php echo e(asset('dr-asset/panel/css/tom-select.bootstrap5.min.css')); ?>">
 <style>
       .h-50{
             height: 50px !important;
