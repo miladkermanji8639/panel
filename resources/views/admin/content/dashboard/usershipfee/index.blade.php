@@ -33,7 +33,7 @@
 
     </div>
     <div class="card-datatable table-responsive">
-     @livewire('usership-fee-component')
+     @livewire('admin.dashboard.usership.usership-fee-component')
     </div>
    </div>
 
