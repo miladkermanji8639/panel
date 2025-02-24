@@ -2,25 +2,26 @@
 <html lang="en">
 
 <head>
- @include('dr.panel.layouts.partials.head-tags')
- @yield('styles')
+ <?php echo $__env->make('dr.panel.layouts.partials.head-tags', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+ <?php echo $__env->yieldContent('styles'); ?>
  <title>
-  @if (Auth::guard('doctor')->check())
+  <?php if(Auth::guard('doctor')->check()): ?>
    پنل دکتر | به نوبه
-  @elseif (Auth::guard('secretary')->check())
+  <?php elseif(Auth::guard('secretary')->check()): ?>
    پنل منشی | به نوبه
-  @else
+  <?php else: ?>
    به نوبه
-  @endif
+  <?php endif; ?>
  </title>
 
- @include('dr.panel.my-tools.loader-btn')
-@livewireStyles
+ <?php echo $__env->make('dr.panel.my-tools.loader-btn', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
+
 
 </head>
 
 <body>
- @include('dr.panel.layouts.partials.sidebar')
+ <?php echo $__env->make('dr.panel.layouts.partials.sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
  <div class="content">
   <!-- لودینگ کلی سایت -->
   <div id="global-loader">
@@ -31,13 +32,13 @@
    </div>
   </div>
 
-  @include('dr.panel.layouts.partials.header')
+  <?php echo $__env->make('dr.panel.layouts.partials.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
   <div class="top-dr-panel d-flex justify-content-between w-100 align-items-start">
    <div class="p-3 bg-white">
     <nav aria-label="breadcrumb">
      <ol class="breadcrumb bg-white">
       <li class="breadcrumb-item"><a href="#">پنل دکتر</a></li>
-      <li class="breadcrumb-item active" aria-current="page"> @yield('bread-crumb-title')</li>
+      <li class="breadcrumb-item active" aria-current="page"> <?php echo $__env->yieldContent('bread-crumb-title'); ?></li>
      </ol>
     </nav>
    </div>
@@ -98,10 +99,10 @@
            </div>
           </div>
          </div>
-         @foreach ($clinics as $clinic)
+         <?php $__currentLoopData = $clinics; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $clinic): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
           <div
-           class="d-flex justify-content-between align-items-center option-card {{ !$clinic->is_active ? 'inactive-clinic' : '' }}"
-           aria-hidden="true" data-id="{{ $clinic->id }}" data-active="{{ $clinic->is_active ? '1' : '0' }}">
+           class="d-flex justify-content-between align-items-center option-card <?php echo e(!$clinic->is_active ? 'inactive-clinic' : ''); ?>"
+           aria-hidden="true" data-id="<?php echo e($clinic->id); ?>" data-active="<?php echo e($clinic->is_active ? '1' : '0'); ?>">
 
            <div class="d-flex align-items-center p-3 position-relative">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -111,26 +112,26 @@
             </svg>
 
             <div class="d-flex flex-column mx-3">
-             <span class="font-weight-bold d-block fs-15"> {{ $clinic->name }}</span>
-             <span class="font-weight-bold d-block fs-13">{{ $clinic->province->name }} ، {{ $clinic->city->name }}</span>
+             <span class="font-weight-bold d-block fs-15"> <?php echo e($clinic->name); ?></span>
+             <span class="font-weight-bold d-block fs-13"><?php echo e($clinic->province->name); ?> ، <?php echo e($clinic->city->name); ?></span>
             </div>
 
-            @if (!$clinic->is_active)
+            <?php if(!$clinic->is_active): ?>
              <div class="inactive-dot" title="این مطب هنوز فعال نشده است برای فعالسازی روی دکمه فعالسازی کلیک کنید">
              </div> <!-- نقطه قرمز برای کلینیک‌های غیرفعال -->
-            @endif
+            <?php endif; ?>
            </div>
 
            <div class="mx-2">
-            @if (!$clinic->is_active)
+            <?php if(!$clinic->is_active): ?>
              <button class="btn btn-primary fs-13 btn-sm h-35" tabindex="0" type="button"
-              onclick="window.location.href='{{ route('activation-doctor-clinic', $clinic) }}'">فعال‌سازی
+              onclick="window.location.href='<?php echo e(route('activation-doctor-clinic', $clinic)); ?>'">فعال‌سازی
              </button>
-            @endif
+            <?php endif; ?>
            </div>
 
           </div>
-         @endforeach
+         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
         </div>
        </div>
@@ -139,12 +140,13 @@
     </div>
    </div>
   </div>
-  @yield('content')
-  @livewireScripts
+  <?php echo $__env->yieldContent('content'); ?>
+  <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
+
 
 </body>
-@include('dr.panel.layouts.partials.scripts')
-@yield('scripts')
+<?php echo $__env->make('dr.panel.layouts.partials.scripts', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php echo $__env->yieldContent('scripts'); ?>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     Livewire.on('refreshDeleteButton', (data) => {
@@ -227,3 +229,4 @@
 </script>
 
 </html>
+<?php /**PATH D:\MyProjects\Benobe\panel\resources\views/dr/panel/layouts/master.blade.php ENDPATH**/ ?>

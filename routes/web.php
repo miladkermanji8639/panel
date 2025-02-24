@@ -66,6 +66,8 @@ use App\Http\Controllers\Admin\Doctors\LogsDoctor\LogsDoctorController;
 use App\Http\Controllers\Admin\Doctors\OrderVisit\OrderVisitController;
 use App\Http\Controllers\Dr\Panel\MyPerformance\MyPerformanceController;
 use App\Http\Controllers\Admin\Tools\MailTemplate\MailTemplateController;
+use App\Http\Controllers\Dr\Panel\DoctorServices\DoctorServicesController;
+use App\Http\Controllers\Dr\Panel\DoctorServices\DoctorServicesContrroler;
 use App\Http\Controllers\Dr\Panel\PatientRecords\PatientRecordsController;
 use App\Http\Controllers\Dr\Panel\Secretary\SecretaryManagementController;
 use App\Http\Controllers\Admin\Dashboard\UserShipfee\UserShipfeeController;
@@ -688,6 +690,23 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
             Route::post('sub-users/update/{id}', [SubUserController::class, 'update'])->name('dr-sub-users-update');
             Route::delete('sub-users/delete/{id}', [SubUserController::class, 'destroy'])->name('dr-sub-users-delete');
         });
+        Route::prefix('dr-services')->group(function () {
+            Route::get('/', [DoctorServicesController::class, 'index'])->name('dr-services.index');
+            Route::get('/create', [DoctorServicesController::class, 'create'])->name('dr-services.create');
+            Route::post('/store', [DoctorServicesController::class, 'store'])->name('dr-services.store');
+
+            // مسیر ویرایش
+            Route::get('/{service}/edit', [DoctorServicesController::class, 'edit'])->name('dr-services.edit');
+
+            // مسیر به‌روزرسانی
+            Route::put('/{service}', [DoctorServicesController::class, 'update'])->name('dr-services.update');
+
+            // مسیر حذف (حتماً پارامتر {service} داشته باشد)
+            Route::delete('/{service}', [DoctorServicesController::class, 'destroy'])->name('dr-services.destroy');
+        });
+
+
+
     });
 });
 

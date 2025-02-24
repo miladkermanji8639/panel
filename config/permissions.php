@@ -28,6 +28,13 @@ return [
             'dr-mySpecialDays-counseling' => 'روزهای خاص مشاوره',
         ],
     ],
+    'dr-services' => [
+        'title' => 'خدمات دکتر',
+        'icon' => 'i-checkout__request', // کلاس آیکون برای بیمه
+        'routes' => [
+            'dr-services.index' =>'خدمات دکتر'
+        ],
+    ],
     'prescription' => [
         'title' => 'نسخه الکترونیک',
         'icon' => 'i-banners', // کلاس آیکون برای نسخه الکترونیک
