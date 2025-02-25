@@ -90,7 +90,7 @@
      'شما می توانید از <b>متن برجسته</b>, ' +
      '<a href="https://pixinvent.com/" target="_blank">لینک ها</a> ' +
      'و از بقیه تگ ها نیز استفاده کنید',
-    showCloseButton: true,
+    show
     showCancelButton: true,
     focusConfirm: false,
     confirmButtonText: '<i class="ti ti-thumb-up"></i> عالیه!',

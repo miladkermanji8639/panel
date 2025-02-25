@@ -664,12 +664,11 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
 
 
         Route::prefix('payment')->group(function () {
-            Route::get('/wallet', function () {
-                return view('dr.panel.payment.wallet.index');
-            })->middleware('secretary.permission:financial_reports')->name('dr-wallet');
-            Route::get('/setting', function () {
-                return view('dr.panel.payment.setting');
-            })->middleware('secretary.permission:financial_reports')->name('dr-payment-setting');
+            Route::get('/wallet', [DrPaymentSettingController::class, 'wallet'])->middleware('secretary.permission:financial_reports')->name('dr-wallet');
+            Route::get('/setting', [DrPaymentSettingController::class, 'index'])->middleware('secretary.permission:financial_reports')->name('dr-payment-setting');
+            Route::get('/charge', function () {
+                return view('dr.panel.payment.charge');
+            })->middleware('secretary.permission:financial_reports')->name('dr-wallet-charge');
         });
 
 
@@ -693,7 +692,7 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
 
             Route::get('upgrade', [DrUpgradeProfileController::class, 'index'])->middleware('secretary.permission:profile')->name('dr-edit-profile-upgrade');
             Route::delete('/doctor/payments/delete/{id}', [DrUpgradeProfileController::class, 'deletePayment'])->name('dr-payment-delete');
-
+            Route::post('/pay', [DrUpgradeProfileController::class, 'payForUpgrade'])->name('doctor.upgrade.pay');
             Route::get('subuser', [SubUserController::class, 'index'])->middleware('secretary.permission:profile')->name('dr-subuser');
             Route::post('sub-users/store', [SubUserController::class, 'store'])->name('dr-sub-users-store');
             Route::get('sub-users/edit/{id}', [SubUserController::class, 'edit'])->name('dr-sub-users-edit');

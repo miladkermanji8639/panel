@@ -1,4 +1,4 @@
-<?php if(session('swal-error')): ?>
+<!--[if BLOCK]><![endif]--><?php if(session('swal-error')): ?>
 
     <script>
         // $(document).ready(function (){
@@ -11,5 +11,5 @@
         // });
     </script>
 
-<?php endif; ?>
+<?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 <?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/alerts/sweetalert/error.blade.php ENDPATH**/ ?>

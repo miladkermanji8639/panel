@@ -91,7 +91,7 @@
                         })
                             .then(response => response.json())
                             .then(() => {
-                                Swal.fire('حذف شد!', 'سرویس با موفقیت حذف شد.', 'success')
+                                Swal.fire('حذف شد!', 'خدمت با موفقیت حذف شد.', 'success')
                                     .then(() => {
                                         let rowToDelete = button.closest('tr');
                                         if (rowToDelete) rowToDelete.remove();

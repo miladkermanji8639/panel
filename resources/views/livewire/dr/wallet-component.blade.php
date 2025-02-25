@@ -11,7 +11,7 @@
                 <button wire:click="requestSettlement" class="btn reqazadsazi btn-success h-50 mt-3">درخواست
                     آزادسازی</button>
             </div>
-            <div class="card mt-3">
+            <div class="mt-3">
                 <div class="card-header"><span>کیف پول</span></div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -24,6 +24,7 @@
                                     <th>نوع</th>
                                     <th>تاریخ ثبت</th>
                                     <th>شرح</th>
+                                    <th>عملیات</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,14 +43,19 @@
                                                 <label class="badge badge-success">پرداخت‌شده</label>
                                             @endif
                                         </td>
-                                        <td>{{ $transaction->type === 'online' ? 'مشاوره آنلاین' : 'نوبت حضوری' }}</td>
+                                        <td>{{ $transaction->type === 'online' ? 'مشاوره آنلاین' : ($transaction->type === 'in_person' ? 'نوبت حضوری' : ($transaction->type === 'charge' ? 'شارژ کیف پول' : 'برداشت')) }}
+                                        </td>
                                         <td>{{ $transaction->registered_at ? $transaction->registered_at->format('Y/m/d H:i') : '-' }}
                                         </td>
                                         <td>{{ $transaction->description ?? '-' }}</td>
+                                        <td>
+                                            <button class="btn btn-light btn-sm delete-transaction rounded-circle"
+                                                data-id="{{ $transaction->id }}"><img src="{{ asset('dr-assets/icons/trash.svg') }}" alt="trash" srcset=""></button>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6">موردی ثبت نشده است</td>
+                                        <td colspan="7">موردی ثبت نشده است</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -59,20 +65,38 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script>
         document.addEventListener('livewire:init', () => {
             toastr.options = {
                 positionClass: 'toast-top-right',
                 timeOut: 3000,
-                closeButton: true,
             };
 
             Livewire.on('toast', (event) => {
                 toastr.success(event.message);
+            });
+
+            // مدیریت دکمه حذف با SweetAlert
+            document.querySelectorAll('.delete-transaction').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const transactionId = this.getAttribute('data-id');
+
+                    Swal.fire({
+                        title: 'آیا مطمئن هستید؟',
+                        text: "این تراکنش حذف خواهد شد و قابل بازگشت نیست!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'بله، حذف کن!',
+                        cancelButtonText: 'خیر'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('deleteTransaction', transactionId);
+                        }
+                    });
+                });
             });
         });
     </script>

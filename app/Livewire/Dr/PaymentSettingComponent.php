@@ -2,8 +2,11 @@
 namespace App\Livewire\Dr;
 
 use Livewire\Component;
+use App\Models\Dr\DoctorWallet;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Dr\DoctorPaymentSetting;
+use App\Models\Dr\DoctorSettlementRequest;
+use App\Models\Dr\DoctorWalletTransaction;
 
 class PaymentSettingComponent extends Component
 {
@@ -30,9 +33,9 @@ class PaymentSettingComponent extends Component
     public function render()
     {
         $doctorId = Auth::guard('doctor')->user()->id;
-        $totalIncome = \App\Models\Dr\DoctorWalletTransaction::where('doctor_id', $doctorId)->sum('amount');
-        $paid = \App\Models\Dr\DoctorWalletTransaction::where('doctor_id', $doctorId)->where('status', 'paid')->sum('amount');
-        $available = \App\Models\Dr\DoctorWalletTransaction::where('doctor_id', $doctorId)->where('status', 'available')->sum('amount');
+        $totalIncome = DoctorWallet::where('doctor_id', $doctorId)->sum('balance');
+        $paid = DoctorWalletTransaction::where('doctor_id', $doctorId)->where('status', 'paid')->sum('amount');
+        $available = DoctorWallet::where('doctor_id', $doctorId)->sum('balance');
 
         return view('livewire.dr.payment-setting-component', [
             'totalIncome' => $totalIncome,
@@ -53,7 +56,7 @@ class PaymentSettingComponent extends Component
         }
 
         // چک کردن درخواست فعال
-        $existingRequest = \App\Models\Dr\DoctorSettlementRequest::where('doctor_id', $doctorId)
+        $existingRequest = DoctorSettlementRequest::where('doctor_id', $doctorId)
             ->whereIn('status', ['pending', 'approved'])
             ->exists();
         if ($existingRequest) {
@@ -61,9 +64,9 @@ class PaymentSettingComponent extends Component
             return;
         }
 
-        $availableAmount = \App\Models\Dr\DoctorWalletTransaction::where('doctor_id', $doctorId)
-            ->where('status', 'available')
-            ->sum('amount');
+        $availableAmount = DoctorWallet::where('doctor_id', $doctorId)
+            
+            ->sum('balance');
         if ($availableAmount <= 0) {
             $this->dispatch('toast', message: 'مبلغ قابل برداشت وجود ندارد.');
             return;
@@ -74,13 +77,13 @@ class PaymentSettingComponent extends Component
             'card_number' => $this->card_number,
         ]);
 
-        \App\Models\Dr\DoctorSettlementRequest::create([
+        DoctorSettlementRequest::create([
             'doctor_id' => $doctorId,
             'amount' => $availableAmount,
             'status' => 'pending',
         ]);
 
-        \App\Models\Dr\DoctorWalletTransaction::where('doctor_id', $doctorId)
+        DoctorWalletTransaction::where('doctor_id', $doctorId)
             ->where('status', 'available')
             ->update(['status' => 'requested']);
 

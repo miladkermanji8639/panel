@@ -2,6 +2,7 @@
 namespace App\Livewire\Dr;
 
 use Livewire\Component;
+use App\Models\Dr\DoctorWallet;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Dr\DoctorWalletTransaction;
 
@@ -12,9 +13,8 @@ class HeaderComponent extends Component
     public function mount()
     {
         $doctorId = Auth::guard('doctor')->user()->id;
-        $this->walletBalance = DoctorWalletTransaction::where('doctor_id', $doctorId)
-            ->where('status', 'available')
-            ->sum('amount');
+        $this->walletBalance = DoctorWallet::where('doctor_id', $doctorId)
+            ->sum('balance');
     }
 
     public function render()

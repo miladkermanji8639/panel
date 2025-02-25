@@ -51,6 +51,7 @@ return [
         'routes' => [
             'dr-wallet' => 'کیف پول',
             'dr-payment-setting' => 'تنظیمات پرداخت',
+            'dr-wallet-charge' => ' شارژ کیف پول',
         ],
     ],
     'patient_records' => [

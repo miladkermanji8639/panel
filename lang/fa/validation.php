@@ -14,6 +14,7 @@ return [
         'ita_phone' => 'شماره موبایل ایتا',
         'whatsapp_phone' => 'شماره موبایل واتس‌اپ',
         "name" => "نام",
+        "amount" => "مبلغ",
         "doctor_id" => "دکتر",
         "days" => "تعداد روز",
         "price" => "قیمت",
