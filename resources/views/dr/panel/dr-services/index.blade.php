@@ -14,7 +14,7 @@
   <div class="card shadow-sm">
    <div class="card-header d-flex justify-content-between align-items-center">
     <h4 class="mb-0">لیست خدمات دکتر</h4>
-    <a href="{{ route('dr-services.create') }}" class="btn btn-primary">ایجاد خدمت جدید</a>
+    <a href="{{ route('dr-services.create') }}" class="btn btn-primary text-white">ایجاد خدمت جدید</a>
    </div>
    <div class="card-body">
     @livewire('dr.panel.doctor-services.doctor-services')

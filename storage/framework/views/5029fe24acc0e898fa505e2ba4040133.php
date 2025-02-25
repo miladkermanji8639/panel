@@ -1,15 +1,16 @@
-@extends('dr.panel.layouts.master')
 
-@section('styles')
- <link type="text/css" href="{{ asset('dr-assets/panel/css/panel.css') }}" rel="stylesheet" />
-@endsection
 
-@section('site-header')
- {{ 'به نوبه | ایجاد خدمت جدید' }}
-@endsection
- @section('bread-crumb-title', ' افزودن خدمات')
+<?php $__env->startSection('styles'); ?>
+ <link type="text/css" href="<?php echo e(asset('dr-assets/panel/css/panel.css')); ?>" rel="stylesheet" />
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('site-header'); ?>
+ <?php echo e('به نوبه | ایجاد خدمت جدید'); ?>
+
+<?php $__env->stopSection(); ?>
+ <?php $__env->startSection('bread-crumb-title', ' افزودن خدمات'); ?>
+
+<?php $__env->startSection('content'); ?>
    <div class="container my-4">
     <div class="card shadow-sm">
     <div class="card-header w-100 d-flex justify-content-between">
@@ -18,14 +19,14 @@
 
     </div>
     <div>
-      <a href="{{ route('dr-services.index') }}" class="btn btn-info text-white">بازگشت</a>
+      <a href="<?php echo e(route('dr-services.index')); ?>" class="btn btn-info text-white">بازگشت</a>
     </div>
     </div>
      <div class="card-body">
-    <form action="{{ route('dr-services.store') }}" method="POST">
-    @csrf
+    <form action="<?php echo e(route('dr-services.store')); ?>" method="POST">
+    <?php echo csrf_field(); ?>
     <div class=" position-relative">
-     <input type="hidden" name="doctor_id" id="doctor_id" class="form-control h-50" value="{{ Auth::guard('doctor')->user()->id }}">
+     <input type="hidden" name="doctor_id" id="doctor_id" class="form-control h-50" value="<?php echo e(Auth::guard('doctor')->user()->id); ?>">
     </div>
     <div class=" position-relative mb-5">
      <label class="label-top-input-special-takhasos" class="label-top-input-special-takhasos" for="name">نام خدمت</label>
@@ -59,9 +60,9 @@
      <label class="label-top-input-special-takhasos" for="parent_id">زیرگروه  (در صورت وجود)</label>
      <select name="parent_id" id="parent_id" class="form-control h-50">
     <option value="">-- انتخاب خدمت  --</option>
-    @foreach($parentServices as $service)
-    <option value="{{ $service->id }}">{{ $service->name }}</option>
-   @endforeach
+    <?php $__currentLoopData = $parentServices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+    <option value="<?php echo e($service->id); ?>"><?php echo e($service->name); ?></option>
+   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
      </select>
     </div>
     <button type="submit" class="btn btn-primary w-100 mt-2 h-50">ثبت خدمت</button>
@@ -69,10 +70,10 @@
      </div>
     </div>
    </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
-   <script src="{{ asset('dr-assets/panel/js/dr-panel.js') }}"></script>
+<?php $__env->startSection('scripts'); ?>
+   <script src="<?php echo e(asset('dr-assets/panel/js/dr-panel.js')); ?>"></script>
    <script>
     $(document).ready(function () {
       let dropdownOpen = false;
@@ -142,4 +143,5 @@
       });
       });
    </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('dr.panel.layouts.master', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/dr/panel/dr-services/create.blade.php ENDPATH**/ ?>

@@ -7,6 +7,7 @@
     <td>{{ $service->duration }} دقیقه</td>
     <td>{{ number_format($service->price, 0) }} تومان</td>
     <td>{{ $service->discount ? number_format($service->discount, 0) . ' تومان' : 'ندارد' }}</td>
+    <td>{{number_format($service->price - $service->discount,0) }}</td>
     <td>
         <span wire:click="toggleStatus({{ $service->id }})"
               class="text-{{ $service->status == 1 ? 'success' : 'danger' }} cursor-pointer">

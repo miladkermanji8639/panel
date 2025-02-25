@@ -15,7 +15,7 @@ class DoctorServicesController
 
  public function create()
  {
-  // دریافت تمامی سرویس‌ها جهت انتخاب به عنوان سرویس مادر
+  // دریافت تمامی خدمت‌ها جهت انتخاب به عنوان خدمت مادر
   $parentServices = DoctorService::all();
   return view('dr.panel.dr-services.create', compact('parentServices'));
  }
@@ -45,23 +45,30 @@ class DoctorServicesController
    'discount.numeric' => 'تخفیف باید به صورت عددی وارد شود.',
    'discount.min' => 'تخفیف نمی‌تواند منفی باشد.',
    'discount.lte' => 'تخفیف نمی‌تواند از قیمت بیشتر باشد.',
-   'parent_id.integer' => 'شناسه سرویس مادر باید به صورت عددی وارد شود.',
-   'parent_id.exists' => 'شناسه سرویس مادر نامعتبر است.',
+   'parent_id.integer' => 'شناسه خدمت مادر باید به صورت عددی وارد شود.',
+   'parent_id.exists' => 'شناسه خدمت مادر نامعتبر است.',
   ]);
 
+  // دریافت کلینیک انتخاب شده از درخواست (با مقدار پیش‌فرض "default")
+  $selectedClinicId = $request->get('selectedClinicId', 'default');
+  // اگر کلینیک انتخاب شده غیر از دیفالت بود، clinic_id رو ست می‌کنیم؛ در غیر این صورت null
+  $data['clinic_id'] = $selectedClinicId !== 'default' ? $selectedClinicId : null;
+
   DoctorService::create($data);
-  return redirect()->route('dr-services.index')->with('success', 'سرویس با موفقیت ایجاد شد.');
+  return redirect()->route('dr-services.index')->with('success', 'خدمت با موفقیت ایجاد شد.');
  }
 
- // نمایش فرم ویرایش خدمت
  public function edit(DoctorService $service)
  {
-  // جلوگیری از انتخاب خود به عنوان والد
+  $selectedClinicId = request()->get('selectedClinicId', 'default');
+  // اگر کلینیک انتخاب شده غیر از "default" باشد و خدمت متعلق به آن کلینیک نباشد، دسترسی رد شود
+  if ($selectedClinicId !== 'default' && $service->clinic_id != $selectedClinicId) {
+   return abort(403, 'Access denied');
+  }
   $parentServices = DoctorService::where('id', '!=', $service->id)->get();
   return view('dr.panel.dr-services.edit', compact('service', 'parentServices'));
  }
 
- // به‌روزرسانی خدمت
  public function update(Request $request, DoctorService $service)
  {
   $data = $request->validate([
@@ -87,23 +94,33 @@ class DoctorServicesController
    'discount.numeric' => 'تخفیف باید به صورت عددی وارد شود.',
    'discount.min' => 'تخفیف نمی‌تواند منفی باشد.',
    'discount.lte' => 'تخفیف نمی‌تواند از قیمت بیشتر باشد.',
-   'parent_id.integer' => 'شناسه سرویس مادر باید به صورت عددی وارد شود.',
-   'parent_id.exists' => 'شناسه سرویس مادر نامعتبر است.',
+   'parent_id.integer' => 'شناسه خدمت مادر باید به صورت عددی وارد شود.',
+   'parent_id.exists' => 'شناسه خدمت مادر نامعتبر است.',
   ]);
 
+  $selectedClinicId = $request->get('selectedClinicId', 'default');
+  if ($selectedClinicId !== 'default' && $service->clinic_id != $selectedClinicId) {
+   return abort(403, 'Access denied');
+  }
+
   $service->update($data);
-  return redirect()->route('dr-services.index')->with('success', 'سرویس با موفقیت به‌روزرسانی شد.');
+  return redirect()->route('dr-services.index')->with('success', 'خدمت با موفقیت به‌روزرسانی شد.');
  }
 
- // حذف خدمت
  public function destroy(DoctorService $service)
  {
+  $selectedClinicId = request()->get('selectedClinicId', 'default');
+  if ($selectedClinicId !== 'default' && $service->clinic_id != $selectedClinicId) {
+   return response()->json(['error' => 'Access denied'], 403);
+  }
+
   try {
    $service->delete();
-   return response()->json(['success' => 'سرویس با موفقیت حذف شد.'], 200);
+   return response()->json(['success' => 'خدمت با موفقیت حذف شد.'], 200);
   } catch (\Exception $e) {
-   return response()->json(['error' => 'خطا در حذف سرویس!', 'message' => $e->getMessage()], 500);
+   return response()->json(['error' => 'خطا در حذف خدمت!', 'message' => $e->getMessage()], 500);
   }
  }
+
 
 }

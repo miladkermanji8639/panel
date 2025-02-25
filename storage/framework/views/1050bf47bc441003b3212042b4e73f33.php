@@ -8,6 +8,7 @@
     <td><?php echo e($service->duration); ?> دقیقه</td>
     <td><?php echo e(number_format($service->price, 0)); ?> تومان</td>
     <td><?php echo e($service->discount ? number_format($service->discount, 0) . ' تومان' : 'ندارد'); ?></td>
+    <td><?php echo e(number_format($service->price - $service->discount,0)); ?></td>
     <td>
         <span wire:click="toggleStatus(<?php echo e($service->id); ?>)"
               class="text-<?php echo e($service->status == 1 ? 'success' : 'danger'); ?> cursor-pointer">
