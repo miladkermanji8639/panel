@@ -1,8 +1,13 @@
 
 <?php $__env->startSection('styles'); ?>
- <link type="text/css" href="<?php echo e(asset('dr-assets/panel/css/panel.css')); ?>" rel="stylesheet" />
- <link type="text/css" href="<?php echo e(asset('dr-assets/panel/profile/edit-profile.css')); ?>" rel="stylesheet" />
- <link type="text/css" href="<?php echo e(asset('dr-assets/panel/css/payment/setting.css')); ?>" rel="stylesheet" />
+  <link type="text/css" href="<?php echo e(asset('dr-assets/panel/css/panel.css')); ?>" rel="stylesheet" />
+  <link type="text/css" href="<?php echo e(asset('dr-assets/panel/profile/edit-profile.css')); ?>" rel="stylesheet" />
+  <link type="text/css" href="<?php echo e(asset('dr-assets/panel/css/payment/setting.css')); ?>" rel="stylesheet" />
+  <style>
+   .myPanelOption {
+    display: none;
+   }
+  </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('site-header'); ?>
  <?php echo e('به نوبه | پنل دکتر'); ?>
