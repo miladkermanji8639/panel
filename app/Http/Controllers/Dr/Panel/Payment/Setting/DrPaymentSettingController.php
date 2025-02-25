@@ -9,4 +9,9 @@ class DrPaymentSettingController
         return view('dr.panel.payment.setting');
 
     }
+    public function wallet()
+    {
+        return view("dr.panel.payment.wallet.index");
+    }
+
 }
