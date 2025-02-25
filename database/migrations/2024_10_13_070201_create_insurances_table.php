@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('insurances', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('doctor_id')->constrained('doctors')->cascadeOnDelete();
+            $table->foreignId('clinic_id')->nullable()->constrained('clinics')->nullOnDelete();
             $table->string('name');
-            $table->string('description')->nullable();
+            $table->tinyInteger('calculation_method'); // 0, 1, 2
+            $table->unsignedInteger('appointment_price')->nullable(); // مبلغ نوبت (تومان)
+            $table->unsignedInteger('insurance_percent')->nullable(); // درصد سهم بیمه
+            $table->unsignedInteger('final_price')->nullable(); // مبلغ تمام‌شده (تومان)
             $table->timestamps();
         });
     }
