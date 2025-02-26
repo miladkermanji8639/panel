@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Dr\DoctorWalletTransaction;
 use Modules\Payment\Services\PaymentService;
 use Livewire\Features\SupportRedirects\Redirector;
+use GuzzleHttp\Exception\ConnectException;
 
 class WalletChargeComponent extends Component
 {
@@ -79,23 +80,35 @@ class WalletChargeComponent extends Component
         $this->transactionId = $transaction->id;
 
         $callbackUrl = route('payment.callback');
-        $paymentResponse = $this->paymentService->pay($this->amount, $callbackUrl, [
-            'doctor_id' => $doctorId,
-            'description' => "شارژ کیف پول - تراکنش {$transaction->id}",
-        ]);
 
-        Log::info('Payment Response:', ['response' => $paymentResponse]);
+        try {
+            $paymentResponse = $this->paymentService->pay($this->amount, $callbackUrl, [
+                'doctor_id' => $doctorId,
+                'description' => "شارژ کیف پول - تراکنش {$transaction->id}",
+            ]);
 
-        if ($paymentResponse instanceof \Illuminate\Http\RedirectResponse) {
-            $this->dispatch('redirect-to-gateway', url: $paymentResponse->getTargetUrl());
-        } elseif (is_string($paymentResponse)) {
-            $this->dispatch('redirect-to-gateway', url: $paymentResponse);
-        } elseif ($paymentResponse instanceof Redirector) {
-            $this->dispatch('redirect-to-gateway', url: $paymentResponse->getIntendedUrl());
-        } else {
+            Log::info('Payment Response:', ['response' => $paymentResponse]);
+
+            if ($paymentResponse instanceof \Illuminate\Http\RedirectResponse) {
+                $this->dispatch('redirect-to-gateway', url: $paymentResponse->getTargetUrl());
+            } elseif (is_string($paymentResponse)) {
+                $this->dispatch('redirect-to-gateway', url: $paymentResponse);
+            } elseif ($paymentResponse instanceof Redirector) {
+                $this->dispatch('redirect-to-gateway', url: $paymentResponse->getIntendedUrl());
+            } else {
+                $this->isLoading = false;
+                $this->dispatch('toast', message: 'خطا در انتقال به درگاه پرداخت');
+            }
+        } catch (ConnectException $e) {
+            // خطای شبکه (مثل قطعی اینترنت)
+            Log::error('Network Error in Payment:', ['error' => $e->getMessage()]);
             $this->isLoading = false;
-            $this->dispatch('toast', message: 'خطا در انتقال به درگاه پرداخت');
-            return;
+            $this->dispatch('toast', message: 'اتصال به اینترنت برقرار نیست. لطفاً دوباره تلاش کنید.');
+        } catch (\Exception $e) {
+            // سایر خطاها
+            Log::error('Payment Error:', ['error' => $e->getMessage()]);
+            $this->isLoading = false;
+            $this->dispatch('toast', message: 'خطایی رخ داد. لطفاً دوباره تلاش کنید.');
         }
 
         $this->reset(['amount', 'displayAmount']);

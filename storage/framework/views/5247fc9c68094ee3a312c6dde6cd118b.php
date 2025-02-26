@@ -11,60 +11,7 @@
                 <button wire:click="requestSettlement" class="btn reqazadsazi btn-success h-50 mt-3">درخواست
                     آزادسازی</button>
             </div>
-            <div class="mt-3">
-                <div class="card-header"><span>کیف پول</span></div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table_middle">
-                            <thead>
-                                <tr>
-                                    <th>ردیف</th>
-                                    <th>مبلغ</th>
-                                    <th>وضعیت</th>
-                                    <th>نوع</th>
-                                    <th>تاریخ ثبت</th>
-                                    <th>شرح</th>
-                                    <th>عملیات</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $transactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $transaction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                    <tr>
-                                        <td><?php echo e($index + 1); ?></td>
-                                        <td><?php echo e(number_format($transaction->amount)); ?> تومان</td>
-                                        <td>
-                                            <!--[if BLOCK]><![endif]--><?php if($transaction->status === 'pending'): ?>
-                                                <label class="badge badge-primary">در انتظار ارائه خدمت</label>
-                                            <?php elseif($transaction->status === 'available'): ?>
-                                                <label class="badge badge-outline-green">قابل برداشت</label>
-                                            <?php elseif($transaction->status === 'requested'): ?>
-                                                <label class="badge badge-warning">درخواست‌شده</label>
-                                            <?php elseif($transaction->status === 'paid'): ?>
-                                                <label class="badge badge-success">پرداخت‌شده</label>
-                                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-                                        </td>
-                                        <td><?php echo e($transaction->type === 'online' ? 'مشاوره آنلاین' : ($transaction->type === 'in_person' ? 'نوبت حضوری' : ($transaction->type === 'charge' ? 'شارژ کیف پول' : 'برداشت'))); ?>
-
-                                        </td>
-                                        <td><?php echo e($transaction->registered_at ? $transaction->registered_at->format('Y/m/d H:i') : '-'); ?>
-
-                                        </td>
-                                        <td><?php echo e($transaction->description ?? '-'); ?></td>
-                                        <td>
-                                            <button class="btn btn-light btn-sm delete-transaction rounded-circle"
-                                                data-id="<?php echo e($transaction->id); ?>"><img src="<?php echo e(asset('dr-assets/icons/trash.svg')); ?>" alt="trash" srcset=""></button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                    <tr>
-                                        <td colspan="7">موردی ثبت نشده است</td>
-                                    </tr>
-                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+      
         </div>
     </div>
     <script>

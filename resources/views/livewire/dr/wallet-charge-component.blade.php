@@ -14,10 +14,11 @@
                     <input type="text" id="displayAmount" wire:model.live="displayAmount"
                         class="form-control border-0 shadow-sm text-center h-50"
                         placeholder="مبلغ را وارد کنید">
-                    @error('amount')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
+                   
                 </div>
+                 @error('amount')
+                        <span class="text-danger mb-2">{{ $message }}</span>
+                    @enderror
             </div>
             <button type="submit" class="btn btn-success w-100 py-2 fw-bold" wire:loading.attr="disabled">
                 <span wire:loading.remove>شارژ کیف پول</span>

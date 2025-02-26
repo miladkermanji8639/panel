@@ -1,13 +1,11 @@
-@extends('dr.panel.layouts.master')
+<?php $__env->startSection('styles'); ?>
+  <link type="text/css" href="<?php echo e(asset('dr-assets/panel/css/panel.css')); ?>" rel="stylesheet" />
+  <link type="text/css" href="<?php echo e(asset('dr-assets/panel/css/my-performance/chart/chart.css')); ?>" rel="stylesheet" />
 
-@section('styles')
-  <link type="text/css" href="{{ asset('dr-assets/panel/css/panel.css') }}" rel="stylesheet" />
-  <link type="text/css" href="{{ asset('dr-assets/panel/css/my-performance/chart/chart.css') }}" rel="stylesheet" />
+<?php $__env->stopSection(); ?>
 
-@endsection
-
-@section('content')
-@section('bread-crumb-title', 'آمار و نمودار')
+<?php $__env->startSection('content'); ?>
+<?php $__env->startSection('bread-crumb-title', 'آمار و نمودار'); ?>
 <div class="chart-content w-100 d-flex flex-column align-items-center mt-4">
 
   <!-- 📊 نمودار ۱: تعداد ویزیت‌ها به تفکیک وضعیت -->
@@ -41,17 +39,17 @@
   </div>
 
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
-  <script src="{{ asset('dr-assets/panel/js/calendar/custm-calendar.js') }}"></script>
+<?php $__env->startSection('scripts'); ?>
+  <script src="<?php echo e(asset('dr-assets/panel/js/calendar/custm-calendar.js')); ?>"></script>
 
 
-  <script src="{{ asset('dr-assets/panel/js/dr-panel.js') }}"></script>
+  <script src="<?php echo e(asset('dr-assets/panel/js/dr-panel.js')); ?>"></script>
   <script>
-   var appointmentsSearchUrl = "{{ route('search.appointments') }}";
+   var appointmentsSearchUrl = "<?php echo e(route('search.appointments')); ?>";
    var updateStatusAppointmentUrl =
-    "{{ route('updateStatusAppointment', ':id') }}";
+    "<?php echo e(route('updateStatusAppointment', ':id')); ?>";
   </script>
   <script>
    document.addEventListener('DOMContentLoaded', function() {
@@ -137,7 +135,7 @@
 
     function loadCharts() {
       $.ajax({
-      url: "{{ route('dr-my-performance-chart-data') }}",
+      url: "<?php echo e(route('dr-my-performance-chart-data')); ?>",
       method: 'GET',
       data: {
         clinic_id: selectedClinicId
@@ -339,4 +337,6 @@
     });
   </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dr.panel.layouts.master', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/dr/panel/my-performance/chart/index.blade.php ENDPATH**/ ?>

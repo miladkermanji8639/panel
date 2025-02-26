@@ -14,17 +14,18 @@
                     <input type="text" id="displayAmount" wire:model.live="displayAmount"
                         class="form-control border-0 shadow-sm text-center h-50"
                         placeholder="مبلغ را وارد کنید">
-                    <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['amount'];
+                   
+                </div>
+                 <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['amount'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                        <span class="text-danger"><?php echo e($message); ?></span>
+                        <span class="text-danger mb-2"><?php echo e($message); ?></span>
                     <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
-                </div>
             </div>
             <button type="submit" class="btn btn-success w-100 py-2 fw-bold" wire:loading.attr="disabled">
                 <span wire:loading.remove>شارژ کیف پول</span>

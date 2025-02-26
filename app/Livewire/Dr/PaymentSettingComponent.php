@@ -12,7 +12,7 @@ class PaymentSettingComponent extends Component
 {
     public $visit_fee = 20000; // پیش‌فرض 20 هزار تومان
     public $card_number;
-
+    public $requests = [];
     public function mount()
     {
         $doctorId = Auth::guard('doctor')->user()->id;
@@ -36,7 +36,7 @@ class PaymentSettingComponent extends Component
         $totalIncome = DoctorWallet::where('doctor_id', $doctorId)->sum('balance');
         $paid = DoctorWalletTransaction::where('doctor_id', $doctorId)->where('status', 'paid')->sum('amount');
         $available = DoctorWallet::where('doctor_id', $doctorId)->sum('balance');
-
+        $this->loadData();
         return view('livewire.dr.payment-setting-component', [
             'totalIncome' => $totalIncome,
             'paid' => $paid,
@@ -44,7 +44,20 @@ class PaymentSettingComponent extends Component
             'formatted_visit_fee' => number_format($this->visit_fee), // فرمت‌شده برای نمایش
         ]);
     }
+    public function deleteRequest($requestId)
+    {
+        $doctorId = Auth::guard('doctor')->user()->id;
+        $transaction = DoctorSettlementRequest::where('doctor_id', $doctorId)->where('id', $requestId)->first();
 
+        if ($transaction) {
+            $transaction->delete(); // حذف نرم
+            $this->dispatch('toast', message: 'درخواست با موفقیت حذف شد.');
+        } else {
+            $this->dispatch('toast', message: 'درخواست یافت نشد!');
+        }
+
+        $this->loadData();
+    }
     public function requestSettlement()
     {
         $doctorId = Auth::guard('doctor')->user()->id;
@@ -88,5 +101,14 @@ class PaymentSettingComponent extends Component
             ->update(['status' => 'requested']);
 
         $this->dispatch('toast', message: 'درخواست تسویه حساب با موفقیت ثبت شد.');
+    }
+    protected function loadData()
+    {
+        $doctorId = Auth::guard('doctor')->user()->id;
+        $this->requests = DoctorSettlementRequest::where('doctor_id', $doctorId)
+            ->latest()->with('doctor')
+            ->get();
+        $wallet = DoctorWallet::where('doctor_id', $doctorId)->firstOrCreate(['doctor_id' => $doctorId], ['balance' => 0]);
+        $this->availableAmount = $wallet->balance;
     }
 }

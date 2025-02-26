@@ -2,9 +2,9 @@
  <span class="bars d-none padding-0-18"></span>
  <a class="header__logo d-none" href="https://netcopy.ir"></a>
  <div class="profile__info border cursor-pointer text-center">
-  <div class="avatar__img">
-   <img src="<?php echo e(asset('dr-assets/panel/img/pro.jpg')); ?>" class="avatar___img">
-   <input type="file" accept="image/*" class="hidden avatar-img__input">
+  <div class="avatar__img cursor-pointer">
+   <img src="<?php echo e(asset('dr-assets/panel/img/pro.jpg')); ?>" class="avatar___img cursor-pointer">
+   <input type="file" accept="image/*" class="avatar-img__input">
    <div class="v-dialog__container" style="display: block;"></div>
    <div class="box__camera default__avatar"></div>
   </div>
@@ -129,9 +129,6 @@ $user = Auth::guard('doctor')->check() ? Auth::guard('doctor')->user() : Auth::g
       </div>
       </a>
       <ul class="drop-toggle d-none">
-      <li class="item-li i-user__inforamtion <?php echo e(Request::routeIs('dr-wallet') ? 'is-active' : ''); ?>">
-      <a href="<?php echo e(route('dr-wallet')); ?>"> کیف پول</a>
-      </li>
       <li class="item-li i-user__inforamtion <?php echo e(Request::routeIs('dr-payment-setting') ? 'is-active' : ''); ?>">
       <a href="<?php echo e(route('dr-payment-setting')); ?>"> پرداخت</a>
       </li>
@@ -279,7 +276,7 @@ $user = Auth::guard('doctor')->check() ? Auth::guard('doctor')->user() : Auth::g
       </li>
   <?php elseif(Auth::guard('secretary')->check()): ?>
    <?php
-   $permissions = is_array($permissions) ? $permissions : json_decode($permissions ?? '[]', true);
+  $permissions = is_array($permissions) ? $permissions : json_decode($permissions ?? '[]', true);
    ?>
    <?php $__currentLoopData = config('permissions'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $permissionKey => $permissionData): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <?php if(in_array($permissionKey, $permissions)): ?>
@@ -291,11 +288,11 @@ $user = Auth::guard('doctor')->check() ? Auth::guard('doctor')->user() : Auth::g
        <?php echo e($permissionData['title']); ?>
 
        <?php if(
-            $permissionKey !== 'dashboard' &&
-            $permissionKey !== 'insurance' &&
-            $permissionKey !== 'permissions' &&
-            $permissionKey !== 'statistics'
-         ): ?>
+        $permissionKey !== 'dashboard' &&
+        $permissionKey !== 'insurance' &&
+        $permissionKey !== 'permissions' &&
+        $permissionKey !== 'statistics'
+      ): ?>
         <div class="d-flex justify-content-end w-100 align-items-center">
          <svg width="6" height="9" class="svg-caret-left" viewBox="0 0 7 11" fill="none"
           xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.3s; transform: rotate(180deg);">

@@ -49,7 +49,6 @@ return [
         'title' => 'گزارش مالی',
         'icon' => 'i-my__peyments', // کلاس آیکون برای گزارش مالی
         'routes' => [
-            'dr-wallet' => 'کیف پول',
             'dr-payment-setting' => 'تنظیمات پرداخت',
             'dr-wallet-charge' => ' شارژ کیف پول',
         ],
@@ -81,7 +80,7 @@ return [
         'title' => 'بیمه‌ها',
         'icon' => 'i-checkout__request', // کلاس آیکون برای بیمه
         'routes' => [
-            'dr-bime'
+            'dr-bime' =>'بیمه'
         ],
     ],
 /*     'permissions' => [
