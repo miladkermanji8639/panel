@@ -141,7 +141,7 @@
   </div>
   @yield('content')
   @livewireScripts
-
+@networkStatus
 </body>
 @include('dr.panel.layouts.partials.scripts')
 @yield('scripts')

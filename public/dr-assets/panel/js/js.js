@@ -53,32 +53,7 @@ $(document).on('click', function (event) {
   $('.dropdown__notification').removeClass('is-active');
  }
 });
-$('.avatar-img__input').on('change', function () {
- var input = $(this);
- if (input[0] && input[0].files && input[0].files[0]) {
-  if (!input[0].files[0].type.includes('image')) {
-   // $('.avatar--img').attr('src', '../img/pr3o.png');
-   return false;
-  }
-  var reader = new FileReader();
-  reader.onload = function (e) {
-   $('.avatar___img').attr('src', e.target.result);
-  };
-  reader.readAsDataURL(input[0].files[0]);
- }
-});
-$('input:file').change(function (e) {
- // console.log(e.currentTarget.files);
- // var numFiles = e.currentTarget.files.length;
- var fileSize = parseInt(e.currentTarget.files[0].size, 10) / 1024;
- filesize = Math.round(fileSize);
- $('.filesize')
-  .addClass('filesize')
-  .text('(' + filesize + 'kb)');
- $('.selectedFiles')
-  .text(e.currentTarget.files[0].name)
-  .appendTo($('.selectedFiles'));
-});
+
 function create_custom_dropdowns() {
  $('select').each(function (i, select) {
   if (!$(this).next().hasClass('dropdown-select')) {
@@ -204,52 +179,6 @@ $('.checkedAll').on('click', function (e) {
   $('.sub-checkbox').prop('checked', true);
  } else {
   $('.sub-checkbox').prop('checked', false);
- }
-});
-jQuery('.delete-btn').on('click', function (e) {
- var allVals = [];
- $('.sub-checkbox:checked').each(function () {
-  allVals.push($(this).attr('data-id'));
- });
- //alert(allVals.length); return false;
- if (allVals.length <= 0) {
-  alert('یک سطر انتخاب کنید');
- } else {
-  //$("#loading").show();
-  WRN_PROFILE_DELETE = 'آیا مطمئن هستید که می خواهید این سطر را حذف کنید؟';
-  var check = confirm(WRN_PROFILE_DELETE);
-  if (check == true) {
-   //for server side
-   /*
-            var join_selected_values = allVals.join(",");
-            $.ajax({
-                type: "POST",
-                url: "delete.php",
-                cache:false,
-                data: 'ids='+join_selected_values,
-                success: function(response)
-                {
-                    $("#loading").hide();
-                    $("#msgdiv").html(response);
-                    //referesh table
-                }
-            });*/
-   //for client side
-   $.each(allVals, function (index, value) {
-    $('table tr')
-     .filter("[data-row-id='" + value + "']")
-     .remove();
-   });
-  }
- }
-});
-$('.course__detial .item-delete').on('click', function (e) {
- WRN_PROFILE_DELETE = 'آیا مطمئن هستید که می خواهید این سطر را حذف کنید؟';
- var check = confirm(WRN_PROFILE_DELETE);
- if (check == true) {
-  $('table tr')
-   .filter("[data-row-id='" + $(this).attr('data-id') + "']")
-   .remove();
  }
 });
 $(document).on('click touchstart', function (e) {

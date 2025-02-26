@@ -13,12 +13,14 @@ use App\Traits\HandlesRateLimiting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Support\Facades\RateLimiter;
 use App\Http\Requests\DoctorSpecialtyRequest;
 use Modules\SendOtp\App\Http\Services\MessageService;
 use Modules\SendOtp\App\Http\Services\SMS\SmsService;
+
 class DrProfileController
 {
     use HandlesRateLimiting;
@@ -30,6 +32,37 @@ class DrProfileController
     protected function getAuthenticatedDoctor()
     {
         return Auth::guard('doctor')->user()->first();
+    }
+    public function uploadPhoto(Request $request)
+    {
+        Log::info('uploadPhoto called', ['has_file' => $request->hasFile('photo')]);
+
+        if (!$request->hasFile('photo')) {
+            Log::error('No photo uploaded in request');
+            return response()->json(['success' => false, 'message' => 'لطفاً یک عکس انتخاب کنید!'], 400);
+        }
+
+        $request->validate([
+            'photo' => 'image', // حداکثر 2MB
+        ]);
+
+        try {
+            $doctor = Auth::guard('doctor')->user();
+            if (!$doctor) {
+                Log::error('No authenticated doctor found');
+                return response()->json(['success' => false, 'message' => 'خطا: کاربر یافت نشد!'], 401);
+            }
+
+            $path = $request->file('photo')->store('profile-photos', 'public');
+            $doctor->update(['profile_photo_path' => $path]);
+
+            Log::info('Photo uploaded and saved', ['path' => $path, 'doctor_id' => $doctor->id]);
+
+            return response()->json(['success' => true, 'message' => 'عکس پروفایل با موفقیت آپدیت شد.', 'path' => Storage::url($path)]);
+        } catch (\Exception $e) {
+            Log::error('Error in uploadPhoto', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'خطا در آپلود عکس: ' . $e->getMessage()], 500);
+        }
     }
     /**
      * Display a listing of the resource.
@@ -444,7 +477,7 @@ class DrProfileController
         ]);
         // ارسال SMS
         $messagesService = new MessageService(
-            SmsService::create($otpCode, $newMobile)
+            SmsService::create(100253, $newMobile, [$otpCode]) // شناسه الگو به صورت پیش‌فرض 96
         );
         $messagesService->send();
         return response()->json(['token' => $token, 'otp_code' => $otpCode]); // توکن و کد جدید را برمی‌گرداند

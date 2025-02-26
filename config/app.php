@@ -182,6 +182,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+       /*  network status provider */
+        App\Providers\NetworkStatusServiceProvider::class,
 
         /*
          * Package Service Providers...

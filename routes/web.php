@@ -674,6 +674,7 @@ Route::prefix('dr')->namespace('Dr')->group(function () {
 
         Route::prefix('profile')->group(function () {
             Route::get('edit-profile', [DrProfileController::class, 'edit'])->middleware('secretary.permission:profile')->name('dr-edit-profile');
+            Route::post('/upload-profile-photo', [DrProfileController::class, 'uploadPhoto'])->name('dr.upload-photo')->middleware('auth:doctor');
             Route::post('update-profile', [DrProfileController::class, 'update_profile'])->middleware('secretary.permission:profile')->name('dr-update-profile');
             Route::get('/dr-check-profile-completeness', [DrProfileController::class, 'checkProfileCompleteness'])->middleware('secretary.permission:profile')->name('dr-check-profile-completeness');
             Route::post('/send-mobile-otp', [DrProfileController::class, 'sendMobileOtp'])->middleware('secretary.permission:profile')->name('dr-send-mobile-otp');
