@@ -27,7 +27,7 @@
 
       </div>
     <div class="wrapper-md">
-      @livewire('usership-fee-form')
+      @livewire('admin.dashboard.usership.usership-fee-form')
     </div>
 
       </div>

@@ -3,11 +3,11 @@
         <div class="d-flex align-items-center">
             <input type="search" class="form-control w-100 me-2" placeholder="جستجو تعرفه" wire:model="search" wire:keyup="searchUpdated">
         </div>
-        <a href="{{ route('admin.Dashboard.usershipfee.create') }}" class="btn btn-primary">
+        <a href="<?php echo e(route('admin.Dashboard.membershipfee.create')); ?>" class="btn btn-primary">
             <i class="ti ti-plus"></i> افزودن تعرفه جدید
         </a>
         <button class="btn btn-danger" wire:click="confirmDelete" wire:loading.attr="disabled" id="deleteButton" 
-                {{ !$hasSelectedRows ? 'disabled' : '' }}>
+                <?php echo e(!$hasSelectedRows ? 'disabled' : ''); ?>>
             <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
         </button>
     </div>
@@ -27,18 +27,19 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($fees as $fee)
+                <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $fees; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $fee): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr>
                         <td>
-                            <input type="checkbox" class="form-check-input" wire:model.live="selectedRows" value="{{ $fee->id }}">
+                            <input type="checkbox" class="form-check-input" wire:model.live="selectedRows" value="<?php echo e($fee->id); ?>">
                         </td>
-                        <td>{{ $fee->name }}</td>
-                        <td>{{ $fee->days }} روز</td>
-                        <td>{{ number_format($fee->price) }} تومان</td>
+                        <td><?php echo e($fee->name); ?></td>
+                        <td><?php echo e($fee->days); ?> روز</td>
+                        <td><?php echo e(number_format($fee->price)); ?> تومان</td>
                         <td>
-                            <span wire:click="toggleStatus({{ $fee->id }})"
-                                  class="badge bg-label-{{ $fee->status ? 'success' : 'danger' }} cursor-pointer">
-                                {{ $fee->status ? 'فعال' : 'غیرفعال' }}
+                            <span wire:click="toggleStatus(<?php echo e($fee->id); ?>)"
+                                  class="badge bg-label-<?php echo e($fee->status ? 'success' : 'danger'); ?> cursor-pointer">
+                                <?php echo e($fee->status ? 'فعال' : 'غیرفعال'); ?>
+
                             </span>
                         </td>
                         <td>
@@ -47,36 +48,34 @@
                                     <i class="ti ti-dots-vertical"></i>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{{ route('admin.Dashboard.usershipfee.edit', $fee->id) }}">
+                                    <a class="dropdown-item" href="<?php echo e(route('admin.Dashboard.membershipfee.edit', $fee->id)); ?>">
                                         <i class="ti ti-pencil me-1"></i> ویرایش
                                     </a>
-                                    <button type="button" class="dropdown-item delete" wire:click="confirmDelete({{ $fee->id }})">
-                                        <i class="ti ti-trash me-1"></i> حذف
-                                    </button>
                                 </div>
                             </div>
                         </td>
                     </tr>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
                         <td colspan="6" class="text-center">هیچ تعرفه‌ای یافت نشد.</td>
                     </tr>
-                @endforelse
+                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
             </tbody>
         </table>
     </div>
 
     <div class="row mx-2 mt-4">
         <div class="col-sm-12 col-md-6">
-            {{ $fees->links('pagination::bootstrap-5') }}
+            <?php echo e($fees->links('pagination::bootstrap-5')); ?>
+
         </div>
     </div>
 </div>
 
-<!-- اسکریپت تأیید حذف با SweetAlert2 -->
+<!-- اسکریپت تأیید حذف و اعلان‌ها -->
 <script>
 document.addEventListener('livewire:init', () => {
-    Livewire.on('show-delete-confirmation', (event) => {
+    Livewire.on('show-delete-confirmation', () => {
         Swal.fire({
             title: 'آیا مطمئن هستید؟',
             text: 'این عمل قابل بازگشت نیست!',
@@ -86,15 +85,11 @@ document.addEventListener('livewire:init', () => {
             cancelButtonText: 'خیر',
         }).then((result) => {
             if (result.isConfirmed) {
-                if (event.id) {
-                    Livewire.dispatch('doDeleteSelected', { id: event.id });
-                } else {
-                    Livewire.dispatch('doDeleteSelected');
-                }
+                Livewire.dispatch('doDeleteSelected');
             }
         });
     });
 
-   
+
 });
-</script>
+</script><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/livewire/admin/dashboard/membership/membership-fee-component.blade.php ENDPATH**/ ?>

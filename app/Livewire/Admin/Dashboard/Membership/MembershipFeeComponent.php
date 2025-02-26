@@ -14,31 +14,41 @@ class MembershipFeeComponent extends Component
     public $selectAll = false;
 
     protected $paginationTheme = 'bootstrap';
-    protected $listeners = ['updateDeleteButton' => 'refreshDeleteButton', 'doDeleteSelected' => 'deleteSelected'];
+    protected $listeners = ['doDeleteSelected' => 'deleteSelected'];
 
-    // **جستجو هنگام تایپ**
     public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    // **انتخاب همه**
     public function updatedSelectAll($value)
     {
-        $this->selectedRows = $value ? MembershipFee::pluck('id')->toArray() : [];
-        $this->dispatch('refreshDeleteButton', hasSelectedRows: count($this->selectedRows) > 0);
+        if ($value) {
+            $this->selectedRows = MembershipFee::where('user_type', 'doctor')
+                ->where('name', 'like', '%' . $this->search . '%')
+                ->pluck('id')
+                ->toArray();
+        } else {
+            $this->selectedRows = [];
+        }
     }
 
-    // **تغییر وضعیت**
+    public function updatedSelectedRows()
+    {
+        $totalFees = MembershipFee::where('user_type', 'doctor')
+            ->where('name', 'like', '%' . $this->search . '%')
+            ->count();
+        $this->selectAll = count($this->selectedRows) === $totalFees && $totalFees > 0;
+    }
+
     public function toggleStatus($id)
     {
         $fee = MembershipFee::find($id);
         $fee->status = !$fee->status;
         $fee->save();
-        $this->dispatch('show-toastr', type: 'success', message: 'وضعیت تعرفه تغییر کرد.');
+        $this->dispatch('show-toastr', type : 'success', message : 'وضعیت تعرفه تغییر کرد.');
     }
 
-    // **تأیید حذف**
     public function confirmDelete()
     {
         if (count($this->selectedRows) > 0) {
@@ -46,25 +56,30 @@ class MembershipFeeComponent extends Component
         }
     }
 
-    // **حذف انتخاب‌شده‌ها**
     public function deleteSelected()
     {
         if (count($this->selectedRows) > 0) {
             MembershipFee::whereIn('id', $this->selectedRows)->delete();
             $this->selectedRows = [];
             $this->selectAll = false;
-            $this->dispatch('refreshDeleteButton', hasSelectedRows: false);
-            $this->dispatch('show-toastr', type: 'success', message: 'تعرفه‌های انتخاب‌شده حذف شدند.');
+            $this->dispatch('show-toastr', ['type' => 'success', 'message' => 'تعرفه‌های انتخاب‌شده حذف شدند.']);
         }
     }
 
     public function render()
     {
-        $fees = MembershipFee::where('name', 'like', '%' . $this->search . '%')->where('user_type','doctor')->paginate(10);
-        return view('livewire.admin.dashboard.membership.membership-fee-component', compact('fees'));
+        $fees = MembershipFee::where('name', 'like', '%' . $this->search . '%')
+            ->where('user_type', 'doctor')
+            ->paginate(10);
+
+        return view('livewire.admin.dashboard.membership.membership-fee-component', [
+            'fees' => $fees,
+            'hasSelectedRows' => count($this->selectedRows) > 0,
+        ]);
     }
+
     public function searchUpdated()
     {
-        $this->resetPage(); // هنگام تغییر مقدار جستجو، صفحه را ریست می‌کند
+        $this->resetPage();
     }
 }

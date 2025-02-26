@@ -24,7 +24,7 @@
 
   </div>
   <div class="wrapper-md">
-   <livewire:usership-fee-edit :membershipFeeId="$membershipFeeId" />
+   <livewire:admin.dashboard.usership.usership-fee-edit :membershipFeeId="$membershipFeeId" />
   </div>
  </div>
 @endsection

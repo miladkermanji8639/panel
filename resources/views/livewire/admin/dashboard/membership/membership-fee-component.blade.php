@@ -1,15 +1,13 @@
 <div>
     <div class="card-header d-flex justify-content-between">
-        
         <div class="d-flex align-items-center">
-        <input type="search" class="form-control  w-100 me-2" placeholder="جستجو شهر" wire:model="search"
-            wire:keyup="searchUpdated">
+            <input type="search" class="form-control w-100 me-2" placeholder="جستجو تعرفه" wire:model="search" wire:keyup="searchUpdated">
         </div>
         <a href="{{ route('admin.Dashboard.membershipfee.create') }}" class="btn btn-primary">
             <i class="ti ti-plus"></i> افزودن تعرفه جدید
         </a>
-        <button class="btn btn-danger" wire:click="confirmDelete" wire:loading.attr="disabled" id="deleteButton"
-            x-bind:disabled="{{ count($selectedRows) === 0 }}">
+        <button class="btn btn-danger" wire:click="confirmDelete" wire:loading.attr="disabled" id="deleteButton" 
+                {{ !$hasSelectedRows ? 'disabled' : '' }}>
             <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
         </button>
     </div>
@@ -19,8 +17,7 @@
             <thead>
                 <tr>
                     <th>
-                        <input type="checkbox" class="form-check-input" wire:model="selectAll"
-                            x-on:change="$wire.dispatch('updateDeleteButton')">
+                        <input type="checkbox" class="form-check-input" wire:model.live="selectAll">
                     </th>
                     <th>نام</th>
                     <th>روز</th>
@@ -30,16 +27,17 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($fees as $fee)
+                @forelse ($fees as $fee)
                     <tr>
-                        <td><input type="checkbox" class="form-check-input" wire:model="selectedRows" value="{{ $fee->id }}"
-                            x-on:change="$wire.dispatch('updateDeleteButton')"></td>
+                        <td>
+                            <input type="checkbox" class="form-check-input" wire:model.live="selectedRows" value="{{ $fee->id }}">
+                        </td>
                         <td>{{ $fee->name }}</td>
                         <td>{{ $fee->days }} روز</td>
                         <td>{{ number_format($fee->price) }} تومان</td>
                         <td>
                             <span wire:click="toggleStatus({{ $fee->id }})"
-                                class="badge bg-label-{{ $fee->status ? 'success' : 'danger' }} cursor-pointer">
+                                  class="badge bg-label-{{ $fee->status ? 'success' : 'danger' }} cursor-pointer">
                                 {{ $fee->status ? 'فعال' : 'غیرفعال' }}
                             </span>
                         </td>
@@ -49,15 +47,18 @@
                                     <i class="ti ti-dots-vertical"></i>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.Dashboard.membershipfee.edit', $fee->id) }}">
+                                    <a class="dropdown-item" href="{{ route('admin.Dashboard.membershipfee.edit', $fee->id) }}">
                                         <i class="ti ti-pencil me-1"></i> ویرایش
                                     </a>
                                 </div>
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center">هیچ تعرفه‌ای یافت نشد.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
@@ -68,3 +69,25 @@
         </div>
     </div>
 </div>
+
+<!-- اسکریپت تأیید حذف و اعلان‌ها -->
+<script>
+document.addEventListener('livewire:init', () => {
+    Livewire.on('show-delete-confirmation', () => {
+        Swal.fire({
+            title: 'آیا مطمئن هستید؟',
+            text: 'این عمل قابل بازگشت نیست!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'بله، حذف کن!',
+            cancelButtonText: 'خیر',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Livewire.dispatch('doDeleteSelected');
+            }
+        });
+    });
+
+
+});
+</script>
