@@ -17,7 +17,7 @@ class DrSidebar extends Component
     public function render()
     {
         $user = Auth::guard('doctor')->check() ? Auth::guard('doctor')->user() : Auth::guard('secretary')->user();
-        Log::info('Rendering sidebar', ['user_id' => $user->id, 'photo_path' => $user->profile_photo_path]);
+       
         return view('livewire.dr.dr-sidebar', compact('user'));
     }
 }

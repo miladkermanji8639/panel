@@ -35,10 +35,8 @@ class DrProfileController
     }
     public function uploadPhoto(Request $request)
     {
-        Log::info('uploadPhoto called', ['has_file' => $request->hasFile('photo')]);
 
         if (!$request->hasFile('photo')) {
-            Log::error('No photo uploaded in request');
             return response()->json(['success' => false, 'message' => 'لطفاً یک عکس انتخاب کنید!'], 400);
         }
 
@@ -49,18 +47,16 @@ class DrProfileController
         try {
             $doctor = Auth::guard('doctor')->user();
             if (!$doctor) {
-                Log::error('No authenticated doctor found');
                 return response()->json(['success' => false, 'message' => 'خطا: کاربر یافت نشد!'], 401);
             }
 
             $path = $request->file('photo')->store('profile-photos', 'public');
             $doctor->update(['profile_photo_path' => $path]);
 
-            Log::info('Photo uploaded and saved', ['path' => $path, 'doctor_id' => $doctor->id]);
+           
 
             return response()->json(['success' => true, 'message' => 'عکس پروفایل با موفقیت آپدیت شد.', 'path' => Storage::url($path)]);
         } catch (\Exception $e) {
-            Log::error('Error in uploadPhoto', ['error' => $e->getMessage()]);
             return response()->json(['success' => false, 'message' => 'خطا در آپلود عکس: ' . $e->getMessage()], 500);
         }
     }
@@ -173,7 +169,6 @@ class DrProfileController
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Specialty Update Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'خطایی در به‌روزرسانی اطلاعات تخصص رخ داد.',
@@ -241,7 +236,6 @@ class DrProfileController
                 'message' => 'تخصص با موفقیت حذف شد.'
             ]);
         } catch (\Exception $e) {
-            Log::error('Delete Specialty Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'خطا در حذف تخصص.'
@@ -340,7 +334,6 @@ class DrProfileController
                 'message' => 'تنظیمات رمز عبور ثابت با موفقیت به‌روزرسانی شد.'
             ]);
         } catch (\Exception $e) {
-            Log::error('Static Password Update Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'خطای سرور در به‌روزرسانی رمز عبور ثابت',
@@ -405,7 +398,6 @@ class DrProfileController
             ]);
         } catch (\Exception $e) {
             // ثبت خطا در لاگ
-            Log::error('Profile Update Error: ' . $e->getMessage());
             // بازگرداندن خطای سرور
             return response()->json([
                 'success' => false,
@@ -425,7 +417,6 @@ class DrProfileController
                 'incomplete_sections' => $incompleteSections
             ]);
         } catch (\Exception $e) {
-            Log::error('Profile Completeness Check Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'خطا در بررسی وضعیت پروفایل',
@@ -551,12 +542,7 @@ class DrProfileController
         }
         // مارک کردن OTP به عنوان استفاده شده
         $otp->update(['used' => 1]);
-        // لاگ برای بررسی
-        Log::info('Mobile updated for doctor', [
-            'doctor_id' => $currentDoctor->id,
-            'old_mobile' => $currentDoctor->getOriginal('mobile'),
-            'new_mobile' => $request->mobile
-        ]);
+      
         return response()->json([
             'success' => true,
             'message' => 'شماره موبایل با موفقیت تغییر یافت',
