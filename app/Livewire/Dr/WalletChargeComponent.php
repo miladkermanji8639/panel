@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Dr;
 
 use Livewire\Component;
@@ -9,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Dr\DoctorWalletTransaction;
 use Modules\Payment\Services\PaymentService;
 use Livewire\Features\SupportRedirects\Redirector;
-use GuzzleHttp\Exception\ConnectException;
 
 class WalletChargeComponent extends Component
 {
@@ -46,9 +46,8 @@ class WalletChargeComponent extends Component
         $wallet = DoctorWallet::firstOrCreate(['doctor_id' => $doctorId], ['balance' => 0]);
         $availableAmount = $wallet->balance;
 
-        if (session('success') && $this->transactionId) {
-            $this->confirmPayment($this->transactionId);
-            $this->transactionId = null;
+        if (session('success')) {
+            $this->dispatch('toast', message: session('success'));
         } elseif (session('error')) {
             $this->dispatch('toast', message: session('error'));
         }
@@ -66,7 +65,7 @@ class WalletChargeComponent extends Component
         $this->isLoading = true;
 
         $doctorId = Auth::guard('doctor')->user()->id;
-        $companyCardNumber = SystemSetting::where('key', 'company_card_number')->value('value');
+        $callbackUrl = route('payment.callback');
 
         $transaction = DoctorWalletTransaction::create([
             'doctor_id' => $doctorId,
@@ -79,60 +78,92 @@ class WalletChargeComponent extends Component
 
         $this->transactionId = $transaction->id;
 
-        $callbackUrl = route('payment.callback');
-
         try {
-            $paymentResponse = $this->paymentService->pay($this->amount, $callbackUrl, [
-                'doctor_id' => $doctorId,
-                'description' => "شارژ کیف پول - تراکنش {$transaction->id}",
+            $activeGateway = \App\Models\Dr\PaymentGateway::active()->first();
+            Log::info('Attempting payment with gateway:', [
+                'gateway' => $activeGateway->name,
+                'settings' => $activeGateway->settings,
+                'amount' => $this->amount,
+                'callback' => $callbackUrl,
             ]);
 
-            Log::info('Payment Response:', ['response' => $paymentResponse]);
+            $paymentResponse = $this->paymentService->pay(
+                $this->amount,
+                $callbackUrl,
+                [
+                    'doctor_id' => $doctorId,
+                    'transaction_id' => $transaction->id,
+                    'type' => 'wallet_charge',
+                ]
+            );
+
+            Log::info('Payment Response:', [
+                'response' => $paymentResponse,
+                'type' => gettype($paymentResponse),
+                'class' => is_object($paymentResponse) ? get_class($paymentResponse) : null,
+            ]);
 
             if ($paymentResponse instanceof \Illuminate\Http\RedirectResponse) {
-                $this->dispatch('redirect-to-gateway', url: $paymentResponse->getTargetUrl());
+                return $paymentResponse;
+            } elseif ($paymentResponse instanceof Redirector) {
+                return $paymentResponse; // هندل کردن Redirector برای Livewire
+            } elseif (method_exists($paymentResponse, 'getAction')) {
+                $this->dispatch('redirect-to-gateway', url: $paymentResponse->getAction());
             } elseif (is_string($paymentResponse)) {
                 $this->dispatch('redirect-to-gateway', url: $paymentResponse);
-            } elseif ($paymentResponse instanceof Redirector) {
-                $this->dispatch('redirect-to-gateway', url: $paymentResponse->getIntendedUrl());
             } else {
-                $this->isLoading = false;
-                $this->dispatch('toast', message: 'خطا در انتقال به درگاه پرداخت');
+                throw new \Exception('پاسخ درگاه پرداخت نامعتبر است: نوع پاسخ پشتیبانی نمی‌شود.');
             }
-        } catch (ConnectException $e) {
-            // خطای شبکه (مثل قطعی اینترنت)
-            Log::error('Network Error in Payment:', ['error' => $e->getMessage()]);
-            $this->isLoading = false;
-            $this->dispatch('toast', message: 'اتصال به اینترنت برقرار نیست. لطفاً دوباره تلاش کنید.');
         } catch (\Exception $e) {
-            // سایر خطاها
-            Log::error('Payment Error:', ['error' => $e->getMessage()]);
+            Log::error('Payment Error Details:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             $this->isLoading = false;
-            $this->dispatch('toast', message: 'خطایی رخ داد. لطفاً دوباره تلاش کنید.');
+            $this->dispatch('toast', message: 'خطایی در فرآیند پرداخت رخ داد: ' . $e->getMessage());
         }
 
         $this->reset(['amount', 'displayAmount']);
     }
 
-    public function confirmPayment($transactionId)
+    public function verifyPayment()
     {
-        $doctorId = Auth::guard('doctor')->user()->id;
-        $transaction = DoctorWalletTransaction::find($transactionId);
-        if ($transaction && $transaction->status === 'pending') {
-            $transaction->update(['status' => 'available']);
-            $wallet = DoctorWallet::firstOrCreate(['doctor_id' => $doctorId], ['balance' => 0]);
-            $wallet->increment('balance', $transaction->amount);
-            $this->dispatch('toast', message: 'پرداخت با موفقیت تأیید شد.');
+        $transaction = $this->paymentService->verify();
+
+        $this->isLoading = false;
+
+        if ($transaction) {
+            $doctorId = Auth::guard('doctor')->user()->id;
+            $walletTransaction = DoctorWalletTransaction::where('id', $transaction->meta['transaction_id'])
+                ->where('doctor_id', $doctorId)
+                ->first();
+
+            if ($walletTransaction && $walletTransaction->status === 'pending') {
+                $walletTransaction->update(['status' => 'available']);
+
+                $wallet = DoctorWallet::firstOrCreate(['doctor_id' => $doctorId], ['balance' => 0]);
+                $wallet->increment('balance', $walletTransaction->amount);
+
+                return redirect()->route('doctor.wallet')->with('success', 'کیف‌پول شما با موفقیت شارژ شد.');
+            }
+
+            return redirect()->route('doctor.wallet')->with('error', 'تراکنش قبلاً تأیید شده یا یافت نشد.');
         }
+
+        return redirect()->route('doctor.wallet')->with('error', 'پرداخت ناموفق بود.');
     }
 
     public function deleteTransaction($transactionId)
     {
         $doctorId = Auth::guard('doctor')->user()->id;
-        $transaction = DoctorWalletTransaction::where('doctor_id', $doctorId)->where('id', $transactionId)->first();
+        $transaction = DoctorWalletTransaction::where('doctor_id', $doctorId)
+            ->where('id', $transactionId)
+            ->first();
 
         if ($transaction) {
-            $transaction->delete(); // حذف نرم
+            $transaction->delete();
             $this->dispatch('toast', message: 'تراکنش با موفقیت حذف شد.');
         } else {
             $this->dispatch('toast', message: 'تراکنش یافت نشد!');

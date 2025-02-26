@@ -1,201 +1,161 @@
 @extends('admin.content.layouts/layoutMaster')
 
-@section('title', 'درگاه های   ')
+@section('title', 'درگاه‌های پرداخت')
 
 @section('vendor-style')
-@vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
-  @endsection
+    @vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
+@endsection
 
-  @section('vendor-script')
-  @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
-    @endsection
+@section('vendor-script')
+    @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
+@endsection
 
-    @section('page-script')
+@section('page-script')
     @vite(['resources/assets/js/dashboards-crm.js'])
-      @endsection
+@endsection
 
-      @section('content')
-      <div class="wrapper-md">
-		
-		<div class="panel panel-default">
-	        <div class="panel-heading"><i class="fas fa-money-check"></i> درگاه های پرداخت</div>
-	        <div class="panel-body">
-	
-        <div class="alert alert-warning"><i class="fa fa-info-circle"></i> توجه داشته باشید شما فقط یک درگاه فعال می توانید داشته باشید.</div>
-        <div class="table-responsive scrollbar">
-        <table class="table table-borderless overflow-hidden">
-            <thead>
-                <tr>
-                    <th width="150">عملیات</th>
-                    <th>آرم</th>
-                    <th>نام درگاه</th>
-                    <th>وضعیت</th>
-                </tr>
-            </thead>
-            <tbody>
-              
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=asanpardakht">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/asanpardakht.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>آسان پرداخت</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=behpardakht">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/behpardakht.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>به پرداخت بانک ملت</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=idpay">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/idpay.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>آی دی پی (idPay)</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=nextpay">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/nextpay.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>درگاه پرداخت نکست پی</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=parsian">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/parsian.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>درگاه پرداخت بانک پارسیان</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=payir">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/payir.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>درگاه پرداخت پی (pay.ir)</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=payping">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/payping.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>درگاه پرداخت پی پینگ</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=saman">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/saman.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>درگاه پرداخت بانک سامان (sb24.ir)</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=sep">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/sep.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>پرداخت الکترونیک سامان (sep.ir)</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=sepehr">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/sepehr.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>درگاه سپهر صادرات</td>
-                <td><badge class="badge text-success">فعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=zarinpal">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/zarinpal.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>درگاه پرداخت زرین پال</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            <tr>
-                <td>
-                    <a class="btn btn-default btn-sm btn-reveal" href="?mod=payment_gateways&amp;action=edit&amp;name=zibal">
-                      <span class="fa fa-edit "></span>
-                    </a>
-                </td>
-                <td>
-                    <div class="shadow-sm" style="background-image: url('https://benobe.ir/modules/payment_gateways/assets/images/zibal.png'); width:50px; height:50px; background-size: 80%; background-repeat: no-repeat; border-radius: 5px; background-position: center; border:1px solid #ddd; overflow: hidden;"></div>
-                </td>
-                <td>درگاه پرداخت زیبال (zibal.ir)</td>
-                <td><badge class="badge text-danger">غیرفعال</badge></td>
-            </tr>
-        
-            </tbody>
-        </table>
+@section('content')
+    <div class="container-fluid py-4">
+        <div class="card shadow-lg border-0 rounded-3">
+            <div
+                class="card-header bg-gradient-primary text-white d-flex align-items-center justify-content-between px-4 py-3">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-money-check-alt me-3"></i>
+                    <h5 class="mb-0 fw-bold">درگاه‌های پرداخت</h5>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-warning alert-dismissible fade show rounded-3 mb-4" role="alert">
+                    <i class="fa fa-info-circle me-2"></i>
+                    توجه داشته باشید شما فقط یک درگاه فعال می‌توانید داشته باشید.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div class="table-responsive rounded-3 shadow-sm">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                        <thead class="table-dark bg-gradient-dark">
+                            <tr>
+                                <th scope="col" class="text-center py-3" style="width: 100px;">عملیات</th>
+                                <th scope="col" class="text-center py-3" style="width: 80px;">آرم</th>
+                                <th scope="col" class="py-3">نام درگاه</th>
+                                <th scope="col" class="text-center py-3" style="width: 120px;">وضعیت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($gateways as $gateway)
+                                <tr class="transition-all hover:bg-gray-100">
+                                    <td class="text-center">
+                                        <a href="{{ route('admin.Dashboard.payment_gateways.edit', $gateway->name) }}"
+                                            class="btn btn-outline-primary btn-sm rounded-pill px-3" title="ویرایش">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="gateway-logo rounded-circle shadow-sm mx-auto"
+                                            style="background-image: url('{{ $gateway->logo }}'); width: 45px; height: 45px; background-size: cover; background-position: center; border: 3px solid #dee2e6; transition: transform 0.3s ease;"
+                                            data-default-logo="https://cdn-icons-png.flaticon.com/512/888/888879.png"
+                                            onmouseover="this.style.transform='scale(1.1)'"
+                                            onmouseout="this.style.transform='scale(1)'">
+                                        </div>
+                                    </td>
+                                    <td class="fw-medium">{{ $gateway->title }}</td>
+                                    <td class="text-center">
+                                        <span
+                                            class="badge toggle-gateway-status {{ $gateway->is_active ? 'bg-success' : 'bg-danger' }} text-white py-2 px-4 rounded-pill fw-bold"
+                                            data-gateway-id="{{ $gateway->id }}" data-gateway-name="{{ $gateway->name }}"
+                                            style="cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                            {{ $gateway->is_active ? 'فعال' : 'غیرفعال' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    
-		</div>
-		
-		</div>
-	</div>
-      @endsection
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // چک کردن لوگوها و جایگزینی با پیش‌فرض اگه لود نشدن
+            $('.gateway-logo').each(function () {
+                var $element = $(this);
+                var originalUrl = $element.css('background-image').replace('url("', '').replace('")', '');
+                var defaultUrl = $element.data('default-logo');
+
+                // تست لود شدن تصویر
+                var img = new Image();
+                img.onload = function () {
+                };
+                img.onerror = function () {
+                    $element.css('background-image', 'url("' + defaultUrl + '")');
+                };
+                img.src = originalUrl;
+            });
+
+            // مدیریت تغییر وضعیت درگاه‌ها
+            $('.toggle-gateway-status').on('click', function () {
+                var gatewayId = $(this).data('gateway-id');
+                var badge = $(this);
+                var isActive = badge.hasClass('bg-success');
+
+                $.ajax({
+                    url: '{{ route("admin.payment_gateways.toggle") }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        gateway_id: gatewayId,
+                        is_active: !isActive
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('.toggle-gateway-status')
+                                .removeClass('bg-success')
+                                .addClass('bg-danger')
+                                .text('غیرفعال');
+
+                            if (response.is_active) {
+                                badge.removeClass('bg-danger').addClass('bg-success').text('فعال');
+                                toastr.success('درگاه با موفقیت فعال شد!', {
+                                    positionClass: 'toast-top-right',
+                                    timeOut: 3000,
+                                    progressBar: true
+                                });
+                            } else {
+                                toastr.info('درگاه با موفقیت غیرفعال شد!', {
+                                    positionClass: 'toast-top-right',
+                                    timeOut: 3000,
+                                    progressBar: true
+                                });
+                                if (response.default_activated === 'zarinpal') {
+                                    $('.toggle-gateway-status[data-gateway-name="zarinpal"]')
+                                        .removeClass('bg-danger')
+                                        .addClass('bg-success')
+                                        .text('فعال');
+                                    toastr.warning('زرین‌پال به‌صورت خودکار فعال شد چون هیچ درگاهی فعال نبود!', {
+                                        positionClass: 'toast-top-right',
+                                        timeOut: 3000,
+                                        progressBar: true
+                                    });
+                                }
+                            }
+                        } else {
+                            toastr.error('خطا در تغییر وضعیت درگاه!', {
+                                positionClass: 'toast-top-right',
+                                timeOut: 3000,
+                                progressBar: true
+                            });
+                        }
+                    },
+                    error: function () {
+                        toastr.error('خطایی رخ داد. لطفاً دوباره تلاش کنید!', {
+                            positionClass: 'toast-top-right',
+                            timeOut: 3000,
+                            progressBar: true
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+@endsection

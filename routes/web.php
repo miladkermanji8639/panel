@@ -221,7 +221,9 @@ Route::prefix('admin')
             });
             Route::prefix('payment_gateways/')->group(function () {
                 Route::get('/', [PaymentGatewaysController::class, 'index'])->name('admin.Dashboard.payment_gateways.index');
-                Route::get('/edit', [PaymentGatewaysController::class, 'edit'])->name('admin.Dashboard.payment_gateways.edit');
+                Route::get('/edit/{name}', [PaymentGatewaysController::class, 'edit'])->name('admin.Dashboard.payment_gateways.edit');
+                Route::put('/payment-gateways/{name}', [PaymentGatewaysController::class, 'update'])->name('admin.payment_gateways.update');
+                Route::post('/payment-gateways/toggle', [PaymentGatewaysController::class, 'toggle'])->name('admin.payment_gateways.toggle');
             });
             Route::prefix('setting/')->group(function () {
                 Route::get('/', [SettingController::class, 'index'])->name('admin.Dashboard.setting.index');
