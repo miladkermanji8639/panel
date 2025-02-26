@@ -44,7 +44,7 @@ $step = $step ?? 1;
       <img src="<?php echo e(asset('dr-assets/login/images/phone.svg')); ?>" alt="Phone Icon" class="me-2">
       <label class="text-custom-gray">شماره موبایل</label>
      </div>
-     <input dir="ltr" class="form-control custom-rounded custom-shadow h-50" type="text" name="mobile"
+     <input dir="ltr" class="form-control custom-rounded custom-shadow h-50" type="tel" name="mobile"
       value="<?php echo e(old('mobile')); ?>" placeholder="09181234567" maxlength="11">
      <div class="invalid-feedback mobile-error"></div>
     </div>
@@ -83,7 +83,7 @@ $step = $step ?? 1;
         <?php echo csrf_field(); ?>
         <div class="d-flex justify-content-between mb-3" dir="rtl">
          <?php for($i = 0; $i < 4; $i++): ?>
-          <input type="text" name="otp[]" maxlength="1"
+          <input type="tel" name="otp[]" maxlength="1"
            class="form-control otp-input text-center custom-rounded border">
          <?php endfor; ?>
         </div>
@@ -127,7 +127,7 @@ $step = $step ?? 1;
           <img src="<?php echo e(asset('dr-assets/login/images/phone.svg')); ?>" alt="Phone Icon" class="me-2">
           <label class="text-custom-gray">شماره موبایل</label>
          </div>
-         <input dir="ltr" class="form-control custom-rounded custom-shadow h-50" type="text" name="mobile"
+         <input dir="ltr" class="form-control custom-rounded custom-shadow h-50" type="tel" name="mobile"
           value="<?php echo e(old('mobile')); ?>" placeholder="09181234567" maxlength="11">
          <div class="invalid-feedback mobile-error"></div>
         </div>
