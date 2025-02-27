@@ -1,5 +1,3 @@
-<?php $__env->startSection('title', 'ویرایش بسته  '); ?>
-
 <?php $__env->startSection('vendor-style'); ?>
  <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apex-charts.scss']); ?>
 <?php $__env->stopSection(); ?>
@@ -13,22 +11,13 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
-   <div class="app-content-body">
-
-    <div class="bg-white-only lter b-b wrapper-md clrfix">
-
-     <h1 class="m-n font-thin h3">بسته ها</h1>
-
-
-    </div>
-  <div class="wrapper-md">
-    <?php
+ <?php
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('admin.dashboard.membershipfee.membership-fee-edit', ['membershipFeeId' => $membershipFeeId]);
+[$__name, $__params] = $__split('admin.dashboard.system-setting.change-logo-component', []);
 
-$__html = app('livewire')->mount($__name, $__params, 'lw-1328494258-0', $__slots ?? [], get_defined_vars());
+$__html = app('livewire')->mount($__name, $__params, 'lw-3784070443-0', $__slots ?? [], get_defined_vars());
 
 echo $__html;
 
@@ -38,8 +27,6 @@ unset($__params);
 unset($__split);
 if (isset($__slots)) unset($__slots);
 ?>
-  </div>
-   </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/dashboard/membershipfee/edit.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/dashboard/setting/change-logo.blade.php ENDPATH**/ ?>

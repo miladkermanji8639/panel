@@ -47,7 +47,7 @@ use App\Http\Controllers\Admin\Authentications\ResetPasswordCover;
 use App\Http\Controllers\Dr\Panel\Payment\Wallet\WalletController;
 use App\Http\Controllers\Admin\Authentications\ForgotPasswordCover;
 use App\Http\Controllers\Admin\Dashboard\Holiday\HolidayController;
-use App\Http\Controllers\Admin\dashboard\Setting\SettingController;
+use App\Http\Controllers\Admin\Dashboard\Setting\SettingController;
 use App\Http\Controllers\Admin\UsersManagement\Auth\AuthController;
 use App\Http\Controllers\Dr\Panel\Tickets\TicketResponseController;
 use App\Http\Controllers\Admin\ContentManagement\Blog\BlogController;

@@ -17,7 +17,7 @@
 
  @include('dr.layouts.partials.scripts')
  @yield('scripts')
-{{-- @networkStatus --}}
+@networkStatus
 
 </body>
 
