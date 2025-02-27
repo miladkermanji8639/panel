@@ -230,10 +230,14 @@ Route::prefix('admin')
                 Route::get('/change-logo', [SettingController::class, 'change_logo'])->name('admin.Dashboard.setting.change-logo');
             });
         });
-        Route::prefix('agent/')->group(function () {
+
+
+        Route::prefix('agent')->group(function () {
             Route::get('/', [AgentController::class, 'index'])->name('admin.agent.agent');
-            Route::get('/agent-wallet', [AgentWalletController::class, 'index'])->name('admin.agent.agent-wallet');
+            Route::get('/agent-wallet', [AgentController::class, 'agentWallet'])->name('admin.agent.agent-wallet');
+            
             Route::get('/create', [AgentController::class, 'create'])->name('admin.agent.create');
+            Route::get('/edit/{agentId}', [AgentController::class, 'edit'])->name('admin.agent.edit');
         });
         Route::prefix('content-management/')->group(function () {
             Route::get('slide/', [SlideController::class, 'index'])->name('admin.content-management.slide.index');

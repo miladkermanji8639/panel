@@ -1,5 +1,3 @@
-<?php $__env->startSection('title', 'نمایندگان'); ?>
-
 <?php $__env->startSection('vendor-style'); ?>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apex-charts.scss']); ?>
 <?php $__env->stopSection(); ?>
@@ -17,9 +15,9 @@
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('admin.agent.agent-list', []);
+[$__name, $__params] = $__split('admin.agent.wallet-report-list', []);
 
-$__html = app('livewire')->mount($__name, $__params, 'lw-3304047340-0', $__slots ?? [], get_defined_vars());
+$__html = app('livewire')->mount($__name, $__params, 'lw-3183607088-0', $__slots ?? [], get_defined_vars());
 
 echo $__html;
 
@@ -30,4 +28,4 @@ unset($__split);
 if (isset($__slots)) unset($__slots);
 ?>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/agent/agent.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/agent/agent_wallet.blade.php ENDPATH**/ ?>

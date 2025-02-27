@@ -7,59 +7,23 @@ use Illuminate\Http\Request;
 
 class AgentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return view('admin.content.agent.agent');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    public function agentWallet()
+    {
+        return view('admin.content.agent.agent_wallet');
+    }
+
     public function create()
     {
         return view('admin.content.agent.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function edit($agentId)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('admin.content.agent.edit', ['agentId' => $agentId]);
     }
 }
