@@ -31,8 +31,4 @@ class HealthcareCenter extends Model
         return $this->belongsTo(Zone::class, 'province_id'); // ارتباط با شهر
     }
 
-    public function specialty()
-    {
-        return $this->belongsTo(DrSpecialty::class, 'specialty_id'); // ارتباط با تخصص
-    }
 }

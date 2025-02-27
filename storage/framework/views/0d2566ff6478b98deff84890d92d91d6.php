@@ -56,7 +56,7 @@
             <h1 class="text-4xl font-bold text-gray-800 mb-4"><?php echo e($code); ?></h1>
             <p class="text-lg text-gray-600 mb-6"><?php echo e($message); ?></p>
             <?php echo $__env->yieldContent('content'); ?>
-            <a href="/" class="btn-home inline-block mt-3">برگشت به صفحه اصلی</a>
+            <a style="text-decoration: none" href="/" class="btn-home inline-block mt-4">برگشت به صفحه اصلی</a>
         </div>
     </div>
 </body>

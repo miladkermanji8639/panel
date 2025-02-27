@@ -36,6 +36,6 @@
 @endsection
 
 @section('content')
-  @livewire('admin.dashboard.holiday-manager')
+  @livewire('admin.dashboard.holiday.holiday-manager')
 
 @endsection

@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Admin\Dashboard\Menu;
 
-use App\Models\Menu;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use App\Models\Admin\Dashboard\Menu\Menu;
 
 class MenuForm extends Component
 {

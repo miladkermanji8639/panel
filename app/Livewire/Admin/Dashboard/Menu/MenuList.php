@@ -3,8 +3,8 @@
 namespace App\Livewire\Admin\Dashboard\Menu;
 
 use Livewire\Component;
-use App\Models\Menu;
 use Livewire\WithPagination;
+use App\Models\Admin\Dashboard\Menu\Menu;
 
 class MenuList extends Component
 {

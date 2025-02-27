@@ -202,11 +202,11 @@ $step = $step ?? 1;
  </div>
 @endsection
 @section('scripts')
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
- <script src="{{ asset('dr-assets/js/login.js') }}"></script>
-<script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="{{ asset('dr-assets/js/login.js') }}"></script>
+  <script src="{{ asset('dr-assets/panel/js/toastr/toastr.min.js') }}"></script>
 
- @php
+   @php
 // محاسبه زمان باقی‌مانده برای تایمر
 $remainingTime = 0;
 if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
@@ -218,44 +218,44 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
     $remainingTime = max(0, ($otp->created_at->addMinutes(2)->timestamp - now()->timestamp) * 1000);
   }
 }
- @endphp
+   @endphp
 
- <script>
-  // استفاده از زمان باقی‌مانده از سمت سرور  
-  var countDownDate = new Date().getTime() + {{ $remainingTime }};
-  var timer = $('#timer');
-  var resendOtp = $('#resend-otp');
-  var x = setInterval(function() {
-   var now = new Date().getTime();
-   var distance = countDownDate - now;
-   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-   // بروزرسانی نمایش تایمر  
-   if (minutes === 0 && seconds === 0) {
+   <script>
+    // استفاده از زمان باقی‌مانده از سمت سرور  
+    var countDownDate = new Date().getTime() + {{ $remainingTime }};
+    var timer = $('#timer');
+    var resendOtp = $('#resend-otp');
+    var x = setInterval(function() {
+     var now = new Date().getTime();
+     var distance = countDownDate - now;
+     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+     // بروزرسانی نمایش تایمر  
+     if (minutes === 0 && seconds === 0) {
     timer.html('کد تایید منقضی شده است.');
-   } else if (minutes === 0) {
+     } else if (minutes === 0) {
     timer.html('ارسال مجدد کد تایید تا ' + seconds + ' ثانیه دیگر');
-   } else {
+     } else {
     timer.html('ارسال مجدد کد تایید تا ' + minutes + ' دقیقه و ' + seconds + ' ثانیه دیگر');
-   }
-   // اگر زمان به پایان برسد  
-   if (distance < 0) {
+     }
+     // اگر زمان به پایان برسد  
+     if (distance < 0) {
     clearInterval(x);
     timer.addClass('d-none');
     resendOtp.removeClass('d-none');
-   }
-  }, 1000);
- </script>
+     }
+    }, 1000);
+   </script>
 
- <script>
-  /* set timer */
-  /* set timer */
-  $(document).ready(function() {
-   // Check if we have a token for the AJAX request
-   const token = "{{ $token ?? '' }}"; // Use an empty string as a fallback
-   let countDownDate;
+   <script>
+    /* set timer */
+    /* set timer */
+    $(document).ready(function() {
+     // Check if we have a token for the AJAX request
+     const token = "{{ $token ?? '' }}"; // Use an empty string as a fallback
+     let countDownDate;
 
-   function startTimer(remainingTime = 120000) {
+     function startTimer(remainingTime = 120000) {
     clearInterval(window.timerInterval); // پاک کردن تایمر قبلی
 
     countDownDate = new Date().getTime() + remainingTime;
@@ -279,9 +279,9 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       $('#resend-otp').removeClass('d-none');
      }
     }, 1000);
-   }
+     }
 
-   function showRateLimitAlert(remainingTime) {
+     function showRateLimitAlert(remainingTime) {
     const swalWithProgress = Swal.mixin({
      customClass: {
       confirmButton: 'btn btn-primary',
@@ -308,10 +308,10 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       clearInterval(timerInterval);
      }
     });
-   }
-   // ارسال مجدد OTP
-   // ارسال مجدد OTP
-   $('#resend-otp').on('click', function(e) {
+     }
+     // ارسال مجدد OTP
+     // ارسال مجدد OTP
+     $('#resend-otp').on('click', function(e) {
     e.preventDefault();
 
     if (!token) {
@@ -326,7 +326,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
        // به‌روزرسانی توکن جدید
 
        $('#otp-form').attr('action', "{{ route('dr.auth.login-confirm', ['token' => ':token']) }}".replace(
-        ':token', response.token));
+      ':token', response.token));
        startTimer(120000); // زمان جدید برای تایمر
       }
       // مخفی کردن دکمه ارسال مجدد
@@ -343,36 +343,36 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
        showRateLimitAlert(remainingTime);
       } else if (xhr.status === 422) {
        const errorMessage = xhr.responseJSON?.message || 'خطا در ارسال مجدد کد';
-        toastr.success(errorMessage);
+      toastr.success(errorMessage);
       }
      }
     });
-   });
-   // شروع تایمر اولیه
-   startTimer({{ $remainingTime }});
-   $('.go-back').on('click', function() {
+     });
+     // شروع تایمر اولیه
+     startTimer({{ $remainingTime }});
+     $('.go-back').on('click', function() {
     const currentStep = parseInt($(this).data('step'));
     if (currentStep > 1) { // ریست کردن تایمر
      window.location.href = "{{ route('dr.auth.login-register-form') }}?step=" + (currentStep - 1);
     }
-   });
-   // متغیرهای عمومی
-   // تابع نمایش لودینگ در دکمه
-   function showButtonLoading(button) {
+     });
+     // متغیرهای عمومی
+     // تابع نمایش لودینگ در دکمه
+     function showButtonLoading(button) {
     button.prop('disabled', true);
     button.html('<div class="loader"></div>');
-   }
-   // تابع بازگرداندن دکمه به حالت اولیه
-   function resetButton(button, text) {
+     }
+     // تابع بازگرداندن دکمه به حالت اولیه
+     function resetButton(button, text) {
     button.prop('disabled', false);
     button.html(text);
-   }
-   $('#login-form-step1').on('submit', function(e) {
+     }
+     $('#login-form-step1').on('submit', function(e) {
     e.preventDefault();
     const form = $(this);
     const submitButton = form.find('button[type="submit"]');
     const termsCheckbox = form.find('input[name="terms_accepted"]');
-/* 
+  /* 
     if (!termsCheckbox.is(':checked')) {
      Swal.fire({
       icon: 'warning',
@@ -402,26 +402,26 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       } else if (xhr.status === 422) {
        const errors = xhr.responseJSON.errors;
        Object.keys(errors).forEach(function(key) {
-        $(`[name="${key}"]`).addClass('is-invalid');
-        $(`[name="${key}"]`).after(`<div class="error-message">${errors[key][0]}</div>`);
+      $(`[name="${key}"]`).addClass('is-invalid');
+      $(`[name="${key}"]`).after(`<div class="error-message">${errors[key][0]}</div>`);
        });
       }
      }
     });
-   });
+     });
 
-   // تابع برای تبدیل ثانیه به فرمت دقیقه و ثانیه
-   function formatTime(seconds) {
+     // تابع برای تبدیل ثانیه به فرمت دقیقه و ثانیه
+     function formatTime(seconds) {
     if (isNaN(seconds) || seconds < 0) {
      return '0 دقیقه و 0 ثانیه'; // مقدار پیش‌فرض برای مقادیر نامعتبر
     }
     const minutes = Math.floor(seconds / 60); // دقیقه‌ها
     const remainingSeconds = Math.floor(seconds % 60); // ثانیه‌ها (بدون اعشار)
     return `${minutes} دقیقه و ${remainingSeconds} ثانیه`;
-   }
+     }
 
-   $('.otp-input').eq(3).focus();
-   $('.otp-input').on('input', function() {
+     $('.otp-input').eq(3).focus();
+     $('.otp-input').on('input', function() {
     const currentInput = $(this);
     const value = currentInput.val();
     // فقط اعداد مجاز باشند
@@ -435,9 +435,9 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       inputs.eq(currentIndex - 1).focus();
      }
     }
-   });
-   // کی‌داون برای حرکت به عقب
-   $('.otp-input').on('keydown', function(e) {
+     });
+     // کی‌داون برای حرکت به عقب
+     $('.otp-input').on('keydown', function(e) {
     const inputs = $('.otp-input');
     const currentIndex = inputs.index($(this));
     if (e.key === 'Backspace' && $(this).val().length === 0) {
@@ -446,11 +446,11 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       inputs.eq(currentIndex + 1).focus().select();
      }
     }
-   });
+     });
     $('.otp-input').on('click', function () {
       $(this).focus();
     });
-   $('#otp-form').on('submit', function(e) {
+     $('#otp-form').on('submit', function(e) {
     e.preventDefault();
     const form = $(this);
     const submitButton = form.find('button[type="submit"]');
@@ -473,7 +473,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
      data: form.serialize(),
      success: function(response) {
       if (response.otp_code) {
-         onOtpReceived(response.otp_code); // نمایش نوتیفیکیشن و پر کردن خودکار
+       onOtpReceived(response.otp_code); // نمایش نوتیفیکیشن و پر کردن خودکار
        }
        toastr.success(" با موفقیت وارد شدید ");
       window.location.href = response.redirect;
@@ -489,12 +489,12 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       }
      },
       complete: function () {
-        submitButton.prop('disabled', false).text('ارسال');
+      submitButton.prop('disabled', false).text('ارسال');
       },
     });
-   });
+     });
 
-   $('#login-with-pass-form').on('submit', function(e) {
+     $('#login-with-pass-form').on('submit', function(e) {
     e.preventDefault();
     const form = $(this);
     const submitButton = form.find('button[type="submit"]');
@@ -515,7 +515,7 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
 
 
        $('.password-error').text(errors['mobile-pass-errors'] || 'لطفا اطلاعات خواسته شده را به درستی وارد کنید')
-        .show();
+      .show();
       }
 
       if (xhr.status === 429) {
@@ -524,8 +524,8 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       }
      }
     });
-   });
-   $('#two-factor-check-form').on('submit', function(e) {
+     });
+     $('#two-factor-check-form').on('submit', function(e) {
     e.preventDefault();
     const form = $(this);
     const submitButton = form.find('button[type="submit"]');
@@ -551,42 +551,43 @@ if (isset($otp) && $otp instanceof \App\Models\Dr\Otp) {
       }
      }
     });
-   });
-  });
+     });
+    });
 
 
-/*   مدیریت نوتیفیکیشن در موبایل */
-  function requestNotificationPermission() {
+  /*   مدیریت نوتیفیکیشن در موبایل */
+    function requestNotificationPermission() {
     if (Notification.permission === "default") {
       Notification.requestPermission();
     }
-  }
-  function isMobile() {
+    }
+    function isMobile() {
     return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  }
-  function sendNotificationOnMobile(code) {
+    }
+    function sendNotificationOnMobile(code) {
       if (isMobile()) {
-        sendNotification(code);
+      sendNotification(code);
       }
     }
 
-  function autoFillOtp(code) {
+    function autoFillOtp(code) {
     const inputs = $('.otp-input');
     const codeArray = code.split('');
     inputs.each(function (index) {
       $(this).val(codeArray[index] || '').trigger('input');
     });
-  }
+    }
 
-  // شبیه‌سازی دریافت کد از سرور
-  function onOtpReceived(code) {
+    // شبیه‌سازی دریافت کد از سرور
+    function onOtpReceived(code) {
     sendNotification(code);
     autoFillOtp(code);
-  }
+    }
 
-  // درخواست مجوز برای نمایش نوتیفیکیشن
-  requestNotificationPermission();
+    // درخواست مجوز برای نمایش نوتیفیکیشن
+    requestNotificationPermission();
 
-/*   مدیریت نوتیفیکیشن در موبایل */
- </script>
+  /*   مدیریت نوتیفیکیشن در موبایل */
+   </script>
+
 @endsection

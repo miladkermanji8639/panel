@@ -43,7 +43,7 @@
 
     </div>
     <div class="wrapper-md">
-   @livewire('admin.dashboard.create-best-doctor')
+   @livewire('admin.dashboard.home_page.create-best-doctor')
 
     </div>
    </div>

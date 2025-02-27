@@ -42,9 +42,9 @@ class MenuController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($menuId)
     {
-        //
+        return view('admin.content.dashboard.menu.edit', ['menuId' => $menuId]);
     }
 
     /**

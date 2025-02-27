@@ -28,7 +28,7 @@
 
 
        <div class="card">
-    @livewire('admin.dashboard.search-best-doctors')
+    @livewire('admin.dashboard.home_page.search-best-doctors')
 
        </div>
 

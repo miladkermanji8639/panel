@@ -26,7 +26,7 @@
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('admin.dashboard.membership.membership-fee-form');
+[$__name, $__params] = $__split('admin.dashboard.membershipfee.membership-fee-form');
 
 $__html = app('livewire')->mount($__name, $__params, 'lw-3502667604-0', $__slots ?? [], get_defined_vars());
 

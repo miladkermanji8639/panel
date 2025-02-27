@@ -1,4 +1,4 @@
-<!--[if BLOCK]><![endif]--><?php if(session('swal-success')): ?>
+<?php if(session('swal-success')): ?>
 
     <script>
         // $(document).ready(function (){
@@ -11,5 +11,5 @@
         // });
     </script>
 
-<?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+<?php endif; ?>
 <?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/alerts/sweetalert/success.blade.php ENDPATH**/ ?>

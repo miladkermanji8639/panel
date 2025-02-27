@@ -42,7 +42,7 @@
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('admin.dashboard.create-best-doctor');
+[$__name, $__params] = $__split('admin.dashboard.home_page.create-best-doctor');
 
 $__html = app('livewire')->mount($__name, $__params, 'lw-515072028-0', $__slots ?? [], get_defined_vars());
 

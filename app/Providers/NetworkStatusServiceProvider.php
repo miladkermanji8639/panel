@@ -32,7 +32,7 @@ class NetworkStatusServiceProvider extends ServiceProvider
                         </svg>
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">اتصال اینترنت قطع شده است!</h2>
                         <p class="text-gray-600 text-center">لطفاً اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.</p>
-                        <div class="mt-6">
+                        <div class="mt-6 d-flex justify-content-center w-100">
                             <span class="loading-dot"></span>
                             <span class="loading-dot"></span>
                             <span class="loading-dot"></span>

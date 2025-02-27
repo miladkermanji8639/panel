@@ -206,7 +206,7 @@ Route::prefix('admin')
             Route::prefix('menu/')->group(function () {
                 Route::get('/', [MenuController::class, 'index'])->name('admin.Dashboard.menu.index');
                 Route::get('/create', [MenuController::class, 'create'])->name('admin.Dashboard.menu.create');
-                Route::get('/edit', [MenuController::class, 'edit'])->name('admin.Dashboard.menu.edit');
+                Route::get('/edit/{id}', [MenuController::class, 'edit'])->name('admin.Dashboard.menu.edit');
             });
             Route::prefix('home_page/')->group(function () {
                 Route::get('/', [HomePageController::class, 'index'])->name('admin.Dashboard.home_page.index');
