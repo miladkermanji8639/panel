@@ -78,7 +78,7 @@ $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-c
  @include('admin.content.alerts.sweetalert.delete-confirm', ['className' => 'delete'])
  {{-- sweet alert --}}
  @livewireScripts
- 
+ @networkStatus
  <script>
   document.addEventListener("DOMContentLoaded", function() {
    Livewire.on('refreshDeleteButton', (data) => {
