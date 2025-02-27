@@ -1,20 +1,18 @@
-@extends('admin.content.layouts/layoutMaster')
+<?php $__env->startSection('title', 'درگاه‌های پرداخت'); ?>
 
-@section('title', 'درگاه‌های پرداخت')
+<?php $__env->startSection('vendor-style'); ?>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apex-charts.scss']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('vendor-style')
-    @vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
-@endsection
+<?php $__env->startSection('vendor-script'); ?>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apexcharts.js']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('vendor-script')
-    @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
-@endsection
+<?php $__env->startSection('page-script'); ?>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/js/dashboards-crm.js']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('page-script')
-    @vite(['resources/assets/js/dashboards-crm.js'])
-@endsection
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="container-fluid py-4">
         <div class="card shadow-lg border-0 rounded-3">
             <div
@@ -41,10 +39,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($gateways as $gateway)
+                            <?php $__currentLoopData = $gateways; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $gateway): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr class="transition-all hover:bg-gray-100">
                                     <td class="text-center">
-                                        <a href="{{ route('admin.Dashboard.payment_gateways.edit', $gateway->name) }}"
+                                        <a href="<?php echo e(route('admin.Dashboard.payment_gateways.edit', $gateway->name)); ?>"
                                             class="btn btn-outline-primary btn-sm rounded-pill px-3" title="ویرایش">
                                             <i class="fa fa-edit"></i>
                                         </a>
@@ -57,17 +55,18 @@
                                             onmouseout="this.style.transform='scale(1)'">
                                         </div>
                                     </td>
-                                    <td class="fw-medium">{{ $gateway->title }}</td>
+                                    <td class="fw-medium"><?php echo e($gateway->title); ?></td>
                                     <td class="text-center">
                                         <span
-                                            class="badge toggle-gateway-status {{ $gateway->is_active ? 'bg-success' : 'bg-danger' }} text-white py-2 px-4 rounded-pill fw-bold"
-                                            data-gateway-id="{{ $gateway->id }}" data-gateway-name="{{ $gateway->name }}"
+                                            class="badge toggle-gateway-status <?php echo e($gateway->is_active ? 'bg-success' : 'bg-danger'); ?> text-white py-2 px-4 rounded-pill fw-bold"
+                                            data-gateway-id="<?php echo e($gateway->id); ?>" data-gateway-name="<?php echo e($gateway->name); ?>"
                                             style="cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                            {{ $gateway->is_active ? 'فعال' : 'غیرفعال' }}
+                                            <?php echo e($gateway->is_active ? 'فعال' : 'غیرفعال'); ?>
+
                                         </span>
                                     </td>
                                 </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -100,10 +99,10 @@
                 var isActive = badge.hasClass('bg-success');
 
                 $.ajax({
-                    url: '{{ route("admin.payment_gateways.toggle") }}',
+                    url: '<?php echo e(route("admin.payment_gateways.toggle")); ?>',
                     method: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}',
+                        _token: '<?php echo e(csrf_token()); ?>',
                         gateway_id: gatewayId,
                         is_active: !isActive
                     },
@@ -158,4 +157,5 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/dashboard/payment_gateways/index.blade.php ENDPATH**/ ?>

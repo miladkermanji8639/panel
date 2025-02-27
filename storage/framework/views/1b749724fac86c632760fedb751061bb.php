@@ -47,7 +47,7 @@
        <td><?php echo e($menu->name); ?></td>
        <td><?php echo e($menu->url); ?></td>
       <td>
-      <img src="<?php echo e($menu->icon ? asset('storage/' . $menu->icon) : asset('default-icon.png')); ?>" alt="آیکون منو"
+      <img src="<?php echo e($menu->icon ? asset('storage/' . $menu->icon) : ''); ?>" alt="آیکون منو"
         class="img-thumbnail" style="width: 40px; height: 40px; border-radius: 8px;">
       </td>
 

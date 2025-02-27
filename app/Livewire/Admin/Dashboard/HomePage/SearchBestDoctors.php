@@ -51,7 +51,7 @@ class SearchBestDoctors extends Component
             $doctor->status = !$doctor->status;
             $doctor->save();
 
-            $this->dispatch('show-toastr', ['type' => 'success', 'message' => 'وضعیت با موفقیت تغییر کرد.']);
+            $this->dispatch('show-toastr', type : 'success', message : 'وضعیت با موفقیت تغییر کرد.');
         }
     }
 

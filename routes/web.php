@@ -211,7 +211,7 @@ Route::prefix('admin')
             Route::prefix('home_page/')->group(function () {
                 Route::get('/', [HomePageController::class, 'index'])->name('admin.Dashboard.home_page.index');
                 Route::get('/create', [HomePageController::class, 'create'])->name('admin.Dashboard.home_page.create');
-                Route::get('/edit', [HomePageController::class, 'edit'])->name('admin.Dashboard.home_page.edit');
+                Route::get('/edit-best-doctor/{bestDoctorId}', [HomePageController::class, 'editBestDoctor'])->name('admin.Dashboard.home_page.edit');
             });
             Route::prefix('holiday/')->group(function () {
                 Route::get('/', [HolidayController::class, 'index'])->name('admin.Dashboard.holiday.index');

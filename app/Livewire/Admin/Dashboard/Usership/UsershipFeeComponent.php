@@ -3,7 +3,7 @@ namespace App\Livewire\Admin\Dashboard\Usership;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Admin\MembershipFee;
+use App\Models\Admin\Dashboard\Membershipfee\MembershipFee;
 
 class UsershipFeeComponent extends Component
 {
