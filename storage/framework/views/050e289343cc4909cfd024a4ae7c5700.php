@@ -185,7 +185,7 @@
                                     <button class="btn btn-light p-1 btn-sm dropdown-toggle custom-dropdown-trigger" type="button">
                                         <img src="<?php echo e(asset('dr-assets/icons/dots-vertical-svgrepo-com.svg')); ?>" width="20" height="20">
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <ul class="dropdown-menu dropdown-menu-end my-drp-left-0">
                                         <li><a class="dropdown-item text-dark cancel-appointment" href="#" data-id="${appointment.id}">لغو نوبت</a></li>
                                         <li><a class="dropdown-item text-dark move-appointment" data-date="${appointment.appointment_date}" data-id="${appointment.id}">جابجایی نوبت</a></li>
                                         <li><a class="dropdown-item text-dark block-user" href="#" data-id="${appointment.id}" data-mobile="${appointment.patient.mobile}" data-user-id="${appointment.patient.id}" data-user-name="${appointment.patient.first_name + ' ' + appointment.patient.last_name}">مسدود کردن کاربر</a></li>
@@ -268,7 +268,7 @@
         <button class="btn btn-light p-1 btn-sm dropdown-toggle custom-dropdown-trigger" type="button">
             <img src="<?php echo e(asset('dr-assets/icons/dots-vertical-svgrepo-com.svg')); ?>" width="20" height="20">
         </button>
-        <ul class="dropdown-menu dropdown-menu-end">
+        <ul class="dropdown-menu dropdown-menu-end my-drp-left-0">
             <li><a class="dropdown-item text-dark cancel-appointment" href="#" data-id="${appointment.id}">لغو نوبت</a></li>
             <li><a class="dropdown-item text-dark move-appointment" href="#" data-date="${appointment.appointment_date}" data-id="${appointment.id}">جابجایی نوبت</a></li>
             <li><a class="dropdown-item text-dark block-user" href="#" data-id="${appointment.id}" data-mobile="${appointment.patient.mobile}" data-user-id="${appointment.patient.id}" data-user-name="${appointment.patient.first_name + ' ' + appointment.patient.last_name}">مسدود کردن کاربر</a></li>
@@ -442,7 +442,7 @@
                         <button class="btn btn-light p-1 btn-sm dropdown-toggle custom-dropdown-trigger" type="button">
                             <img src="<?php echo e(asset('dr-assets/icons/dots-vertical-svgrepo-com.svg')); ?>" width="20"                 height="20">
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end my-drp-left-0">
                             <li><a class="dropdown-item text-dark cancel-appointment" href="#" data-id="${appointment.id}                ">لغو نوبت</a></li>
                             <li><a class="dropdown-item text-dark move-appointment" data-date="${appointment.appointment_date}                " href="#" data-id="${appointment.id}">جابجایی نوبت</a></li>
                             <li><a class="dropdown-item text-dark block-user" href="#" data-id="${appointment.id}"                 data-mobile="${appointment.patient.mobile}" data-user-id="${appointment.patient.id}"                 data-user-name="${appointment.patient.first_name + ' ' + appointment.patient.last_name }">مسدود                 کردن کاربر</a></li>
@@ -1684,7 +1684,7 @@
                                         <button class="btn btn-light p-1 btn-sm dropdown-toggle custom-dropdown-trigger" type="button">
                                             <img src="<?php echo e(asset('dr-assets/icons/dots-vertical-svgrepo-com.svg')); ?>" width="20" height="20">
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
+                                        <ul class="dropdown-menu dropdown-menu-end my-drp-left-0">
                                             <li><a class="dropdown-item text-dark cancel-appointment" href="#" data-id="${appointment.id}">لغو نوبت</a></li>
                                             <li><a class="dropdown-item text-dark move-appointment" data-date="${appointment.appointment_date}" href="#" data-id="${appointment.id}">جابجایی نوبت</a></li>
                                             <li><a class="dropdown-item text-dark block-user" href="#" data-id="${appointment.id}" data-mobile="${appointment.patient.mobile}" data-user-id="${appointment.patient.id}" data-user-name="${appointment.patient.first_name + ' ' + appointment.patient.last_name }">مسدود کردن کاربر</a></li>

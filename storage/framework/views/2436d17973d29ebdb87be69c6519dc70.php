@@ -184,7 +184,7 @@
 <?php endif; ?>
 <div class="sicks-content h-100 mt-4 w-100  position-relative border">
  <div>
-  <div class="table-responsive position-relative top-table">
+  <div class="table-responsive position-relative top-table w-100">
    <table class="table w-100 text-sm text-center">
     <thead class="text-xs text-gray-700 uppercase border-b border-solid bg-gray-50 border-b-gray-100">
      <tr>

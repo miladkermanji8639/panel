@@ -763,7 +763,6 @@ button {
  /* می‌توانید این را به auto تغییر دهید */
  height: auto;
  bottom: 60px;
-
  padding: 0px 10px;
 }
 
@@ -798,10 +797,13 @@ button {
 .h-100 {
  height: 100% !important;
 }
-
 .top-table {
- position: absolute;
- top: 70px;
+  position: absolute;
+  top: 70px;
+  width: 100%;
+  min-height: 268px;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
 .sicks-content {
@@ -882,7 +884,6 @@ button {
   /* مقدار بالا برای اطمینان از نمایش روی سایر المان‌ها */
   top: 100%;
   /* باعث می‌شود زیر دکمه نمایش داده شود */
-  left: 0;
   /* از چپ چین شود */
   min-width: 160px;
   /* اندازه حداقل */
@@ -891,13 +892,16 @@ button {
   display: none;
   /* در حالت عادی مخفی باشد */
 }
-
+.my-drp-left-0{
+  position: absolute !important;
+  left: 0 !important;
+}
 .dropdown-menu.show {
   display: block;
   /* نمایش منو زمانی که کلاس show اضافه شود */
 }
 .top-table{
-  overflow: visible !important;
+  overflow: scroll !important;
 }
 
 
@@ -914,4 +918,22 @@ button {
   right: inherit;
   font-size: 12px;
   bottom: 35px;
+}
+
+
+
+@media screen and (max-width: 768px) {
+  .top-table {
+    overflow-x: auto;
+  }
+
+  .table {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  th,
+  td {
+    padding: 8px;
+  }
 }
