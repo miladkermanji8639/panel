@@ -281,7 +281,7 @@ Route::prefix('admin')
         });
         Route::prefix('questions/')->group(function () {
             Route::get('question/', [QuestionController::class, 'index'])->name('admin.questions.question.index');
-            Route::get('question/show', [QuestionController::class, 'show'])->name('admin.questions.question.show');
+            Route::get('question/show/{id}', [QuestionController::class, 'show'])->name('admin.questions.question.show');
             Route::get('question-cat/', [QuestionCatController::class, 'index'])->name('admin.questions.question-cat.index');
             Route::get('question-cat/create', [QuestionCatController::class, 'create'])->name('admin.questions.question-cat.create');
         });

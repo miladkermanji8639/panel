@@ -32,9 +32,9 @@ class QuestionController extends Controller
      * Display the specified resource.
      */
     // public function show(string $id)
-    public function show()
+    public function show($id)
     {
-        return view("admin.content.questions.question.show");
+        return view("admin.content.questions.question.show",compact('id'));
         
     }
 
