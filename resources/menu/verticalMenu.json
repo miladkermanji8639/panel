@@ -113,11 +113,7 @@
      "name": "Tags",
      "slug": "Tags"
     },
-    {
-     "url": "admin/content-management/category-blog/",
-     "name": "Category Blog",
-     "slug": "Category Blog"
-    },
+   
     {
      "url": "admin/content-management/comments/",
      "name": "Comments",

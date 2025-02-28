@@ -256,7 +256,7 @@ Route::prefix('admin')
             Route::prefix('tags/')->group(function () {
                 Route::get('/', [TagsController::class, 'index'])->name('admin.content-management.tags.index');
                 Route::get('create', [TagsController::class, 'create'])->name('admin.content-management.tags.create');
-                Route::get('edit', [TagsController::class, 'edit'])->name('admin.content-management.tags.edit');
+                Route::get('edit/{id}', [TagsController::class, 'edit'])->name('admin.content-management.tags.edit');
             });
         
             Route::prefix('comments/')->group(function () {

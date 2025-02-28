@@ -1,0 +1,10 @@
+.h-50{
+ height: 50px !important;
+}
+.gap-20{
+ display: flex !important;
+ gap: 20px !important;
+}
+th{
+ text-wrap: nowrap !important;
+}

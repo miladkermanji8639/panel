@@ -6,18 +6,18 @@
     <input type="search" class="form-control  w-100 me-2" placeholder="جستجو شهر" wire:model="search"
      wire:keyup="searchUpdated">
    </div>
-    <a href="{{ route('admin.Dashboard.menu.create') }}" class="btn btn-primary">
+    <a href="<?php echo e(route('admin.Dashboard.menu.create')); ?>" class="btn btn-primary">
       <i class="ti ti-plus"></i> افزودن منو
     </a>
    <div>
-    <button class="btn btn-danger" id="deleteButton" @disabled(empty($selectedRows)) onclick="confirmDelete()">
+    <button class="btn btn-danger" id="deleteButton" <?php if(empty($selectedRows)): echo 'disabled'; endif; ?> onclick="confirmDelete()">
      <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
     </button>
    </div>
   </div>
-  @if (session()->has('success'))
-   <div class="alert alert-success">{{ session('success') }}</div>
-  @endif
+  <!--[if BLOCK]><![endif]--><?php if(session()->has('success')): ?>
+   <div class="alert alert-success"><?php echo e(session('success')); ?></div>
+  <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
   <div class="table-responsive">
    <table class="table table-striped">
     <thead>
@@ -38,25 +38,26 @@
      </tr>
     </thead>
     <tbody>
-     @foreach ($menus as $index => $menu)
+     <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $menus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
       <tr>
-       <td><input type="checkbox" class="form-check-input" wire:model="selectedRows" value="{{ $menu->id }}"
+       <td><input type="checkbox" class="form-check-input" wire:model="selectedRows" value="<?php echo e($menu->id); ?>"
        x-on:change="$wire.dispatch('updateDeleteButton')"></td>
-       <td>{{ $index + 1 }}</td>
-       <td>{{ $menu->name }}</td>
-       <td>{{ $menu->url }}</td>
+       <td><?php echo e($index + 1); ?></td>
+       <td><?php echo e($menu->name); ?></td>
+       <td><?php echo e($menu->url); ?></td>
       <td>
-      <img src="{{ $menu->icon ? asset('storage/' . $menu->icon) : '' }}" alt="آیکون منو"
+      <img src="<?php echo e($menu->icon ? asset('storage/' . $menu->icon) : ''); ?>" alt="آیکون منو"
         class="img-thumbnail" style="width: 40px; height: 40px; border-radius: 8px;">
       </td>
 
-       <td>{{ $menu->position }}</td>
-       <td>{{ $menu->parent ? $menu->parent->name : 'دسته اصلی' }}</td>
-       <td>{{ $menu->order }}</td>
+       <td><?php echo e($menu->position); ?></td>
+       <td><?php echo e($menu->parent ? $menu->parent->name : 'دسته اصلی'); ?></td>
+       <td><?php echo e($menu->order); ?></td>
        <td>
-      <span wire:click="toggleStatus({{ $menu->id }})"
-       class="badge bg-label-{{ $menu->status == 1 ? 'success' : 'danger' }} cursor-pointer">
-       {{ $menu->status == 1 ? 'فعال' : 'غیر فعال' }}
+      <span wire:click="toggleStatus(<?php echo e($menu->id); ?>)"
+       class="badge bg-label-<?php echo e($menu->status == 1 ? 'success' : 'danger'); ?> cursor-pointer">
+       <?php echo e($menu->status == 1 ? 'فعال' : 'غیر فعال'); ?>
+
       </span>
        </td>
        <td>
@@ -65,20 +66,21 @@
         <i class="ti ti-dots-vertical"></i>
        </button>
        <div class="dropdown-menu">
-        <a class="dropdown-item" href="{{ route('admin.Dashboard.menu.edit', ['id' => $menu->id]) }}">
+        <a class="dropdown-item" href="<?php echo e(route('admin.Dashboard.menu.edit', ['id' => $menu->id])); ?>">
          <i class="ti ti-pencil"></i> ویرایش
         </a>
        </div>
       </div>
        </td>
       </tr>
-   @endforeach
+   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
     </tbody>
   </table>
   </div>
   <div class="d-flex justify-content-between mt-3">
-   <span>نمایش {{ $menus->count() }} از {{ $menus->total() }} منو</span>
-   {{ $menus->links() }}
+   <span>نمایش <?php echo e($menus->count()); ?> از <?php echo e($menus->total()); ?> منو</span>
+   <?php echo e($menus->links()); ?>
+
   </div>
  </div>
 </div>
@@ -99,4 +101,4 @@
       }
     });
   }
-</script>
+</script><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/livewire/admin/dashboard/menu/menu-list.blade.php ENDPATH**/ ?>

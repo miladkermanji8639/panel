@@ -4,10 +4,10 @@
         <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
                 <i class="fas fa-newspaper me-3"></i>
-                <h5 class="mb-0 fw-bold">لیست اخبار</h5>
+                <h5 class="mb-0 fw-bold">لیست تگ</h5>
             </div>
-            <a href="{{ route('admin.content-management.blog.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i> افزودن خبر
+            <a href="{{ route('admin.content-management.tags.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i> افزودن تگ
             </a>
         </div>
     </div>
@@ -26,85 +26,59 @@
                     <option value="50">50</option>
                     <option value="100">100</option>
                 </select>
-                <button class="btn btn-danger" id="delete-selected-btn" @if(empty($selectedBlogs)) disabled @endif>
-                    <i class="fas fa-trash me-2"></i> حذف انتخاب‌شده‌ها
-                </button>
+            <button class="btn btn-danger" id="delete-selected-btn" @if(empty($selectedTags)) disabled @endif>
+                <i class="fas fa-trash me-2"></i> حذف انتخاب‌شده‌ها
+            </button>
             </div>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 50px;">
-                            <input type="checkbox" class="form-check-input" wire:model.live="selectAll">
-                        </th>
-                        <th>ردیف</th>
-                        <th>تاریخ</th>
-                        <th>تصویر</th>
-                        <th>عنوان</th>
-                        <th>دسته‌بندی</th>
-                        <th>وضعیت</th>
-                        <th>بازدید</th>
-                        <th>نظرات</th>
-                        <th>عملیات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($blogs as $index => $blog)
-                        <tr>
-                            <td>
-                                <input type="checkbox" class="form-check-input" wire:model.live="selectedBlogs"
-                                    value="{{ $blog->id }}">
-                            </td>
-                            <td>{{ $blogs->firstItem() + $index }}</td>
-                            <td>{{ $blog->persian_date }}</td>
-                            <td>
-                                @if($blog->image)
-                                    <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}"
-                                        style="max-width: 50px; height: auto;">
-                                @else
-                                    بدون تصویر
-                                @endif
-                            </td>
-                            <td>{{ $blog->title }}</td>
-                            <td>{{ $blog->category ? $blog->category->name : 'بدون دسته‌بندی' }}</td>
-                            <td>
-                                <div class="form-check form-switch">
-                                    <input type="checkbox" class="form-check-input"
-                                        wire:model.live="blogStatuses.{{ $blog->id }}"
-                                        wire:change="toggleStatus({{ $blog->id }})" @checked($blog->status)>
-                                    <label class="form-check-label mx-1">{{ $blog->status ? 'فعال' : 'غیرفعال' }}</label>
-                                </div>
-                            </td>
-                            <td>{{ $blog->views }}</td>
-                            <td>{{ $blog->comments_count }}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item"
-                                            href="{{ route('admin.content-management.blog.edit', $blog->id) }}">
-                                            <i class="fas fa-edit me-2"></i> ویرایش
-                                        </a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="10" class="text-center">هیچ خبری یافت نشد.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 18px;">
+                    <input type="checkbox" class="form-check-input" wire:model.live="selectAll">
+                </th>
+                <th>ردیف</th>
+                <th>نام تگ</th>
+                <th>تعداد استفاده</th>
+                <th>وضعیت</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($tags as $index => $tag)
+                <tr>
+                    <td>
+                    <input type="checkbox" class="form-check-input" wire:model.live="selectedTags" value="{{ $tag->id }}">
+                    </td>
+                    <td>{{ $tags->firstItem() + $index }}</td>
+                    <td>{{ $tag->name }}</td>
+                    <td>{{ $tag->usage_count }}</td>
+                    <td>
+                        <button wire:click="toggleStatus({{ $tag->id }})"
+                            class="badge bg-label-{{ $tag->status ? 'success' : 'danger' }} me-1 border-0">
+                            {{ $tag->status ? 'فعال' : 'غیرفعال' }}
+                        </button>
+                    </td>
+                    <td>
+                        <a  href="{{ route('admin.content-management.tags.edit', $tag->id) }}">
+                            <i class="ti ti-pencil me-1"></i> 
+                        </a>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center">هیچ تگی یافت نشد.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
         </div>
 
         <!-- صفحه‌بندی -->
         <div class="mt-4">
-            {{ $blogs->links('pagination::bootstrap-5') }}
+            {{ $tags->links('pagination::bootstrap-5') }}
         </div>
     </div>
 
@@ -156,7 +130,7 @@
                 e.preventDefault();
                 Swal.fire({
                     title: 'آیا مطمئن هستید؟',
-                    text: "این اخبار حذف خواهند شد و قابل بازگشت نیستند!",
+                    text: "این تگ حذف خواهند شد و قابل بازگشت نیستند!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#dc3545',

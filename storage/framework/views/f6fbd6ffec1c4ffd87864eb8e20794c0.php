@@ -258,45 +258,47 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
         }
     </style>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const initialDate = "<?php echo e($this->selectedDate ?? ''); ?>";
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // مقدار initialDate رو از یه متغیر Blade که از کامپوننت میاد می‌گیریم
+        const initialDate = <?php echo json_encode($selectedDate ?? '', 15, 512) ?>;
 
-            flatpickr("#date-picker", {
-                dateFormat: "Y/m/d",
-                locale: "fa", // استفاده از لوکال فارسی
-                defaultDate: initialDate,
-                onChange: function (selectedDates, dateStr) {
-                    window.Livewire.find('<?php echo e($_instance->getId()); ?>').set('selectedDate', dateStr);
-                }
-            });
-
-            Livewire.on('toast', (message, options = {}) => {
-                if (typeof toastr === 'undefined') {
-                    console.error('Toastr is not loaded!');
-                    return;
-                }
-                const type = options.type || 'info';
-                if (type === 'success') {
-                    toastr.success(message, '', {
-                        positionClass: options.position || 'toast-top-right',
-                        timeOut: options.timeOut || 3000,
-                        progressBar: options.progressBar || false,
-                    });
-                } else if (type === 'error') {
-                    toastr.error(message, '', {
-                        positionClass: options.position || 'toast-top-right',
-                        timeOut: options.timeOut || 3000,
-                        progressBar: options.progressBar || false,
-                    });
-                } else {
-                    toastr.info(message, '', {
-                        positionClass: options.position || 'toast-top-right',
-                        timeOut: options.timeOut || 3000,
-                        progressBar: options.progressBar || false,
-                    });
-                }
-            });
+        flatpickr("#date-picker", {
+            dateFormat: "Y/m/d",
+            locale: "fa", // استفاده از لوکال فارسی
+            defaultDate: initialDate,
+            onChange: function (selectedDates, dateStr) {
+                // به جای window.Livewire.find('<?php echo e($_instance->getId()); ?>') مستقیماً از emit استفاده می‌کنیم
+                Livewire.dispatch('updateSelectedDate', { date: dateStr });
+            }
         });
-    </script>
+
+        Livewire.on('toast', (message, options = {}) => {
+            if (typeof toastr === 'undefined') {
+                console.error('Toastr is not loaded!');
+                return;
+            }
+            const type = options.type || 'info';
+            if (type === 'success') {
+                toastr.success(message, '', {
+                    positionClass: options.position || 'toast-top-right',
+                    timeOut: options.timeOut || 3000,
+                    progressBar: options.progressBar || false,
+                });
+            } else if (type === 'error') {
+                toastr.error(message, '', {
+                    positionClass: options.position || 'toast-top-right',
+                    timeOut: options.timeOut || 3000,
+                    progressBar: options.progressBar || false,
+                });
+            } else {
+                toastr.info(message, '', {
+                    positionClass: options.position || 'toast-top-right',
+                    timeOut: options.timeOut || 3000,
+                    progressBar: options.progressBar || false,
+                });
+            }
+        });
+    });
+</script>
 </div><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/livewire/admin/content-management/blog-create.blade.php ENDPATH**/ ?>

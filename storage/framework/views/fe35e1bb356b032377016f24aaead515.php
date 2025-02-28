@@ -1,20 +1,18 @@
-@extends('admin.content.layouts/layoutMaster')
+<?php $__env->startSection('title', 'درگاه‌های پرداخت'); ?>
 
-@section('title', 'درگاه‌های پرداخت')
+<?php $__env->startSection('vendor-style'); ?>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apex-charts.scss']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('vendor-style')
-    @vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
-@endsection
+<?php $__env->startSection('vendor-script'); ?>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apexcharts.js']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('vendor-script')
-    @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
-@endsection
+<?php $__env->startSection('page-script'); ?>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/js/dashboards-crm.js']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('page-script')
-    @vite(['resources/assets/js/dashboards-crm.js'])
-@endsection
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="container-fluid py-2">
         <!-- هدر -->
         <div class="bg-gradient-primary text-white p-4 rounded-top-3 shadow-sm mb-4">
@@ -36,28 +34,29 @@
 
             <!-- لیست درگاه‌ها -->
             <div class="row g-4">
-                @foreach($gateways as $gateway)
+                <?php $__currentLoopData = $gateways; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $gateway): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="col-md-6 col-lg-4">
                         <div class="card border-0 rounded-3 shadow-sm gateway-card transition-all h-100">
                             <div class="card-body p-4 d-flex flex-column gap-3">
                                 <!-- لوگو و نام -->
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="gateway-logo rounded-circle shadow-sm flex-shrink-0"
-                                        style="background-image: url('{{ asset('dr-assets/icons/newspaper-svgrepo-com.svg') }}'); width: 50px; height: 50px; background-size: cover; background-position: center; border: 2px solid #e5e7eb; transition: transform 0.3s ease;"
+                                        style="background-image: url('<?php echo e(asset('dr-assets/icons/newspaper-svgrepo-com.svg')); ?>'); width: 50px; height: 50px; background-size: cover; background-position: center; border: 2px solid #e5e7eb; transition: transform 0.3s ease;"
                                         data-default-logo="https://cdn-icons-png.flaticon.com/512/888/888879.png">
                                     </div>
-                                    <h5 class="mb-0 fw-medium text-dark">{{ $gateway->title }}</h5>
+                                    <h5 class="mb-0 fw-medium text-dark"><?php echo e($gateway->title); ?></h5>
                                 </div>
 
                                 <!-- وضعیت و دکمه ویرایش -->
                                 <div class="d-flex align-items-center justify-content-between mt-auto">
                                     <span
-                                        class="status-btn toggle-gateway-status {{ $gateway->is_active ? 'active' : 'inactive' }} px-3 py-2 rounded-pill d-flex align-items-center gap-2"
-                                        data-gateway-id="{{ $gateway->id }}" data-gateway-name="{{ $gateway->name }}">
-                                        <i class="{{ $gateway->is_active ? 'fas fa-check' : 'fas fa-times' }} fs-6"></i>
-                                        {{ $gateway->is_active ? 'فعال' : 'غیرفعال' }}
+                                        class="status-btn toggle-gateway-status <?php echo e($gateway->is_active ? 'active' : 'inactive'); ?> px-3 py-2 rounded-pill d-flex align-items-center gap-2"
+                                        data-gateway-id="<?php echo e($gateway->id); ?>" data-gateway-name="<?php echo e($gateway->name); ?>">
+                                        <i class="<?php echo e($gateway->is_active ? 'fas fa-check' : 'fas fa-times'); ?> fs-6"></i>
+                                        <?php echo e($gateway->is_active ? 'فعال' : 'غیرفعال'); ?>
+
                                     </span>
-                                    <a href="{{ route('admin.Dashboard.payment_gateways.edit', $gateway->name) }}"
+                                    <a href="<?php echo e(route('admin.Dashboard.payment_gateways.edit', $gateway->name)); ?>"
                                         class="btn btn-outline-primary btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-2">
                                         <i class="fas fa-edit fs-6"></i> ویرایش
                                     </a>
@@ -65,7 +64,7 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
     </div>
@@ -159,10 +158,10 @@
                 const isActive = $badge.hasClass('active');
 
                 $.ajax({
-                    url: '{{ route("admin.payment_gateways.toggle") }}',
+                    url: '<?php echo e(route("admin.payment_gateways.toggle")); ?>',
                     method: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}',
+                        _token: '<?php echo e(csrf_token()); ?>',
                         gateway_id: gatewayId,
                         is_active: !isActive
                     },
@@ -194,4 +193,5 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/dashboard/payment_gateways/index.blade.php ENDPATH**/ ?>

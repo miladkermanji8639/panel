@@ -40,6 +40,7 @@ $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-c
  <link rel="canonical" href="{{ config('variables.productPage') ? config('variables.productPage') : '' }}">
  <!-- Favicon -->
  <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
+ <link rel="stylesheet" href="{{ asset('admin-assets/custom/custom.css') }}" />
 
 
 
@@ -78,7 +79,7 @@ $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-c
  @include('admin.content.alerts.sweetalert.delete-confirm', ['className' => 'delete'])
  {{-- sweet alert --}}
  @livewireScripts
- @networkStatus
+{{--  @networkStatus --}}
  <script>
   document.addEventListener("DOMContentLoaded", function() {
    Livewire.on('refreshDeleteButton', (data) => {

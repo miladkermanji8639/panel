@@ -1,5 +1,5 @@
 <div>
-    <div class="card-header d-flex justify-content-between">
+    <div class="card-header d-flex justify-content-between flex-wrap gap-20">
         <div class="d-flex align-items-center">
             <input type="search" class="form-control w-100 me-2" placeholder="جستجو تعرفه" wire:model="search" wire:keyup="searchUpdated">
         </div>

@@ -4,11 +4,11 @@
             <input type="search" class="form-control  w-100 me-2" placeholder="جستجو تخصص" wire:model="search"
                 wire:keyup="searchUpdated">
         </div>
-            <a href="{{ route('admin.Dashboard.specialty.create') }}" class="btn btn-primary">
+            <a href="<?php echo e(route('admin.Dashboard.specialty.create')); ?>" class="btn btn-primary">
                 <i class="ti ti-plus"></i> افزودن تخصص جدید
             </a>
     <button class="btn btn-danger" wire:click="confirmDelete" wire:loading.attr="disabled" id="deleteButton"
-        x-bind:disabled="{{ count($selectedRows) === 0 }}">
+        x-bind:disabled="<?php echo e(count($selectedRows) === 0); ?>">
         <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
     </button>
 
@@ -29,18 +29,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($specialties as $specialty)
+                <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $specialties; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $specialty): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <tr>
                         <td>
                             <input type="checkbox" class="form-check-input" wire:model="selectedRows"
-                                value="{{ $specialty->id }}" x-on:change="$wire.dispatch('updateDeleteButton')">
+                                value="<?php echo e($specialty->id); ?>" x-on:change="$wire.dispatch('updateDeleteButton')">
                         </td>
-                        <td>{{ $specialty->id }}</td>
-                        <td>{{ $specialty->name }}</td>
+                        <td><?php echo e($specialty->id); ?></td>
+                        <td><?php echo e($specialty->name); ?></td>
                         <td>
-                            <span wire:click="toggleStatus({{ $specialty->id }})"
-                                class="badge bg-label-{{ $specialty->status == 1 ? 'success' : 'danger' }} cursor-pointer">
-                                {{ $specialty->status == 1 ? 'فعال' : 'غیر فعال' }}
+                            <span wire:click="toggleStatus(<?php echo e($specialty->id); ?>)"
+                                class="badge bg-label-<?php echo e($specialty->status == 1 ? 'success' : 'danger'); ?> cursor-pointer">
+                                <?php echo e($specialty->status == 1 ? 'فعال' : 'غیر فعال'); ?>
+
                             </span>
                         </td>
                     <td>
@@ -49,12 +50,8 @@
                                 <i class="ti ti-dots-vertical"></i>
                             </button>
                             <div class="dropdown-menu">
-                             {{--    @if ($specialty->level == 1)
-                                    <a class="dropdown-item" href="{{ url('admin/dashboard/specialty/show/' . $specialty->id) }}">
-                                        <i class="ti ti-eye me-1"></i> مشاهده زیردسته
-                                    </a>
-                                @endif --}}
-                                <a class="dropdown-item" href="{{ url('admin/dashboard/specialty/edit/' . $specialty->id) }}">
+                             
+                                <a class="dropdown-item" href="<?php echo e(url('admin/dashboard/specialty/edit/' . $specialty->id)); ?>">
                                     <i class="ti ti-pencil me-1"></i> ویرایش
                                 </a>
                             </div>
@@ -62,14 +59,15 @@
                     </td>
 
                     </tr>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
             </tbody>
         </table>
     </div>
 
     <div class="row mx-2 mt-4">
         <div class="col-sm-12 col-md-6">
-            {{ $specialties->links('pagination::bootstrap-5') }}
+            <?php echo e($specialties->links('pagination::bootstrap-5')); ?>
+
         </div>
     </div>
-</div>
+</div><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/livewire/admin/dashboard/specialties/search-specialties.blade.php ENDPATH**/ ?>

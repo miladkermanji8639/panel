@@ -6,13 +6,13 @@
                     wire:keyup="searchUpdated">
             </div>
             <div>
-                <button class="btn btn-danger" id="deleteButton" @disabled(empty($selectedRows)) onclick="confirmDelete()">
+                <button class="btn btn-danger" id="deleteButton" <?php if(empty($selectedRows)): echo 'disabled'; endif; ?> onclick="confirmDelete()">
                     <i class="ti ti-trash"></i> حذف انتخاب‌شده‌ها
                 </button>
                
             </div>
             <div>
-                <a href="{{ route('admin.Dashboard.home_page.create') }}" class="btn btn-primary">
+                <a href="<?php echo e(route('admin.Dashboard.home_page.create')); ?>" class="btn btn-primary">
                     <i class="ti ti-plus"></i> افزودن پزشک برتر
                 </a>
             </div>
@@ -35,24 +35,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($bestDoctors as $doctor)
+                    <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $bestDoctors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $doctor): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <tr>
                             <td>
                                 <input type="checkbox" class="form-check-input" wire:model="selectedRows"
-                                    value="{{ $doctor->id }}" x-on:change="$wire.dispatch('updateDeleteButton')">
+                                    value="<?php echo e($doctor->id); ?>" x-on:change="$wire.dispatch('updateDeleteButton')">
                             </td>
-                            <td>{{ $doctor->doctor->first_name . ' ' . $doctor->doctor->last_name }}</td>
-                            <td>{{ $doctor->hospital->name ?? '---' }}</td>
+                            <td><?php echo e($doctor->doctor->first_name . ' ' . $doctor->doctor->last_name); ?></td>
+                            <td><?php echo e($doctor->hospital->name ?? '---'); ?></td>
                             <td>
-                                {!! $doctor->best_doctor ? '<i class="fa fa-check-circle" style="color:green"></i>' : '---' !!}
-                            </td>
-                            <td>
-                                {!! $doctor->best_consultant ? '<i class="fa fa-check-circle" style="color:green"></i>' : '---' !!}
+                                <?php echo $doctor->best_doctor ? '<i class="fa fa-check-circle" style="color:green"></i>' : '---'; ?>
+
                             </td>
                             <td>
-                                <span wire:click="toggleStatus({{ $doctor->id }})"
-                                    class="badge bg-label-{{ $doctor->status ? 'success' : 'danger' }} cursor-pointer">
-                                    {{ $doctor->status ? 'فعال' : 'غیرفعال' }}
+                                <?php echo $doctor->best_consultant ? '<i class="fa fa-check-circle" style="color:green"></i>' : '---'; ?>
+
+                            </td>
+                            <td>
+                                <span wire:click="toggleStatus(<?php echo e($doctor->id); ?>)"
+                                    class="badge bg-label-<?php echo e($doctor->status ? 'success' : 'danger'); ?> cursor-pointer">
+                                    <?php echo e($doctor->status ? 'فعال' : 'غیرفعال'); ?>
+
                                 </span>
                             </td>
                             <td>
@@ -62,25 +65,26 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item"
-                                            href="{{ route('admin.Dashboard.home_page.edit', $doctor->id) }}">
+                                            href="<?php echo e(route('admin.Dashboard.home_page.edit', $doctor->id)); ?>">
                                             <i class="ti ti-pencil"></i> ویرایش
                                         </a>
                                         <button class="dropdown-item text-danger"
-                                            wire:click="deleteSelected({{ $doctor->id }})">
+                                            wire:click="deleteSelected(<?php echo e($doctor->id); ?>)">
                                             <i class="ti ti-trash"></i> حذف
                                         </button>
                                     </div>
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
                 </tbody>
             </table>
         </div>
 
         <div class="d-flex justify-content-between mt-3 p-3">
-            <span>نمایش {{ $bestDoctors->count() }} از {{ $bestDoctors->total() }} پزشک</span>
-            {{ $bestDoctors->links() }}
+            <span>نمایش <?php echo e($bestDoctors->count()); ?> از <?php echo e($bestDoctors->total()); ?> پزشک</span>
+            <?php echo e($bestDoctors->links()); ?>
+
         </div>
     </div>
 </div>
@@ -108,4 +112,4 @@
         });
     }
 
-</script>
+</script><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/livewire/admin/dashboard/home_page/search-best-doctors.blade.php ENDPATH**/ ?>

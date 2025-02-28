@@ -151,12 +151,6 @@
             height: 1.25em;
         }
     </style>
-
-    <!-- اسکریپت SweetAlert و Toastr -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-
     <script>
         document.addEventListener('livewire:initialized', () => {
             document.getElementById('delete-selected-btn').addEventListener('click', function (e) {
