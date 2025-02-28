@@ -261,12 +261,12 @@ Route::prefix('admin')
         
             Route::prefix('comments/')->group(function () {
                 Route::get('/', [CommentController::class, 'index'])->name('admin.content-management.comments.index');
-                Route::get('show', [CommentController::class, 'show'])->name('admin.content-management.comments.show');
+                Route::get('show/{commentId}', [CommentController::class, 'show'])->name('admin.content-management.comments.show');
             });
             Route::prefix('home-video/')->group(function () {
                 Route::get('/', [HomeVideoController::class, 'index'])->name('admin.content-management.home-video.index');
                 Route::get('create', [HomeVideoController::class, 'create'])->name('admin.content-management.home-video.create');
-                Route::get('edit', [HomeVideoController::class, 'edit'])->name('admin.content-management.home-video.edit');
+                Route::get('edit/{id}', [HomeVideoController::class, 'edit'])->name('admin.content-management.home-video.edit');
             });
             Route::prefix('links/')->group(function () {
                 Route::get('/', [LinksController::class, 'index'])->name('admin.content-management.links.index');

@@ -32,9 +32,9 @@ class CommentController extends Controller
      * Display the specified resource.
      */
     // public function show(string $id)
-    public function show()
+    public function show($commentId)
     {
-        return view("admin.content.content-management.comments.show");
+        return view("admin.content.content-management.comments.show",compact('commentId'));
         
     }
 
