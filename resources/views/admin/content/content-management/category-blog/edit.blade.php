@@ -2,15 +2,15 @@
 
 @section('title', 'مدیریت دسته‌بندی‌های وبلاگ')
 @section('vendor-style')
-    @vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
+ @vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
 @endsection
 @section('vendor-script')
-    @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
+ @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
 @endsection
 @section('page-script')
-    @vite(['resources/assets/js/dashboards-crm.js'])
+ @vite(['resources/assets/js/dashboards-crm.js'])
 @endsection
 
 @section('content')
-    <livewire:admin.content-management.category-blog-list />
+ <livewire:admin.content-management.category-blog-edit :id="$id" />
 @endsection

@@ -33,5 +33,5 @@
 
 
 @section('content')
-  @livewire('admin.content-management.blog-create')
+  @livewire('admin.content-management.blog-edit', ['id' => $id])
 @endsection

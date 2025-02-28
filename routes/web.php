@@ -246,18 +246,19 @@ Route::prefix('admin')
             Route::prefix('blog/')->group(function () {
                 Route::get('/', [BlogController::class, 'index'])->name('admin.content-management.blog.index');
                 Route::get('create', [BlogController::class, 'create'])->name('admin.content-management.blog.create');
-                Route::get('edit', [BlogController::class, 'edit'])->name('admin.content-management.blog.edit');
+                Route::get('edit/{id}', [BlogController::class, 'edit'])->name('admin.content-management.blog.edit');
+            });
+            Route::prefix('category-blog')->group(function () {
+                Route::get('/', [CategoryBlogController::class, 'index'])->name('admin.content-management.category-blog.index');
+                Route::get('/create', [CategoryBlogController::class, 'create'])->name('admin.content-management.category-blog.create');
+                Route::get('/edit/{id}', [CategoryBlogController::class, 'edit'])->name('admin.content-management.category-blog.edit');
             });
             Route::prefix('tags/')->group(function () {
                 Route::get('/', [TagsController::class, 'index'])->name('admin.content-management.tags.index');
                 Route::get('create', [TagsController::class, 'create'])->name('admin.content-management.tags.create');
                 Route::get('edit', [TagsController::class, 'edit'])->name('admin.content-management.tags.edit');
             });
-            Route::prefix('category-blog/')->group(function () {
-                Route::get('/', [CategoryBlogController::class, 'index'])->name('admin.content-management.category-blog.index');
-                Route::get('create', [CategoryBlogController::class, 'create'])->name('admin.content-management.category-blog.create');
-                Route::get('edit', [CategoryBlogController::class, 'edit'])->name('admin.content-management.category-blog.edit');
-            });
+        
             Route::prefix('comments/')->group(function () {
                 Route::get('/', [CommentController::class, 'index'])->name('admin.content-management.comments.index');
                 Route::get('show', [CommentController::class, 'show'])->name('admin.content-management.comments.show');

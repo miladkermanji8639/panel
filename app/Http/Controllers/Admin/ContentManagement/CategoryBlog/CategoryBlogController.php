@@ -44,7 +44,7 @@ class CategoryBlogController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('admin.content.content-management.category-blog.edit',compact('id'));
     }
 
     /**
