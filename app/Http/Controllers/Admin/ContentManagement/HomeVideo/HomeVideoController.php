@@ -36,7 +36,7 @@ class HomeVideoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        
     }
 
     /**
@@ -44,7 +44,7 @@ class HomeVideoController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('admin.content.content-management.home-video.edit',compact('id'));
     }
 
     /**
