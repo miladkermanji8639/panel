@@ -271,12 +271,12 @@ Route::prefix('admin')
             Route::prefix('links/')->group(function () {
                 Route::get('/', [LinksController::class, 'index'])->name('admin.content-management.links.index');
                 Route::get('create', [LinksController::class, 'create'])->name('admin.content-management.links.create');
-                Route::get('edit', [LinksController::class, 'edit'])->name('admin.content-management.links.edit');
+                Route::get('edit/{id}', [LinksController::class, 'edit'])->name('admin.content-management.links.edit');
             });
             Route::prefix('front-pages/')->group(function () {
                 Route::get('/', [FrontPagesController::class, 'index'])->name('admin.content-management.front-pages.index');
                 Route::get('create', [FrontPagesController::class, 'create'])->name('admin.content-management.front-pages.create');
-                Route::get('edit', [FrontPagesController::class, 'edit'])->name('admin.content-management.front-pages.edit');
+                Route::get('edit/{id}', [FrontPagesController::class, 'edit'])->name('admin.content-management.front-pages.edit');
             });
         });
         Route::prefix('questions/')->group(function () {

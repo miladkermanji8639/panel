@@ -44,7 +44,7 @@ class LinksController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('admin.content.content-management.links.edit',compact('id'));
     }
 
     /**

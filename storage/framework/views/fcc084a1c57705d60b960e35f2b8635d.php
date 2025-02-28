@@ -1,21 +1,19 @@
-@extends('admin.content.layouts/layoutMaster')
-
 <blade
        section|(%26%2339%3Btitle%26%2339%3B%2C%20%26%2339%3B%D9%85%D8%AF%DB%8C%D8%B1%DB%8C%D8%AA%20%D8%A7%D8%AE%D8%A8%D8%A7%D8%B1%20%20%20%26%2339%3B)%0D />
 
-@section('vendor-style')
-@vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
-  @endsection
+<?php $__env->startSection('vendor-style'); ?>
+<?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apex-charts.scss']); ?>
+  <?php $__env->stopSection(); ?>
 
-  @section('vendor-script')
-  @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
-    @endsection
+  <?php $__env->startSection('vendor-script'); ?>
+  <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apexcharts.js']); ?>
+    <?php $__env->stopSection(); ?>
 
-    @section('page-script')
-    @vite(['resources/assets/js/dashboards-crm.js'])
-      @endsection
+    <?php $__env->startSection('page-script'); ?>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/js/dashboards-crm.js']); ?>
+      <?php $__env->stopSection(); ?>
 
-      @section('content')
+      <?php $__env->startSection('content'); ?>
       <div class="content-wrapper">
 
         <!-- Content -->
@@ -73,7 +71,7 @@
                               خروجی</span></button></div> <button
                                 class="btn btn-secondary add-new btn-primary ms-2 ms-sm-0 waves-effect waves-light "
                                 tabindex="0"
-                                onclick="location.href='{{ route('admin.content-management.front-pages.create') }}'"
+                                onclick="location.href='<?php echo e(route('admin.content-management.front-pages.create')); ?>'"
                                 
                                 aria-controls="DataTables_Table_0"
                                 type="button"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
@@ -134,7 +132,7 @@
                               <i class="ti ti-dots-vertical"></i>
                             </button>
                             <div class="dropdown-menu">
-                              <a class="dropdown-item" 
+                              <a class="dropdown-item" onclick="location.href='<?php echo e(route('admin.content-management.comments.show')); ?>'"
                                  href="javascript:void(0);">
                                 <i class="ti ti-pencil me-1"></i>
                                 ویرایش
@@ -243,4 +241,6 @@
         <!-- / Footer -->
         <div class="content-backdrop fade"></div>
       </div>
-      @endsection
+      <?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/content-management/front-pages/index.blade.php ENDPATH**/ ?>

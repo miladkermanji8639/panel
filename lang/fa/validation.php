@@ -40,6 +40,7 @@ return [
         "birthdate" => "تاریخ تولد",
         "married" => "متاهل",
         "single" => "مجرد",
+        "category_id" => "دسته بندی",
         "day" => "روز",
         "month" => "ماه",
         "year" => "سال",

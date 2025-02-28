@@ -1,4 +1,4 @@
-<?php $__env->startSection('title', 'مدیریت پیوندها'); ?>
+<?php $__env->startSection('title', 'ایجاد پیوند'); ?>
 
 <?php $__env->startSection('vendor-style'); ?>
   <?php echo app('Illuminate\Foundation\Vite')(['resources/assets/vendor/libs/apex-charts/apex-charts.scss']); ?>
@@ -17,9 +17,9 @@
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('admin.content-management.link-list');
+[$__name, $__params] = $__split('admin.content-management.link-create');
 
-$__html = app('livewire')->mount($__name, $__params, 'lw-3433610154-0', $__slots ?? [], get_defined_vars());
+$__html = app('livewire')->mount($__name, $__params, 'lw-918750854-0', $__slots ?? [], get_defined_vars());
 
 echo $__html;
 
@@ -30,4 +30,4 @@ unset($__split);
 if (isset($__slots)) unset($__slots);
 ?>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/content-management/links/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('admin.content.layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/admin/content/content-management/links/create.blade.php ENDPATH**/ ?>
