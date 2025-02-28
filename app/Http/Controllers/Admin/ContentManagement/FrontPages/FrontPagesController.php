@@ -44,7 +44,7 @@ class FrontPagesController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('admin.content.content-management.front-pages.edit',compact('id'));
     }
 
     /**
