@@ -242,7 +242,7 @@ Route::prefix('admin')
         Route::prefix('content-management/')->group(function () {
             Route::get('slide/', [SlideController::class, 'index'])->name('admin.content-management.slide.index');
             Route::get('slide/create', [SlideController::class, 'create'])->name('admin.content-management.slide.create');
-            Route::get('slide/edit', [SlideController::class, 'edit'])->name('admin.content-management.slide.edit');
+            Route::get('slide/edit/{id}', [SlideController::class, 'edit'])->name('admin.content-management.slide.edit');
             Route::prefix('blog/')->group(function () {
                 Route::get('/', [BlogController::class, 'index'])->name('admin.content-management.blog.index');
                 Route::get('create', [BlogController::class, 'create'])->name('admin.content-management.blog.create');
