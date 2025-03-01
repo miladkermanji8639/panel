@@ -73,6 +73,8 @@ export default defineConfig({
     ...LibsScssFiles,
     ...LibsCssFiles,
     ...FontsScssFiles,
+    'resources/css/custom-datepicker.css', // اضافه شده
+    'resources/js/custom-datepicker.js',  // اضافه شده
    ],
    refresh: true,
   }),

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Tools\SiteMap;
 
 use App\Http\Controllers\Admin\Controller;
 use Illuminate\Http\Request;
-
 class SiteMapController extends Controller
 {
     /**
