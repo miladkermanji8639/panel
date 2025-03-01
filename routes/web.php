@@ -289,7 +289,6 @@ Route::prefix('admin')
             Route::get('file-manager/', [ToolsController::class, 'index'])->name('admin.tools.file-manager.index');
             Route::get('news-latter/', [NewsLatterController::class, 'index'])->name('admin.tools.news-latter.index');
             Route::get('redirects/', [RedirectController::class, 'index'])->name('admin.tools.redirects.index');
-            Route::get('redirects/create', [RedirectController::class, 'create'])->name('admin.tools.redirects.create');
             Route::get('mail-template', [MailTemplateController::class, 'index'])->name('admin.tools.mail-template.index');
             Route::get('site-map', [SiteMapController::class, 'index'])->name('admin.tools.site-map.index');
         });

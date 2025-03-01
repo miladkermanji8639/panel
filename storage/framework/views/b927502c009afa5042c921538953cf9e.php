@@ -1,11 +1,11 @@
-<div class="container-fluid py-5">
+<div class="container-fluid py-1">
  <!-- هدر -->
  <div class="bg-white-only lter b-b wrapper-md clrfix mb-5">
   <h1 class="m-n h3 font-thin">مدیریت ریدایرکت‌ها</h1>
  </div>
 
  <!-- فرم افزودن -->
- <div class="wrapper-md mb-5">
+ <div class="wrapper-md mb-2">
   <div class="panel panel-default shadow-sm">
    <div class="panel-heading">افزودن ریدایرکت جدید</div>
    <div class="panel-body">
@@ -44,7 +44,7 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
       </div>
      </div>
      <div class="col-md-2 d-flex align-items-end">
-      <button wire:click="addRedirect" class="btn btn-gradient-success w-100 py-2">ثبت و
+      <button wire:click="addRedirect" class="btn h-50 btn-gradient-success w-100 py-2">ثبت و
        ذخیره</button>
      </div>
     </div>
