@@ -1,5 +1,6 @@
 <?php
 namespace App\Livewire\Admin\Doctors;
+
 use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\Dr\Doctor;
@@ -8,11 +9,15 @@ use Morilog\Jalali\Jalalian;
 use App\Helpers\JalaliHelper;
 use App\Models\Dr\Appointment;
 use App\Models\Dr\UserBlocking;
+use Modules\SendOtp\App\Http\Services\MessageService;
+use Modules\SendOtp\App\Http\Services\SMS\SmsService;
 use Illuminate\Support\Facades\Log;
+
 class LogsDoctor extends Component
 {
     use WithPagination;
-    public $reqDoctor = '0'; // مقدار انتخاب‌شده
+
+    public $reqDoctor = '0';
     public $mobile = '';
     public $trackingCode = '';
     public $startDate = '';
@@ -21,23 +26,27 @@ class LogsDoctor extends Component
     public $selectedAppointments = [];
     public $selectAll = false;
     public $perPage = 50;
+
     public function updated($propertyName)
     {
         if (in_array($propertyName, ['reqDoctor', 'mobile', 'trackingCode', 'startDate', 'endDate', 'search', 'selectAll'])) {
             $this->resetPage();
         }
     }
+
     public function updatedSelectAll($value)
     {
         $appointments = $this->getAppointmentsQuery()->paginate($this->perPage);
         $this->selectedAppointments = $value ? $appointments->pluck('id')->toArray() : [];
     }
+
     public function updatedSelectedAppointments()
     {
         $appointments = $this->getAppointmentsQuery()->paginate($this->perPage);
         $currentPageIds = $appointments->pluck('id')->toArray();
         $this->selectAll = !empty($this->selectedAppointments) && !array_diff($currentPageIds, $this->selectedAppointments);
     }
+
     public function resetFilters()
     {
         $this->reqDoctor = '0';
@@ -50,75 +59,162 @@ class LogsDoctor extends Component
         $this->selectAll = false;
         $this->resetPage();
     }
-    public function banUser($userId, $doctorId, $userName)
+
+    public function toggleBlockUser($userId, $doctorId, $userName, $status)
     {
-        $this->dispatch('showBanForm', userId: $userId, doctorId: $doctorId, userName: $userName);
+       
+        $appointment = Appointment::where('patient_id', $userId)->where('doctor_id', $doctorId)->first();
+        $patientName = $appointment && $appointment->patient
+            ? trim($appointment->patient->first_name . ' ' . $appointment->patient->last_name)
+            : 'کاربر بدون نام';
+
+        $isBlocked = UserBlocking::where('user_id', $userId)
+            ->where('doctor_id', $doctorId)
+            ->where('status', 1)
+            ->exists();
+
+        $this->dispatch('show-ban-form', [
+            'userId' => $userId,
+            'doctorId' => $doctorId,
+            'userName' => $patientName,
+            'status' => $isBlocked ? 0 : 1
+        ]);
     }
-    public function confirmBanUser($userId, $doctorId, $reason, $expiry)
+
+    public function toggleBlockUserConfirm($userId, $doctorId, $data)
     {
+       
         try {
-            $expiryGregorian = JalaliHelper::parsePersianTextDate($expiry);
-            UserBlocking::create([
-                'user_id' => $userId,
-                'doctor_id' => $doctorId,
-                'blocked_at' => now(),
-                'unblocked_at' => $expiryGregorian,
-                'reason' => $reason,
-                'status' => 1
-            ]);
-            $this->dispatch('toast', 'کاربر با موفقیت مسدود شد.', ['type' => 'success']);
+            $isBlocked = UserBlocking::where('user_id', $userId)
+                ->where('doctor_id', $doctorId)
+                ->where('status', 1)
+                ->exists();
+
+            $user = \App\Models\User::findOrFail($userId);
+            $doctor = Doctor::findOrFail($doctorId);
+            $doctorName = $doctor->first_name . ' ' . $doctor->last_name;
+
+            if ($data['status'] == 1) {
+                if ($isBlocked) {
+                    $this->dispatch('toast', ['message' => 'این کاربر قبلاً مسدود شده است.', 'type' => 'error']);
+                    return;
+                }
+                $expiryGregorian = JalaliHelper::parsePersianTextDate($data['expiry']);
+                UserBlocking::create([
+                    'user_id' => $userId,
+                    'doctor_id' => $doctorId,
+                    'blocked_at' => now(),
+                    'unblocked_at' => $expiryGregorian,
+                    'reason' => $data['reason'],
+                    'status' => 1,
+                ]);
+
+                // ارسال پیامک برای مسدود کردن
+                $message = "کاربر گرامی، شما توسط پزشک {$doctorName} مسدود شده‌اید.";
+                $smsService = new MessageService(
+                    SmsService::create(100254, $user->mobile, [$doctorName])
+                );
+                $smsService->send();
+
+                $this->dispatch('toast', ['message' => 'کاربر با موفقیت مسدود شد و پیامک ارسال شد.', 'type' => 'success']);
+            } else {
+                if (!$isBlocked) {
+                    $this->dispatch('toast', ['message' => 'این کاربر مسدود نیست.', 'type' => 'error']);
+                    return;
+                }
+                UserBlocking::where('user_id', $userId)
+                    ->where('doctor_id', $doctorId)
+                    ->update(['status' => 0]);
+
+                // ارسال پیامک برای رفع مسدودی
+                $message = "کاربر گرامی، شما توسط پزشک {$doctorName} از حالت مسدودی خارج شدید.";
+                $smsService = new MessageService(
+                    SmsService::create(100255, $user->mobile, [$doctorName])
+                );
+                $smsService->send();
+
+                $this->dispatch('toast', ['message' => 'کاربر با موفقیت از مسدودی خارج شد و پیامک ارسال شد.', 'type' => 'success']);
+            }
         } catch (\Exception $e) {
-            $this->dispatch('toast', 'خطا در مسدود کردن کاربر: ' . $e->getMessage(), ['type' => 'error']);
+            $this->dispatch('toast', ['message' => 'خطا در عملیات: ' . $e->getMessage(), 'type' => 'error']);
         }
     }
+
     public function cancelAppointment($id)
     {
-        $this->dispatch('confirmAction', 'cancel', $id);
+        $this->dispatch('confirm-action', ['action' => 'cancel', 'id' => $id]);
     }
+
     public function confirmCancel($id)
     {
         try {
             $appointment = Appointment::findOrFail($id);
+
+            // چک کردن اینکه نوبت قبلاً لغو شده یا نه
+            if ($appointment->status === 'cancelled') {
+                $this->dispatch('toast', ['message' => 'این نوبت قبلاً لغو شده است.', 'type' => 'warning']);
+                return;
+            }
+
             $appointment->update(['status' => 'cancelled']);
-            $this->dispatch('toast', 'نوبت با موفقیت لغو شد.', ['type' => 'success']);
+
+            // ارسال پیامک برای لغو نوبت
+            $user = \App\Models\User::findOrFail($appointment->patient_id);
+            $doctor = Doctor::findOrFail($appointment->doctor_id);
+            $doctorName = $doctor->first_name . ' ' . $doctor->last_name;
+            $trackingCode = $appointment->tracking_code;
+            $message = "نوبت شما با کد پیگیری {$trackingCode} توسط پزشک {$doctorName} لغو شد.";
+            $smsService = new MessageService(
+                SmsService::create(100256, $user->mobile, [$trackingCode, $doctorName])
+            );
+            $smsService->send();
+
+            $this->dispatch('toast', ['message' => 'نوبت با موفقیت لغو شد و پیامک ارسال شد.', 'type' => 'success']);
         } catch (\Exception $e) {
-            $this->dispatch('toast', 'خطا در لغو نوبت: ' . $e->getMessage(), ['type' => 'error']);
+            $this->dispatch('toast', ['message' => 'خطا در لغو نوبت: ' . $e->getMessage(), 'type' => 'error']);
         }
     }
+
     public function deleteAppointment($id)
     {
-        $this->dispatch('confirmAction', 'delete', $id);
+        $this->dispatch('confirm-action', ['action' => 'delete', 'id' => $id]);
     }
+
     public function confirmDelete($id)
     {
         try {
             $appointment = Appointment::findOrFail($id);
             $appointment->delete();
             $this->selectedAppointments = array_diff($this->selectedAppointments, [$id]);
-            $this->dispatch('toast', 'نوبت با موفقیت حذف شد.', ['type' => 'success']);
+            $this->dispatch('toast', ['message' => 'نوبت با موفقیت حذف شد.', 'type' => 'success']);
         } catch (\Exception $e) {
-            $this->dispatch('toast', 'خطا در حذف نوبت: ' . $e->getMessage(), ['type' => 'error']);
+            $this->dispatch('toast', ['message' => 'خطا در حذف نوبت: ' . $e->getMessage(), 'type' => 'error']);
         }
     }
+
     public function deleteSelected()
     {
+       
         if (empty($this->selectedAppointments)) {
-            $this->dispatch('toast', 'هیچ نوبت‌ی انتخاب نشده است.', ['type' => 'warning']);
+            $this->dispatch('toast', ['message' => 'هیچ نوبت‌ی انتخاب نشده است.', 'type' => 'warning']);
             return;
         }
-        $this->dispatch('confirmDeleteSelected');
+        $this->dispatch('confirm-delete-selected');
     }
+
     public function confirmDeleteSelected()
     {
+       
         try {
             Appointment::whereIn('id', $this->selectedAppointments)->delete();
             $this->selectedAppointments = [];
             $this->selectAll = false;
-            $this->dispatch('toast', 'نوبت‌های انتخاب‌شده با موفقیت حذف شدند.', ['type' => 'success']);
+            $this->dispatch('toast', ['message' => 'نوبت‌های انتخاب‌شده با موفقیت حذف شدند.', 'type' => 'success']);
         } catch (\Exception $e) {
-            $this->dispatch('toast', 'خطا در حذف نوبت‌ها: ' . $e->getMessage(), ['type' => 'error']);
+            $this->dispatch('toast', ['message' => 'خطا در حذف نوبت‌ها: ' . $e->getMessage(), 'type' => 'error']);
         }
     }
+
     public function export()
     {
         $appointments = $this->getAppointmentsQuery()->get();
@@ -140,6 +236,7 @@ class LogsDoctor extends Component
             echo $csv;
         }, 'appointments-logs.csv');
     }
+
     private function getAppointmentsQuery()
     {
         $startDateGregorian = $this->startDate ? JalaliHelper::parsePersianTextDate($this->startDate) : null;
@@ -164,37 +261,12 @@ class LogsDoctor extends Component
                     ->orWhere('start_time', 'like', $searchTerm);
             }));
     }
-    public function toggleBlockUser($userId, $doctorId, $userName, $status)
-    {
-        $this->dispatch('showBanForm', ['userId' => $userId, 'doctorId' => $doctorId, 'userName' => $userName, 'status' => $status]);
-    }
-    public function toggleBlockUserConfirm($userId, $doctorId, $data)
-    {
-        $isBlocked = UserBlocking::where('user_id', $userId)
-            ->where('doctor_id', $doctorId)
-            ->where('status', 1)
-            ->exists();
-        if ($data['status'] == 1 && $isBlocked) {
-            $this->dispatch('toast', 'این کاربر قبلاً مسدود شده است.', ['type' => 'error']);
-            return;
-        }
-        $response = app('App\Http\Controllers\Dr\Panel\Turn\Schedule\ScheduleSetting\BlockingUsers\BlockingUsersController')
-            ->updateStatus(new \Illuminate\Http\Request([
-                'id' => UserBlocking::where('user_id', $userId)->where('doctor_id', $doctorId)->first()?->id,
-                'status' => $data['status'],
-                'selectedClinicId' => 'default',
-            ]));
-        $result = json_decode($response->getContent(), true);
-        if ($result['success']) {
-            $this->dispatch('toast', $result['message'], ['type' => 'success']);
-        } else {
-            $this->dispatch('toast', $result['message'], ['type' => 'error']);
-        }
-    }
+
     public function mount()
     {
-        $this->reqDoctor = '0'; // مقدار اولیه
+        $this->reqDoctor = '0';
     }
+
     public function render()
     {
         $appointments = $this->getAppointmentsQuery()->paginate($this->perPage);
@@ -202,7 +274,7 @@ class LogsDoctor extends Component
         return view('livewire.admin.doctors.logs-doctor', [
             'appointments' => $appointments,
             'doctors' => $doctors,
-            'selectedDoctorId' => $this->reqDoctor // برای استفاده توی Blade
+            'selectedDoctorId' => $this->reqDoctor
         ]);
     }
 }

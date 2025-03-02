@@ -1,4 +1,4 @@
-<div wire:id="SRC2BPOiUobLmGYyjKu0">
+<div>
  <input type="hidden" id="reqDoctorValue" value="<?php echo e($reqDoctor ?? '0'); ?>">
  <div class="container-fluid py-1">
   <header class="glass-header p-3 rounded-3 mb-2 shadow-lg">
@@ -91,69 +91,78 @@
       </thead>
       <tbody>
        <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $appointments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $appointment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-        <tr>
-         <td><input type="checkbox" wire:model.live="selectedAppointments" value="<?php echo e($appointment->id); ?>"
-           class="form-check-input"></td>
-         <td><?php echo e($appointments->firstItem() + $index); ?></td>
-         <td><?php echo e($appointment->doctor->full_name); ?></td>
-         <td><?php echo e($appointment->doctor->mobile); ?></td>
-         <td><?php echo e($appointment->doctor->province->name ?? ''); ?> / <?php echo e($appointment->doctor->city->name ?? ''); ?></td>
-         <td><?php echo e(\App\Helpers\JalaliHelper::toJalaliDate($appointment->appointment_date)); ?></td>
-         <td><?php echo e($appointment->start_time); ?></td>
-         <td><?php echo e($appointment->patient->first_name ?? ''); ?> <?php echo e($appointment->patient->last_name ?? ''); ?>
+            <tr>
+             <td><input type="checkbox" wire:model.live="selectedAppointments" value="<?php echo e($appointment->id); ?>"
+               class="form-check-input"></td>
+             <td><?php echo e($appointments->firstItem() + $index); ?></td>
+             <td><?php echo e($appointment->doctor->full_name); ?></td>
+             <td><?php echo e($appointment->doctor->mobile); ?></td>
+             <td><?php echo e($appointment->doctor->province->name ?? ''); ?> / <?php echo e($appointment->doctor->city->name ?? ''); ?></td>
+             <td><?php echo e(\App\Helpers\JalaliHelper::toJalaliDate($appointment->appointment_date)); ?></td>
+             <td><?php echo e($appointment->start_time); ?></td>
+             <td><?php echo e($appointment->patient->first_name ?? ''); ?> <?php echo e($appointment->patient->last_name ?? ''); ?>
 
-          (<?php echo e($appointment->patient->mobile ?? ''); ?>)</td>
-         <td><?php echo e($appointment->patient->national_code ?? ''); ?></td>
-         <td><?php echo e(\App\Helpers\JalaliHelper::toJalaliDateTime($appointment->reserved_at)); ?></td>
-         <td><?php echo e($appointment->tracking_code); ?></td>
-         <td>
-          <span class="badge <?php echo e($appointment->status === 'scheduled' ? 'bg-label-info' : 'bg-label-danger'); ?>">
-           <?php echo e($appointment->status === 'scheduled' ? 'در انتظار خدمت' : $appointment->status); ?>
+              (<?php echo e($appointment->patient->mobile ?? ''); ?>)
+             </td>
+             <td><?php echo e($appointment->patient->national_code ?? ''); ?></td>
+             <td><?php echo e(\App\Helpers\JalaliHelper::toJalaliDateTime($appointment->reserved_at)); ?></td>
+             <td><?php echo e($appointment->tracking_code); ?></td>
+             <td>
+            <span class="badge 
+                <?php echo e($appointment->status === 'scheduled' ? 'bg-label-info' :
+            ($appointment->status === 'cancelled' ? 'bg-label-danger' :
+                ($appointment->status === 'attended' ? 'bg-label-success' :
+                    'bg-label-warning'))); ?>">
+                <?php echo e($appointment->status === 'scheduled' ? 'در انتظار خدمت' :
+            ($appointment->status === 'cancelled' ? 'لغو شده' :
+                ($appointment->status === 'attended' ? 'حضور یافته' :
+                    'غایب'))); ?>
 
-          </span>
-          <!--[if BLOCK]><![endif]--><?php if($appointment->notification_sent): ?>
-           <span style="display:block; text-align:center; color:dodgerblue" title="پیامک تأیید نوبت ارسال شده است">
-            <i class="fa fa-file-text"></i>
-           </span>
-          <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-         </td>
-         <td class="text-center">
-          <button type="button" class="btn btn-sm btn-gradient-secondary" data-bs-toggle="popover"
-           data-bs-content="Site/App: <?php echo e($appointment->appointment_type); ?><br>methodpay: <?php echo e($appointment->payment_status); ?><br>bank_refid: <?php echo e($appointment->fee ? 'N/A' : '0'); ?><br>system: onlinepayment<br>type: <?php echo e($appointment->appointment_type); ?>">
-           <i class="fa fa-info-circle"></i>
-          </button>
-         </td>
-         <td class="text-center">
-          <div class="dropdown">
-           <button class="btn btn-gradient-secondary btn-sm" type="button" data-bs-toggle="dropdown">
-            <i class="fas fa-ellipsis-v"></i>
-           </button>
-           <ul class="dropdown-menu dropdown-menu-end">
-            <?php
-    $userName = trim(
-        ($appointment->patient->first_name ?? '') . ' ' . ($appointment->patient->last_name ?? ''),
-    );
-    $userName = $userName !== '' ? $userName : 'کاربر بدون نام';
-    $isBlocked = \App\Models\Dr\UserBlocking::where('user_id', $appointment->patient_id)
-        ->where('doctor_id', $appointment->doctor_id)
-        ->where('status', 1)
-        ->exists();
-            ?>
-            <li>
-             <a class="dropdown-item" href="#"
-              wire:click.prevent="toggleBlockUser(<?php echo e($appointment->patient_id); ?>, <?php echo e($appointment->doctor_id); ?>, '<?php echo e(addslashes($userName)); ?>', <?php echo e($isBlocked ? 0 : 1); ?>)">
-              <?php echo e($isBlocked ? 'خروج از مسدودی' : 'مسدود کردن'); ?>
+            </span>
+              <!--[if BLOCK]><![endif]--><?php if($appointment->notification_sent): ?>
+               <span style="display:block; text-align:center; color:dodgerblue" title="پیامک تأیید نوبت ارسال شده است">
+                <i class="fa fa-file-text"></i>
+               </span>
+              <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+             </td>
+             <td class="text-center">
+              <button type="button" class="btn btn-sm btn-gradient-secondary" data-bs-toggle="popover"
+               data-bs-content="Site/App: <?php echo e($appointment->appointment_type); ?><br>methodpay: <?php echo e($appointment->payment_status); ?><br>bank_refid: <?php echo e($appointment->fee ? 'N/A' : '0'); ?><br>system: onlinepayment<br>type: <?php echo e($appointment->appointment_type); ?>">
+               <i class="fa fa-info-circle"></i>
+              </button>
+             </td>
+             <td class="text-center">
+              <div class="dropdown">
+               <button class="btn btn-gradient-secondary btn-sm" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-ellipsis-v"></i>
+               </button>
+               <ul class="dropdown-menu dropdown-menu-end">
+                <?php
+        $userName = trim(
+            ($appointment->patient->first_name ?? '') . ' ' . ($appointment->patient->last_name ?? ''),
+        );
+        $userName = $userName !== '' ? $userName : 'کاربر بدون نام';
+        $isBlocked = \App\Models\Dr\UserBlocking::where('user_id', $appointment->patient_id)
+            ->where('doctor_id', $appointment->doctor_id)
+            ->where('status', 1)
+            ->exists();
+                ?>
+                <li>
+                 <a class="dropdown-item" href="#"
+                  wire:click.prevent="toggleBlockUser(<?php echo e($appointment->patient_id); ?>, <?php echo e($appointment->doctor_id); ?>, '<?php echo e(addslashes($userName)); ?>', <?php echo e($isBlocked ? 0 : 1); ?>)">
+                  <?php echo e($isBlocked ? 'خروج از مسدودی' : 'مسدود کردن'); ?>
 
-             </a>
-            </li>
-            <li><a class="dropdown-item" href="#"
-              wire:click.prevent="cancelAppointment(<?php echo e($appointment->id); ?>)">لغو نوبت</a></li>
-            <li><a class="dropdown-item text-danger" href="#"
-              wire:click.prevent="deleteAppointment(<?php echo e($appointment->id); ?>)">حذف</a></li>
-           </ul>
-          </div>
-         </td>
-        </tr>
+                 </a>
+                </li>
+                <li><a class="dropdown-item" href="#"
+                  wire:click.prevent="cancelAppointment(<?php echo e($appointment->id); ?>)">لغو
+                  نوبت</a></li>
+                <li><a class="dropdown-item text-danger" href="#"
+                  wire:click.prevent="deleteAppointment(<?php echo e($appointment->id); ?>)">حذف</a></li>
+               </ul>
+              </div>
+             </td>
+            </tr>
        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
         <tr>
          <td colspan="14" class="text-center py-5">
@@ -181,13 +190,16 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
    }
+
    .glass-header:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
    }
+
    .panel-default {
     border: 1px solid #e5e7eb;
     border-radius: 8px;
    }
+
    .panel-heading {
     background: linear-gradient(135deg, #f9fafb, #e5e7eb);
     padding: 10px;
@@ -196,9 +208,11 @@
     border-radius: 8px 8px 0 0;
     color: #4b5563;
    }
+
    .panel-body {
     padding: 15px;
    }
+
    .input-shiny {
     border: 1px solid #d1d5db;
     border-radius: 6px;
@@ -208,239 +222,265 @@
     background: #fff;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
    }
+
    .input-shiny:focus {
     border-color: #4f46e5;
     box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
    }
+
    .btn-gradient-secondary {
     background: linear-gradient(90deg, #6b7280, #9ca3af);
     border: none;
     color: white;
    }
+
    .btn-gradient-secondary:hover {
     background: linear-gradient(90deg, #4b5563, #6b7280);
     transform: translateY(-1px);
    }
+
    .btn-outline-secondary {
     border: 1px solid #6b7280;
     color: #6b7280;
     background: transparent;
    }
+
    .btn-outline-secondary:hover {
     background: #6b7280;
     color: white;
     transform: translateY(-1px);
    }
+
    .btn-outline-primary {
     border: 1px solid #4f46e5;
     color: #4f46e5;
     background: transparent;
    }
+
    .btn-outline-primary:hover {
     background: #4f46e5;
     color: white;
     transform: translateY(-1px);
    }
+
    .btn-outline-danger {
     border: 1px solid #ef4444;
     color: #ef4444;
     background: transparent;
    }
+
    .btn-outline-danger:hover:not(:disabled) {
     background: #ef4444;
     color: white;
     transform: translateY(-1px);
    }
+
    .btn-outline-danger:disabled {
     border-color: #d1d5db;
     color: #d1d5db;
     cursor: not-allowed;
    }
+
    .bg-light {
     background: #f9fafb;
     border: 1px solid #e5e7eb;
    }
+
    .table-sm td,
    .table-sm th {
     padding: 0.5rem;
     font-size: 0.875rem;
    }
+
    .dropdown-menu {
     min-width: 120px;
    }
   </style>
-  <script>
-   document.addEventListener('DOMContentLoaded', () => {
+<script>
+document.addEventListener('DOMContentLoaded', () => {
     function initializeTomSelect() {
-     document.querySelectorAll('.tom-select:not(.tomselected)').forEach(select => {
-      const tom = new TomSelect(select, {
-       create: false,
-       maxOptions: null,
-       direction: 'rtl',
-       search: true,
-       placeholder: select.dataset.placeholder,
-       render: {
-        option: function(data, escape) {
-         return `<div>${escape(data.text)}</div>`;
-        },
-        item: function(data, escape) {
-         return `<div>${escape(data.text)}</div>`;
-        }
-       },
-       onChange: function(value) {
-        select.dispatchEvent(new Event('change'));
-       },
-       onInitialize: function() {
-        const initialValue = document.getElementById('reqDoctorValue').value;
-        this.setValue(initialValue, true);
-       }
-      });
-     });
+        document.querySelectorAll('.tom-select:not(.tomselected)').forEach(select => {
+            const tom = new TomSelect(select, {
+                create: false,
+                maxOptions: null,
+                direction: 'rtl',
+                search: true,
+                placeholder: select.dataset.placeholder,
+                render: {
+                    option: function(data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    },
+                    item: function(data, escape) {
+                        return `<div>${escape(data.text)}</div>`;
+                    }
+                },
+                onChange: function(value) {
+                    select.dispatchEvent(new Event('change'));
+                },
+                onInitialize: function() {
+                    const initialValue = document.getElementById('reqDoctorValue').value;
+                    this.setValue(initialValue, true);
+                }
+            });
+        });
     }
     initializeTomSelect();
     $('[data-bs-toggle="popover"]').popover();
-    document.addEventListener('livewire:initialized', () => {
-     Livewire.on('toast', (message, options = {}) => {
-      toastr[options.type || 'info'](message);
-     });
-     Livewire.on('confirmAction', (action, id) => {
-      Swal.fire({
-       title: 'آیا مطمئن هستید؟',
-       text: action === 'cancel' ? 'این نوبت لغو خواهد شد!' : 'این نوبت حذف خواهد شد!',
-       icon: 'warning',
-       showCancelButton: true,
-       confirmButtonColor: '#ef4444',
-       cancelButtonText: 'خیر',
-       confirmButtonText: 'بله'
-      }).then((result) => {
-       if (result.isConfirmed) {
-        if (action === 'cancel') {
-         Livewire.dispatch('callMethod', {
-          method: 'confirmCancel',
-          params: [id]
-         });
-        } else {
-         Livewire.dispatch('callMethod', {
-          method: 'confirmDelete',
-          params: [id]
-         });
-        }
-       }
-      });
-     });
-     Livewire.on('confirmDeleteSelected', () => {
-      Swal.fire({
-       title: 'آیا مطمئن هستید؟',
-       text: 'نوبت‌های انتخاب‌شده حذف خواهند شد!',
-       icon: 'warning',
-       showCancelButton: true,
-       confirmButtonColor: '#ef4444',
-       cancelButtonText: 'خیر',
-       confirmButtonText: 'بله'
-      }).then((result) => {
-       if (result.isConfirmed) {
-        Livewire.dispatch('callMethod', {
-         method: 'confirmDeleteSelected',
-         params: []
+
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('toast', (event) => {
+            const data = event[0];
+            const { message, type } = data;
+            if (typeof toastr === 'undefined') {
+                console.error('Toastr is not loaded!');
+                return;
+            }
+            const toastOptions = {
+                positionClass: 'toast-top-right',
+                timeOut: 3000,
+                progressBar: false,
+            };
+            if (type === 'success') toastr.success(message, '', toastOptions);
+            else if (type === 'error') toastr.error(message, '', toastOptions);
+            else if (type === 'warning') toastr.warning(message, '', toastOptions);
+            else toastr.info(message, '', toastOptions);
         });
-       }
-      });
-     });
-     Livewire.on('showBanForm', ({
-      userId,
-      doctorId,
-      userName,
-      status
-     }) => {
-      const isBlocking = status === 1;
-      Swal.fire({
-       title: isBlocking ? 'مسدود کردن' : 'خروج از مسدودی',
-       html: `<p style="text-align: right;">آیا از ${isBlocking ? 'مسدود کردن' : 'خروج از مسدودی'} ${userName || 'کاربر بدون نام'} مطمئن هستید؟</p>` +
-        (isBlocking ?
-         '<input id="banReason" class="swal2-input" placeholder="دلیل مسدود کردن" style="width: 100%;">' +
-         '<label style="display: block; text-align: right;">تاریخ انقضا:</label>' +
-         '<input id="banExpiry" class="swal2-input" type="date" style="width: 100%; direction: ltr; text-align: center;">' :
-         ''),
-       showCancelButton: true,
-       confirmButtonText: 'ثبت',
-       cancelButtonText: 'انصراف',
-       preConfirm: () => {
-        if (isBlocking) {
-         const reason = document.getElementById('banReason').value;
-         const expiry = document.getElementById('banExpiry').value;
-         if (!reason || !expiry) {
-          Swal.showValidationMessage('لطفاً دلیل و تاریخ انقضا را وارد کنید');
-         }
-         return {
-          status: 1,
-          reason,
-          expiry
-         };
-        }
-        return {
-         status: 0
-        };
-       }
-      }).then((result) => {
-       if (result.isConfirmed) {
-        Livewire.dispatch('callMethod', {
-         method: 'toggleBlockUserConfirm',
-         params: [userId, doctorId, result.value]
+
+        Livewire.on('show-ban-form', (event) => {
+            const data = event[0];
+            const { userId, doctorId, userName, status } = data;
+            const isBlocking = status === 1;
+            Swal.fire({
+                title: isBlocking ? 'مسدود کردن کاربر' : 'خروج از مسدودی',
+                html: `<p style="text-align: right;">آیا از ${isBlocking ? 'مسدود کردن' : 'خروج از مسدودی'} "${userName}" مطمئن هستید؟</p>` +
+                    (isBlocking ?
+                        '<input id="banReason" class="swal2-input" placeholder="دلیل مسدود کردن" style="width: 100%;">' +
+                        '<label style="display: block; text-align: right;">تاریخ انقضا:</label>' +
+                        '<input id="banExpiry" class="form-control input-shiny custom-datepicker" placeholder="انتخاب تاریخ ..." style="width: 100%; z-index: 9999;" readonly>' :
+                        ''),
+                showCancelButton: true,
+                confirmButtonText: 'ثبت',
+                cancelButtonText: 'انصراف',
+                didOpen: () => {
+                    if (isBlocking) {
+                        const expiryInput = document.getElementById('banExpiry');
+                        window.initializeDatepicker(expiryInput);
+                        const calendar = expiryInput.parentNode.querySelector('.calendar');
+                        if (calendar) {
+                            calendar.style.zIndex = '10000';
+                        }
+                    }
+                },
+                preConfirm: () => {
+                    if (isBlocking) {
+                        const reason = document.getElementById('banReason').value;
+                        const expiry = document.getElementById('banExpiry').value;
+                        if (!reason || !expiry) {
+                            Swal.showValidationMessage('لطفاً دلیل و تاریخ انقضا را وارد کنید');
+                            return false;
+                        }
+                        return { status: 1, reason: reason, expiry: expiry };
+                    }
+                    return { status: 0 };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                
+                    window.Livewire.find('<?php echo e($_instance->getId()); ?>').toggleBlockUserConfirm(userId, doctorId, result.value);
+                }
+            });
         });
-       }
-      });
-     });
-     Livewire.hook('morph.updated', () => {
-      document.querySelectorAll('select.tom-select').forEach(select => {
-       const tom = select.tomselect;
-       const currentValue = document.getElementById('reqDoctorValue').value;
-       if (!tom || !document.querySelector('.ts-wrapper')) {
-        const newTom = new TomSelect(select, {
-         create: false,
-         maxOptions: null,
-         direction: 'rtl',
-         search: true,
-         placeholder: select.dataset.placeholder,
-         render: {
-          option: function(data, escape) {
-           return `<div>${escape(data.text)}</div>`;
-          },
-          item: function(data, escape) {
-           return `<div>${escape(data.text)}</div>`;
-          }
-         },
-         onChange: function(value) {
-          select.dispatchEvent(new Event('change'));
-         }
+
+        Livewire.on('confirm-action', (event) => {
+            const data = event[0];
+            const { action, id } = data;
+            Swal.fire({
+                title: 'آیا مطمئن هستید؟',
+                text: action === 'cancel' ? 'این نوبت لغو خواهد شد!' : 'این نوبت حذف خواهد شد!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonText: 'خیر',
+                confirmButtonText: 'بله'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (action === 'cancel') {
+                        window.Livewire.find('<?php echo e($_instance->getId()); ?>').confirmCancel(id);
+                    } else {
+                        window.Livewire.find('<?php echo e($_instance->getId()); ?>').confirmDelete(id);
+                    }
+                }
+            });
         });
-        newTom.setValue(currentValue, true);
-       } else {
-        tom.setValue(currentValue, true);
-       }
-      });
-      document.querySelectorAll('.custom-datepicker').forEach(input => {
-       if (!input.dataset.datepickerInitialized || !input.parentNode.querySelector('.datepicker-container')) {
-        window.initializeDatepicker(input);
-       } else {
-        input.removeEventListener('click', input.clickHandler);
-        input.clickHandler = function(e) {
-         e.stopPropagation();
-         const calendar = input.parentNode.querySelector('.calendar');
-         calendar.classList.toggle('active');
-         if (calendar.classList.contains('active')) {
-          const daysContainer = calendar.querySelector('.days');
-          if (!daysContainer.innerHTML) {
-           window.initializeDatepicker(input);
-          }
-         }
-        };
-        input.addEventListener('click', input.clickHandler);
-       }
-      });
-     });
+
+        Livewire.on('confirm-delete-selected', (event) => {
+            Swal.fire({
+                title: 'آیا مطمئن هستید؟',
+                text: 'نوبت‌های انتخاب‌شده حذف خواهند شد!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonText: 'خیر',
+                confirmButtonText: 'بله'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.Livewire.find('<?php echo e($_instance->getId()); ?>').confirmDeleteSelected();
+                }
+            });
+        });
     });
-   });
-  </script>
+
+    Livewire.hook('morph.updated', () => {
+        document.querySelectorAll('select.tom-select').forEach(select => {
+            const tom = select.tomselect;
+            const currentValue = document.getElementById('reqDoctorValue').value;
+            if (!tom || !document.querySelector('.ts-wrapper')) {
+                const newTom = new TomSelect(select, {
+                    create: false,
+                    maxOptions: null,
+                    direction: 'rtl',
+                    search: true,
+                    placeholder: select.dataset.placeholder,
+                    render: {
+                        option: function(data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        },
+                        item: function(data, escape) {
+                            return `<div>${escape(data.text)}</div>`;
+                        }
+                    },
+                    onChange: function(value) {
+                        select.dispatchEvent(new Event('change'));
+                    }
+                });
+                newTom.setValue(currentValue, true);
+            } else {
+                tom.setValue(currentValue, true);
+            }
+        });
+
+        document.querySelectorAll('.custom-datepicker').forEach(input => {
+            if (!input.dataset.datepickerInitialized || !input.parentNode.querySelector('.datepicker-container')) {
+                window.initializeDatepicker(input);
+            } else {
+                input.removeEventListener('click', input.clickHandler);
+                input.clickHandler = function(e) {
+                    e.stopPropagation();
+                    const calendar = input.parentNode.querySelector('.calendar');
+                    calendar.classList.toggle('active');
+                    if (calendar.classList.contains('active')) {
+                        const daysContainer = calendar.querySelector('.days');
+                        if (!daysContainer.innerHTML) {
+                            window.initializeDatepicker(input);
+                        }
+                    }
+                };
+                input.addEventListener('click', input.clickHandler);
+            }
+        });
+    });
+});
+</script>
  </div>
 </div>
 <?php /**PATH D:\MyProjects\Benobe\panel\resources\views/livewire/admin/doctors/logs-doctor.blade.php ENDPATH**/ ?>
