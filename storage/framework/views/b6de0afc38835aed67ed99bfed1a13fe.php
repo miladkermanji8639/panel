@@ -5,7 +5,7 @@
    <div class="d-flex align-items-center justify-content-between gap-3">
     <div class="d-flex align-items-center gap-2">
      <i class="fas fa-calendar-check fs-4 text-white animate-bounce"></i>
-     <h4 class="mb-0 fw-bold text-white">لاگ پزشکان</h4>
+     <h4 class="mb-0 fw-bold text-white">گزارش رزرو و نوبت دهی پزشکان</h4>
     </div>
     <div class="text-white fw-medium fs-6">جستجو و مدیریت نوبت‌ها</div>
    </div>
@@ -70,7 +70,7 @@
   <div class="card shadow-sm">
    <div class="card-body p-3">
     <div class="table-responsive text-nowrap">
-     <table class="table table-bordered table-sm">
+     <table class="table table-bordered table-striped table-sm">
       <thead>
        <tr>
         <th style="width: 2%;"><input type="checkbox" wire:model.live="selectAll" class="form-check-input"></th>
@@ -130,14 +130,14 @@
            </button>
            <ul class="dropdown-menu dropdown-menu-end">
             <?php
-             $userName = trim(
-                 ($appointment->patient->first_name ?? '') . ' ' . ($appointment->patient->last_name ?? ''),
-             );
-             $userName = $userName !== '' ? $userName : 'کاربر بدون نام';
-             $isBlocked = \App\Models\Dr\UserBlocking::where('user_id', $appointment->patient_id)
-                 ->where('doctor_id', $appointment->doctor_id)
-                 ->where('status', 1)
-                 ->exists();
+    $userName = trim(
+        ($appointment->patient->first_name ?? '') . ' ' . ($appointment->patient->last_name ?? ''),
+    );
+    $userName = $userName !== '' ? $userName : 'کاربر بدون نام';
+    $isBlocked = \App\Models\Dr\UserBlocking::where('user_id', $appointment->patient_id)
+        ->where('doctor_id', $appointment->doctor_id)
+        ->where('status', 1)
+        ->exists();
             ?>
             <li>
              <a class="dropdown-item" href="#"
