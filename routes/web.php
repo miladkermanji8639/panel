@@ -295,7 +295,7 @@ Route::prefix('admin')
         Route::prefix('doctors/')->group(function () {
             Route::get('logs-doctor/', [LogsDoctorController::class, 'index'])->name('admin.doctors.logs-doctor.index');
             Route::get('order-visit/', [OrderVisitController::class, 'index'])->name('admin.doctors.order-visit.index');
-            Route::get('order-visit/show', [OrderVisitController::class, 'show'])->name('admin.doctors.order-visit.show');
+            Route::get('order-visit/show/{id}', [OrderVisitController::class, 'show'])->name('admin.doctors.order-visit.show');
             Route::prefix('doctors-management/')->group(function () {
                 Route::get('/status/{doctor}', [DoctorsManagementController::class, 'status'])->name('admin.doctor.status');
                 Route::get('/', [DoctorsManagementController::class, 'index'])->name('admin.doctors.doctors-management.index');
