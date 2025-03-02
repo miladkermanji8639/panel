@@ -1,0 +1,172 @@
+/* خط 1: کانتینر اصلی سلکت */
+@import url('./../../dr-assets/fonts/IRANSans/style.css');
+
+.custom-select-wrapper {
+ position: relative;
+ /* خط 2: موقعیت نسبی برای قرارگیری گزینه‌ها */
+ width: 100%;
+ /* خط 3: عرض کامل */
+}
+
+input,
+.custom-select-option {
+ font-family: IRANSans !important;
+}
+
+/* خط 4: کانتینر داخلی سلکت */
+.custom-select {
+ position: relative;
+ /* خط 5: موقعیت نسبی برای گزینه‌ها */
+ width: 100%;
+ /* خط 6: عرض کامل */
+ font-size: 14px;
+ /* خط 7: اندازه فونت */
+ font-family: 'Arial', sans-serif;
+ /* خط 8: فونت */
+ cursor: pointer;
+ /* خط 9: نشانگر دست */
+}
+
+/* خط 10: اینپوت اصلی که مقدار رو نشون می‌ده */
+.custom-select-input {
+ width: 100%;
+ /* خط 11: عرض کامل */
+ padding: 10px 30px 10px 10px;
+ /* خط 12: فاصله داخلی (راست برای دکمه پاک کردن) */
+ border: 1px solid #d1d5db;
+ /* خط 13: حاشیه خاکستری */
+ border-radius: 6px;
+ /* خط 14: گوشه‌های گرد */
+ background: #fff;
+ /* خط 15: پس‌زمینه سفید */
+ box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+ /* خط 16: سایه داخلی */
+ transition: border-color 0.3s ease, box-shadow 0.3s ease;
+ /* خط 17: انیمیشن حاشیه و سایه */
+ font-size: 14px;
+ /* خط 18: اندازه فونت */
+ outline: none;
+ /* خط 19: حذف حاشیه فوکوس پیش‌فرض */
+ cursor: pointer;
+ /* خط 20: نشانگر دست */
+}
+
+/* خط 21: حالت فوکوس اینپوت */
+.custom-select-input:focus {
+ border-color: #4f46e5;
+ /* خط 22: رنگ حاشیه بنفش */
+ box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+ /* خط 23: سایه بنفش */
+}
+
+/* خط 24: کانتینر گزینه‌ها */
+.custom-select-options {
+ position: absolute;
+ /* خط 25: موقعیت مطلق زیر اینپوت */
+ top: 100%;
+ /* خط 26: زیر اینپوت */
+ left: 0;
+ /* خط 27: چپ */
+ right: 0;
+ /* خط 28: راست */
+ max-height: 200px;
+ /* خط 29: حداکثر ارتفاع با اسکرول */
+ overflow-y: auto;
+ /* خط 30: اسکرول عمودی */
+ background: #fff;
+ /* خط 31: پس‌زمینه سفید */
+ border: 1px solid #d1d5db;
+ /* خط 32: حاشیه خاکستری */
+ border-radius: 6px;
+ /* خط 33: گوشه‌های گرد */
+ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+ /* خط 34: سایه خارجی */
+ z-index: 1000;
+ /* خط 35: بالای بقیه المنت‌ها */
+ display: none;
+ /* خط 36: مخفی به‌صورت پیش‌فرض */
+ margin-top: 4px;
+ /* خط 37: فاصله از اینپوت */
+ opacity: 0;
+ /* خط 38: شفافیت اولیه برای انیمیشن */
+ transform: translateY(-10px);
+ /* خط 39: جابجایی اولیه برای انیمیشن */
+ transition: opacity 0.2s ease, transform 0.2s ease;
+ /* خط 40: انیمیشن باز شدن */
+}
+
+/* خط 41: حالت باز گزینه‌ها */
+.custom-select-options.open {
+ display: block;
+ /* خط 42: نمایش */
+ opacity: 1;
+ /* خط 43: شفافیت کامل */
+ transform: translateY(0);
+ /* خط 44: جابجایی به موقعیت اصلی */
+}
+
+/* خط 45: هر گزینه */
+.custom-select-option {
+ padding: 8px 12px;
+ /* خط 46: فاصله داخلی */
+ cursor: pointer;
+ /* خط 47: نشانگر دست */
+ transition: background 0.2s ease;
+ /* خط 48: انیمیشن تغییر رنگ */
+}
+
+/* خط 49: هاور روی گزینه */
+.custom-select-option:hover {
+ background: #f9fafb;
+ /* خط 50: رنگ خاکستری روشن */
+}
+
+/* خط 51: گزینه انتخاب‌شده */
+.custom-select-option.selected {
+ background: #4f46e5;
+ /* خط 52: رنگ بنفش */
+ color: white;
+ /* خط 53: متن سفید */
+}
+
+/* خط 54: دکمه پاک کردن */
+.custom-select-clear {
+ position: absolute;
+ /* خط 55: موقعیت مطلق */
+ right: 10px;
+ /* خط 56: فاصله از راست */
+ top: 50%;
+ /* خط 57: وسط عمودی */
+ transform: translateY(-50%);
+ /* خط 58: تنظیم موقعیت عمودی */
+ color: #6b7280;
+ /* خط 59: رنگ خاکستری */
+ cursor: pointer;
+ /* خط 60: نشانگر دست */
+ font-size: 16px;
+ /* خط 61: اندازه فونت */
+ display: none;
+ /* خط 62: مخفی به‌صورت پیش‌فرض */
+}
+
+/* خط 63: نمایش دکمه پاک کردن وقتی اینپوت مقدار داره */
+.custom-select-input:not(:placeholder-shown)+.custom-select-clear {
+ display: block;
+ /* خط 64: نمایش */
+}
+
+/* خط 65: اینپوت جستجو */
+.custom-select-search {
+ width: 100%;
+ /* خط 66: عرض کامل */
+ padding: 8px 12px;
+ /* خط 67: فاصله داخلی */
+ border: none;
+ /* خط 68: بدون حاشیه */
+ border-bottom: 1px solid #e5e7eb;
+ /* خط 69: خط زیرین */
+ outline: none;
+ /* خط 70: حذف حاشیه فوکوس */
+ font-size: 14px;
+ /* خط 71: اندازه فونت */
+}

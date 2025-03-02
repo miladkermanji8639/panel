@@ -71,11 +71,6 @@ $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-c
  <!-- $isFront is used to append the front layout scripts only on the front layout otherwise the variable will be blank -->
  @include('admin.content.layouts/sections/scripts' . $isFront)
 
- {{-- sweet alert --}}
- @include('admin.content.alerts.sweetalert.success')
- @include('admin.content.alerts.sweetalert.error')
- @include('admin.content.alerts.sweetalert.delete-confirm', ['className' => 'delete'])
- {{-- sweet alert --}}
  @livewireScripts
 {{--  @networkStatus --}}
 <link rel="stylesheet" href="{{ asset('admin-assets/css/codemirror/5.65.7/codemirror.min.css') }}">

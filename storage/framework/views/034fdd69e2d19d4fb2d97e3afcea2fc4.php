@@ -73,11 +73,6 @@ $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-c
  <!-- $isFront is used to append the front layout scripts only on the front layout otherwise the variable will be blank -->
  <?php echo $__env->make('admin.content.layouts/sections/scripts' . $isFront, array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
- 
- <?php echo $__env->make('admin.content.alerts.sweetalert.success', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
- <?php echo $__env->make('admin.content.alerts.sweetalert.error', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
- <?php echo $__env->make('admin.content.alerts.sweetalert.delete-confirm', ['className' => 'delete'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
- 
  <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
 
 
