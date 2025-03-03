@@ -14,7 +14,12 @@ class doctor
 
     public function handle(Request $request, Closure $next): Response
     {
-        // بررسی اینکه آیا دکتر یا منشی وارد شده است
+        // چک کردن گارد مدیر (manager)
+        if (Auth::guard('manager')->check()) {
+            return $next($request); // اجازه ورود به مدیر
+        }
+
+        // چک کردن گارد دکتر یا منشی
         if (!Auth::guard('doctor')->check() && !Auth::guard('secretary')->check()) {
             return redirect()->to(route('dr.auth.login-register-form'));
         }

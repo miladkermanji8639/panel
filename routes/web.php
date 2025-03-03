@@ -300,7 +300,8 @@ Route::prefix('admin')
                 Route::get('/status/{doctor}', [DoctorsManagementController::class, 'status'])->name('admin.doctor.status');
                 Route::get('/', [DoctorsManagementController::class, 'index'])->name('admin.doctors.doctors-management.index');
                 Route::get('/create', [DoctorsManagementController::class, 'create'])->name('admin.doctors.doctors-management.create');
-                Route::get('/edit', [DoctorsManagementController::class, 'edit'])->name('admin.doctors.doctors-management.edit');
+                Route::get('/edit/{doctor}', [DoctorsManagementController::class, 'edit'])->name('admin.doctors.doctors-management.edit'); // اصلاح شده
+                Route::post('/update/{doctor}', [DoctorsManagementController::class, 'update'])->name('admin.doctors.doctors-management.update'); // اضافه شده برای ذخیره تغییرات
                 Route::prefix('bime/')->group(function () {
                     Route::get('/', [BimeController::class, 'index'])->name('admin.doctors.doctors-management.bime.index');
                     Route::get('/create', [BimeController::class, 'create'])->name('admin.doctors.doctors-management.bime.create');
@@ -317,6 +318,13 @@ Route::prefix('admin')
                     Route::get('/', [GalleryController::class, 'index'])->name('admin.content.doctors.doctors-management.gallery.index');
                 });
             });
+            Route::get('/doctor-login/{doctor}', function (\App\Models\Dr\Doctor $doctor) {
+                // لاگین کردن دکتر با گارد doctor
+                Auth::guard('doctor')->login($doctor);
+
+                // ریدایرکت به پنل دکتر
+                return redirect()->route('dr-panel');
+            })->name('doctor.login');
             Route::prefix('wallet-doctor-request/')->group(function () {
                 Route::get('/', [WalletDoctorRequestController::class, 'index'])->name('admin.content.doctors.wallet-doctor-request.index');
                 Route::get('/show', [WalletDoctorRequestController::class, 'show'])->name('admin.content.doctors.wallet-doctor-request.show');

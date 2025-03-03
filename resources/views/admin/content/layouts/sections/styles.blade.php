@@ -1,4 +1,3 @@
-<script src="{{ asset('admin-assets/js/jquery/jquery.min.js') }}"></script>
 
 @vite(['resources/assets/vendor/fonts/tabler-icons.scss', 'resources/assets/vendor/fonts/fontawesome.scss', 'resources/assets/vendor/fonts/flag-icons.scss'])
 <!-- Core CSS -->
@@ -9,9 +8,10 @@
 <!-- Page Styles -->
 @yield('page-style')
 
-<link rel="stylesheet" href="{{ asset('admin-assets/css/choosen/choosen.min.css') }}">
 <link rel="stylesheet" href="{{ asset('dr-assets/panel/css/toastr/toastr.min.css') }}">
 <link rel="stylesheet" href="{{ asset('dr-asset/panel/css/tom-select.bootstrap5.min.css') }}">
+<link href="{{ asset('admin-assets/css/select2/select2.min.css') }}" rel="stylesheet" />
+
 <style>
       .h-50{
             height: 50px !important;

@@ -14,6 +14,7 @@ use App\Models\Admin\Dashboard\Cities\Zone;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Admin\Doctors\DoctorManagement\DoctorTariff;
 
 class Doctor extends Authenticatable
 {
@@ -107,7 +108,10 @@ class Doctor extends Authenticatable
     {
         return $this->belongsTo(Zone::class, 'province_id');
     }
-
+    public function tariff()
+    {
+        return $this->hasOne(DoctorTariff::class, 'doctor_id');
+    }
     public function city()
     {
         return $this->belongsTo(Zone::class, 'city_id'); // ارتباط با شهر

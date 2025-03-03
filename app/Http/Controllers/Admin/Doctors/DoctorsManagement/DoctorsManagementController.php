@@ -6,6 +6,7 @@ use App\Models\Dr\Doctor;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\Controller;
 use App\Models\Admin\Dashboard\Cities\Zone;
+use App\Models\Admin\Doctors\DoctorManagement\DoctorTariff;
 
 class DoctorsManagementController extends Controller
 {
@@ -61,18 +62,39 @@ class DoctorsManagementController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Doctor $doctor)
     {
-        //
+        return view('admin.content.doctors.doctors-management.edit', compact('doctor'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Doctor $doctor)
     {
-        //
+        $request->validate([
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'mobile' => 'nullable|string|max:11|unique:doctors,mobile,' . $doctor->id,
+            'status' => 'required|in:0,1,2,3,4',
+            'visit_fee' => 'nullable|integer|min:0',
+            'site_fee' => 'nullable|integer|min:0',
+        ]);
+
+        // آپدیت اطلاعات دکتر
+        $doctor->update([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'mobile' => $request->mobile,
+            'status' => $request->status,
+        ]);
+
+        // آپدیت یا ایجاد تعرفه
+        $tariff = $doctor->tariff ?? new DoctorTariff(['doctor_id' => $doctor->id]);
+        $tariff->visit_fee = $request->visit_fee ?? 0;
+        $tariff->site_fee = $request->site_fee ?? 0;
+        $tariff->save();
+
+        return redirect()->route('admin.doctors.doctors-management.index')->with('success', 'اطلاعات پزشک با موفقیت به‌روزرسانی شد.');
     }
+
 
     /**
      * Remove the specified resource from storage.
