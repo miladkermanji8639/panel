@@ -9,11 +9,12 @@ use Morilog\Jalali\Jalalian;
 use App\Helpers\JalaliHelper;
 use App\Models\Dr\Appointment;
 use App\Models\Dr\UserBlocking;
+use Illuminate\Support\Facades\Log;
+use App\Models\Dr\CounselingAppointment;
 use Modules\SendOtp\App\Http\Services\MessageService;
 use Modules\SendOtp\App\Http\Services\SMS\SmsService;
-use Illuminate\Support\Facades\Log;
 
-class LogsDoctor extends Component
+class DoctorCounselingLogs extends Component
 {
     use WithPagination;
 
@@ -62,8 +63,8 @@ class LogsDoctor extends Component
 
     public function toggleBlockUser($userId, $doctorId, $userName, $status)
     {
-       
-        $appointment = Appointment::where('patient_id', $userId)->where('doctor_id', $doctorId)->first();
+
+        $appointment = CounselingAppointment::where('patient_id', $userId)->where('doctor_id', $doctorId)->first();
         $patientName = $appointment && $appointment->patient
             ? trim($appointment->patient->first_name . ' ' . $appointment->patient->last_name)
             : 'کاربر بدون نام';
@@ -83,7 +84,7 @@ class LogsDoctor extends Component
 
     public function toggleBlockUserConfirm($userId, $doctorId, $data)
     {
-       
+
         try {
             $isBlocked = UserBlocking::where('user_id', $userId)
                 ->where('doctor_id', $doctorId)
@@ -148,7 +149,7 @@ class LogsDoctor extends Component
     public function confirmCancel($id)
     {
         try {
-            $appointment = Appointment::findOrFail($id);
+            $appointment = CounselingAppointment::findOrFail($id);
 
             // چک کردن اینکه نوبت قبلاً لغو شده یا نه
             if ($appointment->status === 'cancelled') {
@@ -183,7 +184,7 @@ class LogsDoctor extends Component
     public function confirmDelete($id)
     {
         try {
-            $appointment = Appointment::findOrFail($id);
+            $appointment = CounselingAppointment::findOrFail($id);
             $appointment->delete();
             $this->selectedAppointments = array_diff($this->selectedAppointments, [$id]);
             $this->dispatch('toast', ['message' => 'نوبت با موفقیت حذف شد.', 'type' => 'success']);
@@ -194,7 +195,7 @@ class LogsDoctor extends Component
 
     public function deleteSelected()
     {
-       
+
         if (empty($this->selectedAppointments)) {
             $this->dispatch('toast', ['message' => 'هیچ نوبت‌ی انتخاب نشده است.', 'type' => 'warning']);
             return;
@@ -204,9 +205,9 @@ class LogsDoctor extends Component
 
     public function confirmDeleteSelected()
     {
-       
+
         try {
-            Appointment::whereIn('id', $this->selectedAppointments)->delete();
+            CounselingAppointment::whereIn('id', $this->selectedAppointments)->delete();
             $this->selectedAppointments = [];
             $this->selectAll = false;
             $this->dispatch('toast', ['message' => 'نوبت‌های انتخاب‌شده با موفقیت حذف شدند.', 'type' => 'success']);
@@ -218,8 +219,20 @@ class LogsDoctor extends Component
     public function export()
     {
         $appointments = $this->getAppointmentsQuery()->get();
-        $csv = "ردیف,پزشک,شماره تماس,استان/شهر,تاریخ ملاقات,زمان ملاقات,نام کاربر,کدملی کاربر,تاریخ رزرو,کد پیگیری,وضعیت\n";
+        $csv = "ردیف,پزشک,شماره تماس,استان/شهر,تاریخ ملاقات,زمان ملاقات,نام کاربر,کدملی کاربر,تاریخ رزرو,کد پیگیری,وضعیت,مبلغ (تومان),مدت زمان (دقیقه),زمان تماس,وضعیت تسویه\n";
         foreach ($appointments as $index => $appointment) {
+            $statusText = match ($appointment->status) {
+                'scheduled' => 'در انتظار خدمت',
+                'cancelled' => 'لغو شده',
+                'attended' => 'حضور یافته',
+                'missed' => 'غایب',
+                'pending_review' => 'در انتظار بررسی و تماس',
+                'call_answered' => 'تماس و پاسخ داده شده',
+                'call_completed' => 'مکالمه انجام و پایان یافته است',
+                'refunded' => 'بازگشت به کیف پول',
+                default => $appointment->status,
+            };
+
             $csv .= ($index + 1) . ',' .
                 ($appointment->doctor->full_name ?? '') . ',' .
                 ($appointment->doctor->mobile ?? '') . ',' .
@@ -230,18 +243,55 @@ class LogsDoctor extends Component
                 ($appointment->patient->national_code ?? '') . ',' .
                 JalaliHelper::toJalaliDateTime($appointment->reserved_at) . ',' .
                 ($appointment->tracking_code ?? '') . ',' .
-                ($appointment->status === 'scheduled' ? 'در انتظار خدمت' : $appointment->status) . "\n";
+                $statusText . ',' .
+                ($appointment->fee ? number_format($appointment->fee) : '0') . ',' .
+                ($appointment->duration ?? '0') . ',' .
+                ($appointment->confirmed_at ? JalaliHelper::toJalaliDateTime($appointment->confirmed_at) : '---') . ',' .
+                ($appointment->payment_status === 'paid' ? 'پرداخت شده' : ($appointment->payment_status === 'unpaid' ? 'پرداخت نشده' : 'در انتظار پرداخت')) . "\n";
         }
         return response()->streamDownload(function () use ($csv) {
             echo $csv;
         }, 'appointments-logs.csv');
     }
+    public function changeStatus($appointmentId, $newStatus)
+    {
+        try {
+            $appointment = CounselingAppointment::findOrFail($appointmentId);
 
+            // آپدیت وضعیت
+            $appointment->update(['status' => $newStatus]);
+
+            // ارسال پیامک به کاربر (اختیاری، بر اساس نیاز)
+            $user = \App\Models\User::findOrFail($appointment->patient_id);
+            $doctor = Doctor::findOrFail($appointment->doctor_id);
+            $doctorName = $doctor->first_name . ' ' . $doctor->last_name;
+            $trackingCode = $appointment->tracking_code;
+
+            $statusMessage = match ($newStatus) {
+                'pending_review' => 'در انتظار بررسی و تماس قرار گرفت.',
+                'call_answered' => 'تماس شما پاسخ داده شد.',
+                'call_completed' => 'مکالمه شما با موفقیت انجام و پایان یافت.',
+                'refunded' => 'نوبت شما لغو و مبلغ به کیف پول شما بازگشت.',
+                'missed' => 'به دلیل عدم پاسخگویی، نوبت شما لغو شد.',
+                default => 'وضعیت نوبت شما تغییر کرد.',
+            };
+
+            $message = "نوبت شما با کد پیگیری {$trackingCode} با پزشک {$doctorName} به {$statusMessage}";
+            $smsService = new MessageService(
+                SmsService::create(100257, $user->mobile, [$trackingCode, $doctorName, $statusMessage])
+            );
+            $smsService->send();
+
+            $this->dispatch('toast', ['message' => 'وضعیت نوبت با موفقیت تغییر کرد و پیامک ارسال شد.', 'type' => 'success']);
+        } catch (\Exception $e) {
+            $this->dispatch('toast', ['message' => 'خطا در تغییر وضعیت: ' . $e->getMessage(), 'type' => 'error']);
+        }
+    }
     private function getAppointmentsQuery()
     {
         $startDateGregorian = $this->startDate ? JalaliHelper::parsePersianTextDate($this->startDate) : null;
         $endDateGregorian = $this->endDate ? JalaliHelper::parsePersianTextDate($this->endDate) : null;
-        return Appointment::with(['doctor', 'patient', 'doctor.province', 'doctor.city'])
+        return CounselingAppointment::with(['doctor', 'patient', 'doctor.province', 'doctor.city'])
             ->when($this->reqDoctor && $this->reqDoctor != '0', fn($q) => $q->where('doctor_id', $this->reqDoctor))
             ->when($this->mobile, fn($q) => $q->whereHas('patient', fn($q2) => $q2->where('mobile', 'like', '%' . trim($this->mobile) . '%')))
             ->when($this->trackingCode, fn($q) => $q->where('tracking_code', 'like', '%' . trim($this->trackingCode) . '%'))
@@ -273,7 +323,7 @@ class LogsDoctor extends Component
     {
         $appointments = $this->getAppointmentsQuery()->paginate($this->perPage);
         $doctors = Doctor::all();
-        return view('livewire.admin.doctors.logs-doctor', [
+        return view('livewire.admin.doctors.doctor-counseling-logs', [
             'appointments' => $appointments,
             'doctors' => $doctors,
             'selectedDoctorId' => $this->reqDoctor

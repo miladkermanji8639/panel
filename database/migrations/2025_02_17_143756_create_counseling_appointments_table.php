@@ -32,7 +32,16 @@ return new class extends Migration {
             $table->timestamp('confirmed_at')->nullable();
 
             // وضعیت‌های مشاوره
-            $table->enum('status', ['scheduled', 'cancelled', 'attended', 'missed'])->default('scheduled');
+            $table->enum('status', [
+                'scheduled',          // در انتظار خدمت
+                'cancelled',          // لغو شده
+                'attended',           // حضور یافته
+                'missed',             // غایب
+                'pending_review',     // در انتظار بررسی و تماس
+                'call_answered',      // تماس و پاسخ داده شده
+                'call_completed',     // مکالمه انجام و پایان یافته است
+                'refunded'
+            ])->default('scheduled');
             $table->enum('attendance_status', ['attended', 'missed', 'cancelled'])->nullable();
 
             // توضیحات و اطلاعات تکمیلی
