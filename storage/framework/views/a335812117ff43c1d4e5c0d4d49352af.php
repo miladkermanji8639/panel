@@ -23,7 +23,7 @@
                     <option value="50">50</option>
                     <option value="100">100</option>
                 </select>
-                <button class="btn btn-danger" id="delete-selected-btn" @if(empty($selectedRequests)) disabled @endif>
+                <button class="btn btn-danger" id="delete-selected-btn" <?php if(empty($selectedRequests)): ?> disabled <?php endif; ?>>
                     <i class="fas fa-trash me-2"></i> حذف انتخاب‌شده‌ها
                 </button>
             </div>
@@ -45,47 +45,49 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($requestsPaginated as $request)
+                    <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $requestsPaginated; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td>
                                 <input type="checkbox" class="form-check-input" wire:model.live="selectedRequests"
-                                    value="{{ $request->id }}">
+                                    value="<?php echo e($request->id); ?>">
                             </td>
-                            <td>{{ $requestsPaginated->firstItem() + $loop->index }}</td>
-                            <td>{{ $request->doctor->first_name . ' ' . $request->doctor->last_name }}</td>
-                            <td>{{ number_format($request->amount) }} تومان</td>
+                            <td><?php echo e($requestsPaginated->firstItem() + $loop->index); ?></td>
+                            <td><?php echo e($request->doctor->first_name . ' ' . $request->doctor->last_name); ?></td>
+                            <td><?php echo e(number_format($request->amount)); ?> تومان</td>
                             <td>
-                                @if ($request->status === 'pending')
+                                <!--[if BLOCK]><![endif]--><?php if($request->status === 'pending'): ?>
                                     <label class="badge badge-primary">در انتظار ارائه خدمت</label>
-                                @elseif ($request->status === 'available')
+                                <?php elseif($request->status === 'available'): ?>
                                     <label class="badge badge-outline-green">قابل برداشت</label>
-                                @elseif ($request->status === 'requested')
+                                <?php elseif($request->status === 'requested'): ?>
                                     <label class="badge badge-warning">درخواست‌شده</label>
-                                @elseif ($request->status === 'paid')
+                                <?php elseif($request->status === 'paid'): ?>
                                     <label class="badge badge-success">پرداخت‌شده</label>
-                                @endif
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                             </td>
                             <td>
-                                {{ \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::parse($request->requested_at))->format('Y/m/d') }}
+                                <?php echo e(\Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::parse($request->requested_at))->format('Y/m/d')); ?>
+
                             </td>
                             <td>
                                 <button class="btn btn-light btn-sm delete-transaction"
-                                    data-id="{{ $request->id }}"><img src="{{ asset('dr-assets/icons/trash.svg') }}"
+                                    data-id="<?php echo e($request->id); ?>"><img src="<?php echo e(asset('dr-assets/icons/trash.svg')); ?>"
                                         alt="trash" srcset=""></button>
                             </td>
                         </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
                             <td colspan="7" class="text-center">هیچ درخواستی یافت نشد.</td>
                         </tr>
-                    @endforelse
+                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                 </tbody>
             </table>
         </div>
 
         <!-- صفحه‌بندی -->
         <div class="mt-4">
-            {{ $requestsPaginated->links('pagination::bootstrap-5') }}
+            <?php echo e($requestsPaginated->links('pagination::bootstrap-5')); ?>
+
         </div>
     </div>
 
@@ -177,7 +179,7 @@
                     let value = e.target.value.replace(/[^0-9]/g, '');
                     if (value.length > 16) value = value.slice(0, 16);
                     e.target.value = formatCardNumber(value);
-                    @this.set('card_number', e.target.value);
+                    window.Livewire.find('<?php echo e($_instance->getId()); ?>').set('card_number', e.target.value);
                 });
 
                 cardNumberInput.addEventListener('keypress', function (e) {
@@ -212,7 +214,7 @@
                     cancelButtonText: 'خیر'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        @this.call('deleteRequest', requestId);
+                        window.Livewire.find('<?php echo e($_instance->getId()); ?>').call('deleteRequest', requestId);
                     }
                 });
             });
@@ -242,10 +244,10 @@
                 cancelButtonText: 'خیر'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    @this.call('deleteSelectedRequests');
+                    window.Livewire.find('<?php echo e($_instance->getId()); ?>').call('deleteSelectedRequests');
                     console.log('Delete confirmed');
                 }
             });
         });
     </script>
-</div>
+</div><?php /**PATH D:\MyProjects\Benobe\panel\resources\views/livewire/admin/doctors/doctor-wallet-request.blade.php ENDPATH**/ ?>

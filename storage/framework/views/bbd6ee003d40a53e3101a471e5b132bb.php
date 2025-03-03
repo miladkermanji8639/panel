@@ -28,7 +28,7 @@
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('admin.doctors.doctors-management.doctor-wallet-request');
+[$__name, $__params] = $__split('admin.doctors.doctor-wallet-request');
 
 $__html = app('livewire')->mount($__name, $__params, 'lw-2056085932-0', $__slots ?? [], get_defined_vars());
 

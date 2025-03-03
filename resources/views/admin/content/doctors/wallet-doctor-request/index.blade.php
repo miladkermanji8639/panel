@@ -26,6 +26,6 @@
     </div>
     </header>
 
-    @livewire('admin.doctors.doctors-management.doctor-wallet-request')
+    @livewire('admin.doctors.doctor-wallet-request')
     </div>
 @endsection

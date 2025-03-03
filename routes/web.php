@@ -2,6 +2,7 @@
 use Mockery\Container;
 use Illuminate\Support\Facades\Route;
 use App\Models\Dr\SecretaryPermission;
+use App\Models\Admin\Dashboard\Cities\Zone;
 use App\Http\Controllers\Admin\layouts\Blank;
 use App\Http\Controllers\Admin\layouts\Fluid;
 use App\Http\Controllers\Dr\Auth\LoginController;
@@ -235,7 +236,7 @@ Route::prefix('admin')
         Route::prefix('agent')->group(function () {
             Route::get('/', [AgentController::class, 'index'])->name('admin.agent.agent');
             Route::get('/agent-wallet', [AgentController::class, 'agentWallet'])->name('admin.agent.agent-wallet');
-            
+
             Route::get('/create', [AgentController::class, 'create'])->name('admin.agent.create');
             Route::get('/edit/{agentId}', [AgentController::class, 'edit'])->name('admin.agent.edit');
         });
@@ -258,7 +259,7 @@ Route::prefix('admin')
                 Route::get('create', [TagsController::class, 'create'])->name('admin.content-management.tags.create');
                 Route::get('edit/{id}', [TagsController::class, 'edit'])->name('admin.content-management.tags.edit');
             });
-        
+
             Route::prefix('comments/')->group(function () {
                 Route::get('/', [CommentController::class, 'index'])->name('admin.content-management.comments.index');
                 Route::get('show/{commentId}', [CommentController::class, 'show'])->name('admin.content-management.comments.show');
@@ -342,7 +343,16 @@ Route::prefix('admin')
             Route::prefix('hospitals-management/')->group(function () {
                 Route::get('/', [HospitalsManagementController::class, 'index'])->name('admin.content.hospitals.hospitals-management.index');
                 Route::get('/create', [HospitalsManagementController::class, 'create'])->name('admin.content.hospitals.hospitals-management.create');
-                Route::get('/edit', [HospitalsManagementController::class, 'edit'])->name('admin.content.hospitals.hospitals-management.edit');
+                Route::get('/edit/{id}', [HospitalsManagementController::class, 'edit'])->name('admin.content.hospitals.hospitals-management.edit');
+                Route::post('/store', [HospitalsManagementController::class, 'store'])->name('admin.content.hospitals.hospitals-management.store');
+                Route::put('/update/{id}', [HospitalsManagementController::class, 'update'])->name('admin.content.hospitals.hospitals-management.update');
+                Route::delete('/destroy/{id}', [HospitalsManagementController::class, 'destroy'])->name('admin.content.hospitals.hospitals-management.destroy');
+                Route::get('/get-cities/{province_id}', function ($province_id) {
+                    return Zone::where('parent_id', $province_id)
+                        ->where('level', 2)
+                        ->get(['id', 'name']);
+                })->name('admin.content.hospitals.hospitals-management.get-cities');
+
                 Route::prefix('doctors-of-hospital/')->group(function () {
                     Route::get('/', [DoctorsOfHospitalController::class, 'index'])->name('admin.content.hospitals.hospitals-management.doctors-of-hospital.index');
                     Route::get('/create', [DoctorsOfHospitalController::class, 'create'])->name('admin.content.hospitals.hospitals-management.doctors-of-hospital.create');

@@ -17,6 +17,7 @@ class Clinic extends Model
         'doctor_id',
         'name',
         'phone_numbers',
+        'phone_number',
         'address',
         'province_id',
         'secretary_phone',
