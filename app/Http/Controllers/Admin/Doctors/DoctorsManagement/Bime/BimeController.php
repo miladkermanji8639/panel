@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Doctors\DoctorsManagement\Bime;
 
 use App\Http\Controllers\Admin\Controller;
+use App\Models\Dr\Doctor;
 use Illuminate\Http\Request;
 
 class BimeController extends Controller
@@ -10,9 +11,10 @@ class BimeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($doctor)
     {
-        return view("admin.content.doctors.doctors-management.bime.index");
+        $doctorName = Doctor::where('id',$doctor)->first()->full_name;
+        return view("admin.content.doctors.doctors-management.bime.index",compact('doctorName'));
     }
 
     /**

@@ -1,10 +1,12 @@
 <?php
 namespace App\Livewire\Dr\Panel\Insurance;
 
+use GuzzleHttp\Psr7\Request;
 use Livewire\Component;
 use App\Models\Dr\Insurance;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
+use function Laravel\Prompts\alert;
 
 class InsuranceComponent extends Component
 {
@@ -36,6 +38,11 @@ class InsuranceComponent extends Component
         // شرط برای clinic_id
         if ($this->selectedClinicId === 'default') {
             $query->whereNull('clinic_id');
+        } else if (Auth::guard('manager')->check()) {
+            // Get the last segment of the current URL
+            $id = last(request()->segments());
+            $query->where('doctor_id', $id);
+
         } else {
             $query->where('clinic_id', $this->selectedClinicId);
         }
@@ -46,8 +53,10 @@ class InsuranceComponent extends Component
 
     public function store()
     {
+        // Validate the incoming data
         $data = $this->validate();
 
+        // Handle calculation method logic
         switch ($data['calculation_method']) {
             case '0':
                 $data['insurance_percent'] = null;
@@ -62,13 +71,27 @@ class InsuranceComponent extends Component
                 break;
         }
 
-        $data['doctor_id'] = Auth::guard('doctor')->user()->id;
-        // شرط برای clinic_id موقع ثبت
+        // Set the doctor_id based on the authentication context
+        if (Auth::guard('manager')->check()) {
+            // If a manager is logged in, get the ID from the URL
+            $CurrentUrl = $_SERVER['HTTP_REFERER'];
+            $doctorId = explode("/",$CurrentUrl)[7];
+            $data['doctor_id'] = $doctorId; // Ensure this is the correct segment
+        } else {
+            // If a doctor is logged in, use their ID
+            $data['doctor_id'] = Auth::guard('doctor')->user()->id;
+        }
+
+        // Set clinic_id based on selectedClinicId
         $data['clinic_id'] = $this->selectedClinicId === 'default' ? null : $this->selectedClinicId;
 
+        // Create the Insurance record
         Insurance::create($data);
 
+        // Dispatch a success message
         $this->dispatch('toast', message: 'بیمه جدید با موفقیت اضافه شد.');
+
+        // Reset fields after submission
         $this->resetFields();
     }
 
@@ -87,6 +110,12 @@ class InsuranceComponent extends Component
         // شرط برای clinic_id موقع حذف
         if ($this->selectedClinicId === 'default') {
             $insurance->whereNull('clinic_id');
+        }else if (Auth::guard('manager')->check()) {
+            // If a manager is logged in, get the ID from the URL
+            $CurrentUrl = $_SERVER['HTTP_REFERER'];
+            $doctorId = explode("/", $CurrentUrl)[7];
+            $insurance->where('doctor_id', $doctorId);
+            // Ensure this is the correct segment
         } else {
             $insurance->where('clinic_id', $this->selectedClinicId);
         }

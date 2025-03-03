@@ -14,7 +14,7 @@
 @endsection
 @section('content')
 @section('bread-crumb-title', 'پرداخت')
-    <livewire:dr.payment-setting-component />
+    <livewire:dr.panel.payment.payment-setting-component />
 @endsection
 @section('scripts')
     <script src="{{ asset('dr-assets/panel/jalali-datepicker/run-jalali.js') }}"></script>

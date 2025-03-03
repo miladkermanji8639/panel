@@ -303,7 +303,7 @@ Route::prefix('admin')
                 Route::get('/edit/{doctor}', [DoctorsManagementController::class, 'edit'])->name('admin.doctors.doctors-management.edit'); // اصلاح شده
                 Route::post('/update/{doctor}', [DoctorsManagementController::class, 'update'])->name('admin.doctors.doctors-management.update'); // اضافه شده برای ذخیره تغییرات
                 Route::prefix('bime/')->group(function () {
-                    Route::get('/', [BimeController::class, 'index'])->name('admin.doctors.doctors-management.bime.index');
+                    Route::get('/{doctor}', [BimeController::class, 'index'])->name('admin.doctors.doctors-management.bime.index');
                     Route::get('/create', [BimeController::class, 'create'])->name('admin.doctors.doctors-management.bime.create');
                     Route::get('/edit', [BimeController::class, 'edit'])->name('admin.doctors.doctors-management.bime.edit');
                 });
@@ -331,7 +331,7 @@ Route::prefix('admin')
             });
             Route::prefix('comment-doctor/')->group(function () {
                 Route::get('/', [CommentDoctorController::class, 'index'])->name('admin.content.doctors.comment-doctor.index');
-                Route::get('/show', [CommentDoctorController::class, 'show'])->name('admin.content.doctors.comment-docor.show');
+                Route::get('show/{id}', [CommentDoctorController::class, 'show'])->name('admin.content.doctors.comment-doctor.show');
             });
             Route::prefix('moshavere/')->group(function () {
                 Route::get('/', [MoshavereController::class, 'index'])->name('admin.content.doctors.moshavere.index');

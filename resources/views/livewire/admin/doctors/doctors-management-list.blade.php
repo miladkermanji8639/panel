@@ -111,13 +111,13 @@
            </button>
            <ul class="dropdown-menu">
             <li><li><a href="{{ route('admin.doctors.doctors-management.edit', $doctor) }}" class="dropdown-item"><i class="fa fa-edit"></i> ویرایش</a></li></li>
-            <li><a href="{{ route('admin.doctors.doctors-management.bime.index', ['doctor_id' => $doctor->id]) }}"
+            <li><a href="{{ route('admin.doctors.doctors-management.bime.index', $doctor->id) }}"
               class="dropdown-item"><i class="fa fa-edit"></i> بیمه‌ها</a></li>
             <li><a
-              href="{{ route('admin.content.doctors.doctors-management.nobatdehi-setting.index', ['doctor_id' => $doctor->id]) }}"
+              href="{{ route('dr-workhours', $doctor->id) }}"
               class="dropdown-item"><i class="fa fa-calendar-times-o"></i> برنامه نوبت‌دهی</a></li>
             <li><a
-              href="{{ route('admin.content.doctors.doctors-management.moshavere-setting.index', ['doctor_id' => $doctor->id]) }}"
+              href="{{ route('dr-moshavere_setting', $doctor->id) }}"
               class="dropdown-item"><i class="fa fa-calendar-times-o"></i> برنامه مشاوره</a></li>
             <li><a
               href="{{ route('admin.content.doctors.doctors-management.gallery.index', ['doctor_id' => $doctor->id]) }}"
